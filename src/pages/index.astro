@@ -57,33 +57,28 @@ const featured = posts.filter((p) => p.featured);
   <!-- ===== 2. Mood Products：漂浮产品展示区（参考 Wildbran） ===== -->
   <MoodProductsSection />
 
-  <!-- ===== 3. Career Feature：暗色大背景 + 中央浅色卡片 ===== -->
-  <section class="px-3 md:px-4">
-    <div class="relative overflow-hidden rounded-[24px] md:rounded-[32px]">
-      <Media src="/media/career-bg.jpg" ph="dark" class="absolute inset-0" />
-      <div class="absolute inset-0 bg-dark/55"></div>
+  <!-- ===== 3. Career Feature：full-bleed 暗色背景 + 中央小圆角浅色卡片 =====
+       背景就是整个 section 的背景（非圆角卡片），顶满浏览器宽度、顶部直角 -->
+  <section class="career-section">
+    <div class="career-bg-media">
+      <Media src="/media/career-bg.jpg" ph="dark" class="h-full w-full" />
+    </div>
+    <div class="career-bg-overlay"></div>
 
-      <div class="relative z-10 flex flex-col items-center px-5 py-20 md:py-28">
-        <p class="num text-[12px] uppercase tracking-[0.35em] text-white/60">
-          Career Development
+    <div class="career-content">
+      <p class="num text-[12px] tracking-[0.35em] text-white/60">
+        从连接到重构
+      </p>
+      <div data-reveal class="career-card mt-8">
+        <h2 class="font-serif text-[32px] font-bold md:text-[42px]">职业发展</h2>
+        <p class="mx-auto mt-4 max-w-[560px] text-[15px] leading-[1.9] text-ink/70">
+          第一份工作让我学会连接政府、企业、高校、创业者与产业资源；第二份工作让我走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。
         </p>
-        <div
-          data-reveal
-          class="mt-8 w-full max-w-[620px] rounded-3xl bg-card p-7 text-center md:p-12"
-        >
-          <h2 class="font-serif text-[32px] font-bold md:text-[42px]">职业发展</h2>
-          <p class="mt-3 text-[18px] font-medium md:text-[20px]">从连接到重构。</p>
-          <p class="mt-4 text-[15px] leading-[1.9] text-ink/70">
-            第一份工作让我学会连接政府、企业、高校、创业者与产业资源；第二份工作让我走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。
-          </p>
-          <div class="mt-7 flex justify-center">
-            <PillButton href="/career">了解更多</PillButton>
-          </div>
-          <Media
-            src="/media/career-card.jpg"
-            ph="warm"
-            class="mt-8 aspect-[16/9] w-full rounded-2xl"
-          />
+        <div class="mt-7 flex justify-center">
+          <PillButton href="/career">了解更多</PillButton>
+        </div>
+        <div class="career-card-media">
+          <Media src="/media/career-card.jpg" ph="warm" class="h-full w-full" />
         </div>
       </div>
     </div>
@@ -93,19 +88,20 @@ const featured = posts.filter((p) => p.featured);
   <section class="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-28">
     <SectionTitle
       align="center"
-      title="最近写了什么"
+      title="技能干货"
       subtitle="一些从真实工作里拆出来的方法、流程和工具笔记。"
     />
     <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {
         featured.map((post) => (
-          <a
-            href="/skills"
-            class="group rounded-2xl border border-border bg-paper p-3 transition duration-200 hover:-translate-y-1"
-          >
-            <span class="relative block overflow-hidden rounded-xl">
-              <Media src={post.cover} ph={post.ph} class="aspect-[4/3] w-full" />
-              <span class="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink transition-colors duration-200 group-hover:bg-blue group-hover:text-white">
+          <a href="/skills" class="group block rounded-lg bg-[#e4e0d4] p-3">
+            <span class="relative block overflow-hidden rounded-md">
+              <Media
+                src={post.cover}
+                ph={post.ph}
+                class="aspect-[4/3] w-full transition-transform duration-500 ease-out group-hover:scale-[0.94]"
+              />
+              <span class="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink transition-transform duration-300 ease-out group-hover:translate-x-1.5 group-hover:scale-[0.85]">
                 <svg class="h-4 w-4" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path
                     d="M3 11 11 3M4.5 3H11v6.5"
@@ -125,7 +121,7 @@ const featured = posts.filter((p) => p.featured);
                 {post.readTime}
               </span>
             </span>
-            <span class="mt-3 block px-1 pb-2 text-[17px] font-semibold leading-snug">
+            <span class="mt-3 block truncate px-1 pb-2 text-[17px] font-semibold leading-snug">
               {post.title}
             </span>
           </a>
@@ -142,15 +138,95 @@ const featured = posts.filter((p) => p.featured);
     >
       <div class="max-w-[640px]">
         <h2 class="font-serif text-[34px] font-bold leading-[1.35] md:text-[52px]">
-          有些东西，<br />可以直接拿去用。
+          资源库
         </h2>
         <p class="mt-4 text-[16px] leading-[1.9] text-muted">
           我会把工作中反复用到的模板、清单、工具和学习资料整理到这里。
         </p>
       </div>
       <div class="shrink-0">
-        <PillButton href="/resources">去资源库</PillButton>
+        <PillButton href="/resources">到此一游</PillButton>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* ===== Career Feature：full-bleed 暗色板块（参考 Wildbran Manufacturing） =====
+   * 外层顶满浏览器宽度、四角直角，不露页面底色 */
+  .career-section {
+    position: relative;
+    /* main 无内边距/宽度限制，100% 即真正 full-bleed，
+     * 避免 100vw 因滚动条宽度产生横向溢出 */
+    width: 100%;
+    min-height: 100vh;
+    background: #10100e;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  /* 背景媒体层：铺满整个 section（不是圆角卡片） */
+  .career-bg-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .career-bg-media :global(img),
+  .career-bg-media :global(video) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  /* 暗色遮罩 */
+  .career-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+  }
+
+  /* 内容层：背景之上居中 */
+  .career-content {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(96px, 14vh, 150px) 24px;
+  }
+
+  /* 中央浅色卡片：小圆角（8px） */
+  .career-card {
+    width: min(760px, calc(100vw - 48px));
+    background: #faf7f2;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    padding: 40px 24px 24px;
+  }
+
+  /* 卡片内媒体：小圆角（6px） */
+  .career-card-media {
+    margin-top: 40px;
+    width: 100%;
+    height: 220px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .career-card-media :global(img),
+  .career-card-media :global(video) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+</style>

@@ -7,7 +7,7 @@
   /* 清空 Tailwind 默认调色板，防止误用高饱和色 */
   --color-*: initial;
 
-  --color-bg: #f6f2ec;
+  --color-bg: #faf7f2;
   --color-card: #e9e3d7;
   --color-ink: #1f1f1f;
   --color-muted: #8f959e;
