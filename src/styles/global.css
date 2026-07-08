@@ -18,7 +18,7 @@
   h2,
   h3,
   h4 {
-    line-height: 1.4;
+    line-height: 1.35;
     letter-spacing: 0.01em;
   }
 
@@ -40,7 +40,7 @@
 }
 
 /* ===== 导航 hover 手绘线 =====
- * 全站唯一的手绘线条：只在导航项 hover / focus 时画出，离开即消失
+ * 只在导航项 hover / focus 时画出，离开即消失
  * 桌面端专用（移动端菜单不渲染此 SVG）
  */
 .nav-link .nav-scribble {
@@ -53,7 +53,7 @@
   height: 10px;
   opacity: 0;
   pointer-events: none;
-  color: var(--color-line);
+  color: currentColor;
 }
 
 .nav-scribble path {
@@ -90,7 +90,55 @@
   transform: none;
 }
 
-/* ===== 用户关闭动效：直接显示，不做绘制动画 ===== */
+/* ===== Mood 区散落元素：轻微漂浮 ===== */
+@keyframes floaty {
+  from {
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+  to {
+    transform: translateY(-10px) rotate(var(--tilt, 0deg));
+  }
+}
+
+.floaty {
+  animation: floaty 5.5s ease-in-out infinite alternate;
+}
+
+.floaty--slow {
+  animation-duration: 7.5s;
+}
+
+.floaty--delay {
+  animation-delay: 1.6s;
+}
+
+/* 占位媒体：先画渐变，后续换成真实图片 / 视频不影响布局 */
+.ph {
+  background-size: cover;
+  background-position: center;
+}
+
+.ph--warm {
+  background-image: linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%);
+}
+
+.ph--sage {
+  background-image: linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%);
+}
+
+.ph--blue {
+  background-image: linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%);
+}
+
+.ph--rose {
+  background-image: linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%);
+}
+
+.ph--dark {
+  background-image: linear-gradient(160deg, #2a2a26 0%, #10100e 70%);
+}
+
+/* ===== 用户关闭动效：直接显示，不做动画 ===== */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -105,5 +153,9 @@
   .nav-scribble path {
     stroke-dashoffset: 0;
     transition: none;
+  }
+
+  .floaty {
+    animation: none;
   }
 }

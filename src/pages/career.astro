@@ -1,0 +1,66 @@
+---
+/**
+ * 职业发展总览 —— 连接 与 重构 两段经历
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import Media from "../components/Media.astro";
+
+const stages = [
+  {
+    id: "connection",
+    kicker: "第一段经历",
+    title: "连接",
+    org: "重庆清控科创 / 阿里云创新中心（重庆）",
+    tags: ["市场活动", "政企协作", "产学研", "政府申报", "资源连接"],
+    desc: "学会连接政府、企业、高校、创业者与产业资源，把分散的资源变成能落地的合作。",
+    ph: "warm",
+    cover: "/media/career-connection.jpg",
+  },
+  {
+    id: "rebuild",
+    kicker: "第二段经历",
+    title: "重构",
+    org: "东莞市将为防伪科技有限公司",
+    tags: ["数字化转型", "飞书系统", "产品管理", "SOP", "财税合规"],
+    desc: "走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。",
+    ph: "sage",
+    cover: "/media/career-rebuild.jpg",
+  },
+] as const;
+---
+
+<BaseLayout title="职业发展">
+  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
+    <SectionTitle
+      title="职业发展"
+      subtitle="从连接到重构。"
+      lead="第一份工作让我学会连接政府、企业、高校、创业者与产业资源；第二份工作让我走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。"
+    />
+
+    <div class="mt-14 space-y-8">
+      {
+        stages.map((s) => (
+          <article
+            id={s.id}
+            data-reveal
+            class="grid gap-6 rounded-3xl bg-card p-6 md:grid-cols-2 md:gap-10 md:p-10"
+          >
+            <Media src={s.cover} ph={s.ph} class="aspect-[4/3] w-full rounded-2xl" />
+            <div class="flex flex-col justify-center">
+              <p class="num text-[12px] tracking-[0.25em] text-muted">{s.kicker}</p>
+              <h2 class="mt-2 font-serif text-[32px] font-bold md:text-[40px]">{s.title}</h2>
+              <p class="mt-2 text-[15px] text-muted">{s.org}</p>
+              <p class="mt-4 text-[16px] leading-[1.9] text-ink/75">{s.desc}</p>
+              <ul class="mt-6 flex flex-wrap gap-2">
+                {s.tags.map((tag) => (
+                  <li class="rounded-full bg-paper px-3 py-1 text-[13px] text-ink/70">{tag}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

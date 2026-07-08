@@ -1,0 +1,44 @@
+---
+/**
+ * 更多视频 —— 视频占位网格，素材就位后替换
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import Media from "../components/Media.astro";
+
+const videos = [
+  { title: "视频占位 01", ph: "warm", cover: "/media/video-1.jpg" },
+  { title: "视频占位 02", ph: "blue", cover: "/media/video-2.jpg" },
+  { title: "视频占位 03", ph: "sage", cover: "/media/video-3.jpg" },
+  { title: "视频占位 04", ph: "rose", cover: "/media/video-4.jpg" },
+] as const;
+---
+
+<BaseLayout title="更多视频">
+  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
+    <SectionTitle
+      title="更多视频"
+      lead="这里会放我记录工作与生活的视频。内容整理中，先用占位图占个座。"
+    />
+
+    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2">
+      {
+        videos.map((v) => (
+          <div class="group">
+            <span class="relative block overflow-hidden rounded-2xl">
+              <Media src={v.cover} ph={v.ph} class="aspect-video w-full" />
+              <span class="absolute inset-0 flex items-center justify-center">
+                <span class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-ink">
+                  <svg class="ml-0.5 h-5 w-5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4 2.5v11l9-5.5z" />
+                  </svg>
+                </span>
+              </span>
+            </span>
+            <p class="mt-3 text-[15px] font-medium">{v.title}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

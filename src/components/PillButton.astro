@@ -1,0 +1,47 @@
+---
+/**
+ * PillButton —— 蓝色胶囊按钮 + 右侧白色圆形箭头（Wildbran 风格）
+ * variant: blue 蓝底白字（默认） / light 浅底深字（用于深色背景上的次级按钮）
+ */
+interface Props {
+  href: string;
+  variant?: "blue" | "light";
+  class?: string;
+}
+
+const { href, variant = "blue", class: className = "" } = Astro.props;
+
+const styles =
+  variant === "light"
+    ? "bg-white text-ink"
+    : "bg-blue text-white";
+
+const circle =
+  variant === "light" ? "bg-blue text-white" : "bg-white text-blue";
+---
+
+<a
+  href={href}
+  class:list={[
+    "group inline-flex items-center gap-3 rounded-full py-2 pl-6 pr-2 text-[15px] font-medium transition-all duration-200 hover:-translate-y-0.5",
+    styles,
+    className,
+  ]}
+>
+  <slot />
+  <span
+    class:list={[
+      "flex h-9 w-9 items-center justify-center rounded-full transition-transform duration-200 group-hover:translate-x-0.5",
+      circle,
+    ]}
+  >
+    <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path
+        d="M2 7h9M7.5 3 11.5 7 7.5 11"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </span>
+</a>

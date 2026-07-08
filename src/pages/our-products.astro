@@ -1,0 +1,38 @@
+---
+/**
+ * Our Products —— 首页 Mood 区按钮的落地页（占位）
+ * 展示五个产品占位插画，后续替换为真实产品内容
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import ProductSketch from "../components/ProductSketch.astro";
+
+const products = [
+  { variant: "bag", name: "Bites" },
+  { variant: "ball", name: "Energy Balls" },
+  { variant: "crackers", name: "Crackers" },
+  { variant: "cookies", name: "Cookies" },
+  { variant: "bars", name: "Bars" },
+] as const;
+---
+
+<BaseLayout title="Our Products">
+  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
+    <SectionTitle
+      align="center"
+      title="Our Products"
+      lead="产品内容整理中，先用占位插画占个座。"
+    />
+
+    <div data-reveal class="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 md:grid-cols-5">
+      {
+        products.map((p) => (
+          <div class="flex flex-col items-center text-center">
+            <ProductSketch variant={p.variant} class="h-auto w-full max-w-[180px]" />
+            <p class="mt-4 font-hand text-[24px] leading-none text-blue">{p.name}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

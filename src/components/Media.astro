@@ -1,0 +1,30 @@
+---
+/**
+ * Media —— 图片占位组件
+ * 先用渐变占位；素材放到 public 下对应路径后自动显示为真实图片
+ * （CSS 多重背景：图片缺失时下层渐变兜底，布局不受影响）
+ */
+interface Props {
+  /** public 下的图片路径，如 /media/mood-career.jpg */
+  src?: string;
+  /** 渐变占位风格 */
+  ph?: "warm" | "sage" | "blue" | "rose" | "dark";
+  class?: string;
+}
+
+const { src, ph = "warm", class: className = "" } = Astro.props;
+
+const gradients: Record<string, string> = {
+  warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
+  sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
+  blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
+  rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
+  dark: "linear-gradient(160deg, #2a2a26 0%, #10100e 70%)",
+};
+
+const style = src
+  ? `background-image:url('${src}'),${gradients[ph]};`
+  : `background-image:${gradients[ph]};`;
+---
+
+<div class:list={["ph", className]} style={style} aria-hidden="true"></div>

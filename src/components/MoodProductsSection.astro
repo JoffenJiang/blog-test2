@@ -1,0 +1,456 @@
+---
+/**
+ * MoodProductsSection —— 高保真参考 Wildbran "What are you in the mood for?"
+ *
+ * 结构：140vh 高的 section + 内部 100vh sticky 容器；
+ *       中间标题按钮固定视觉中心，10 个主视觉占位符围绕成不规则椭圆环。
+ * 动效：标题/按钮先淡入 → 随滚动进度分三批出现（顶部排 → 两侧小件 → 底部排），
+ *       出现后随滚动做 10–30px 轻微 parallax；prefers-reduced-motion 全部直接显示。
+ *
+ * ★ 替换真实图片：每个 <figure class="mood-item mood-item-xxx"> 里有一个
+ *   <div class="mood-shape ..."> 占位符，把它换成
+ *   <img class="mood-img" src="/media/products/xxx.png" alt="" />
+ *   即可，位置 / 尺寸 / 旋转 / 动效都由外层 figure 的 class 控制，不用改。
+ */
+import PillButton from "./PillButton.astro";
+
+interface Layer {
+  /** 位置与尺寸由同名 class 控制（见下方 <style>） */
+  name: string;
+  /** 占位符形状 class */
+  shape: string;
+  /** 出现批次：1 顶部排 / 2 两侧小件 / 3 底部排 */
+  batch: 1 | 2 | 3;
+  /** 批内错开延迟 */
+  stagger: string;
+  /** 滑入起点与最终旋转角 */
+  vars: string;
+  /** parallax 强度（滚动时 10–30px 位移） */
+  parallax: number;
+  /** 手写标签（仅 5 个产品有） */
+  label?: string;
+  /** 标签排列：arrow-first 箭头在文字前（指向左侧产品）/ text-first */
+  labelOrder?: "arrow-first" | "text-first";
+}
+
+const layers: Layer[] = [
+  { name: "mood-item-bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "Bites", labelOrder: "arrow-first" },
+  { name: "mood-item-top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.45", parallax: 0.06 },
+  { name: "mood-item-energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05, label: "Energy Balls", labelOrder: "arrow-first" },
+  { name: "mood-item-crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "Crackers", labelOrder: "text-first" },
+  { name: "mood-item-left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
+  { name: "mood-item-right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg", parallax: 0.065 },
+  { name: "mood-item-cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:-4deg", parallax: 0.03, label: "Cookies", labelOrder: "arrow-first" },
+  { name: "mood-item-burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", parallax: 0.045 },
+  { name: "mood-item-bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", parallax: 0.035, label: "Bars", labelOrder: "text-first" },
+  { name: "mood-item-bottom-blur", shape: "mood-shape-blur", batch: 3, stagger: ".3s", vars: "--sy:60px;--op:.45", parallax: 0.06 },
+];
+---
+
+<section
+  data-mood-section
+  class="mood-section relative bg-bg"
+  aria-label="What are you in the mood for?"
+>
+  <div class="mood-sticky">
+    <!-- 视觉中心：标题 + 按钮 -->
+    <div class="mood-center relative z-10 flex flex-col items-center text-center">
+      <h2 class="mood-title font-serif font-bold">
+        What are you in<br />the mood for?
+      </h2>
+      <div class="mood-btn mt-8">
+        <PillButton href="/our-products">Explore Our Products</PillButton>
+      </div>
+    </div>
+
+    <!-- 10 个主视觉占位符（椭圆环绕，替换真实图片见文件头注释） -->
+    {
+      layers.map((l) => (
+        <figure
+          class:list={["mood-item", l.name]}
+          data-batch={l.batch}
+          data-parallax={l.parallax}
+          style={`${l.vars};--stg:${l.stagger}`}
+        >
+          <div class:list={["mood-shape", l.shape]} />
+          {l.label && (
+            <figcaption class="mood-label">
+              {l.labelOrder === "arrow-first" ? (
+                <>
+                  <span class="mood-arrow mood-arrow--flip" aria-hidden="true" />
+                  <span class="mood-label-text">{l.label}</span>
+                </>
+              ) : (
+                <>
+                  <span class="mood-label-text">{l.label}</span>
+                  <span class="mood-arrow" aria-hidden="true" />
+                </>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  /* ===== 骨架：140vh section + 100vh sticky 容器 =====
+   * overflow 用 clip 而不是 hidden：clip 不产生滚动容器，sticky 才能生效 */
+  .mood-section {
+    height: 120vh;
+    overflow: clip;
+  }
+
+  @media (min-width: 768px) {
+    .mood-section {
+      height: 140vh;
+    }
+  }
+
+  .mood-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== 中间标题：比上一版明显缩小 ===== */
+  .mood-title {
+    max-width: 620px;
+    font-size: 36px;
+    line-height: 1.05;
+  }
+
+  @media (min-width: 640px) {
+    .mood-title {
+      font-size: 48px;
+      line-height: 1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .mood-title {
+      font-size: 60px;
+    }
+  }
+
+  /* 标题 / 按钮进场 */
+  .mood-title,
+  .mood-btn {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+
+  .mood-btn {
+    transition-delay: 0.2s;
+  }
+
+  .mood-head-in .mood-title,
+  .mood-head-in .mood-btn {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ===== 主视觉元素：初始隐藏，按批次出现 ===== */
+  .mood-item {
+    position: absolute;
+    margin: 0;
+    opacity: 0;
+    transform: translate(var(--sx, 0px), var(--sy, 0px)) scale(0.88)
+      rotate(calc(var(--rot, 0deg) + 5deg));
+    transition:
+      opacity 0.85s ease var(--stg, 0s),
+      transform 0.85s cubic-bezier(0.25, 0.7, 0.3, 1) var(--stg, 0s);
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  .mood-b1 .mood-item[data-batch="1"],
+  .mood-b2 .mood-item[data-batch="2"],
+  .mood-b3 .mood-item[data-batch="3"] {
+    opacity: var(--op, 1);
+    transform: translate(0, 0) scale(1) rotate(var(--rot, 0deg));
+  }
+
+  /* ===== 10 个元素的位置与尺寸（桌面初稿，按需微调这里即可） ===== */
+  .mood-item-bites        { left: 5%;   top: 5%;     width: 210px; }
+  .mood-item-top-blur     { left: 24%;  top: -2%;    width: 68px; }
+  .mood-item-energy-ball  { left: 46%;  top: 3%;     width: 96px; }
+  .mood-item-crackers     { right: 7%;  top: 4%;     width: 210px; }
+  .mood-item-left-bar     { left: -4%;  top: 45%;    width: 170px; }
+  .mood-item-right-cracker{ right: -1%; top: 43%;    width: 84px; }
+  .mood-item-cookies      { left: 12%;  bottom: -8%; width: 230px; }
+  .mood-item-burst        { left: 44%;  bottom: -3%; width: 145px; }
+  .mood-item-bars         { right: 15%; bottom: 0;   width: 245px; }
+  .mood-item-bottom-blur  { right: 25%; bottom: 4%;  width: 62px; }
+
+  @media (max-width: 1023px) {
+    .mood-item-bites        { width: 150px; }
+    .mood-item-top-blur     { width: 52px; }
+    .mood-item-energy-ball  { width: 72px; }
+    .mood-item-crackers     { width: 150px; }
+    .mood-item-left-bar     { width: 120px; }
+    .mood-item-right-cracker{ width: 62px; }
+    .mood-item-cookies      { width: 165px; }
+    .mood-item-burst        { width: 104px; }
+    .mood-item-bars         { width: 175px; }
+    .mood-item-bottom-blur  { width: 48px; }
+  }
+
+  @media (max-width: 639px) {
+    .mood-item-bites        { width: 104px; left: 2%; }
+    .mood-item-top-blur     { width: 40px; }
+    .mood-item-energy-ball  { width: 54px; }
+    .mood-item-crackers     { width: 104px; right: 2%; }
+    .mood-item-left-bar,
+    .mood-item-right-cracker { display: none; }
+    .mood-item-cookies      { width: 120px; left: 4%; bottom: -4%; }
+    .mood-item-burst        { width: 76px; }
+    .mood-item-bars         { width: 128px; right: 6%; }
+    .mood-item-bottom-blur  { width: 36px; }
+  }
+
+  /* ===== 形状占位符（纯 CSS，后续整体换成 <img class="mood-img">） ===== */
+  .mood-shape {
+    width: 100%;
+  }
+
+  .mood-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* 包装袋：圆角矩形 + 顶部封口 */
+  .mood-shape-bag {
+    aspect-ratio: 4 / 5;
+    background: #e6cf9d;
+    border-radius: 14% / 11%;
+    position: relative;
+  }
+
+  .mood-shape-bag::before {
+    content: "";
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 0;
+    height: 9%;
+    background: #d0b276;
+    border-radius: 999px;
+  }
+
+  .mood-shape-bag--green {
+    background: #ccd6ad;
+  }
+
+  .mood-shape-bag--green::before {
+    background: #aebb85;
+  }
+
+  /* 盒子：圆角矩形 + 左侧深色棱面（轻微 3D 感） */
+  .mood-shape-box {
+    aspect-ratio: 3 / 4;
+    background: #f1e6cf;
+    border-radius: 6% / 4.5%;
+    position: relative;
+  }
+
+  .mood-shape-box::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2%;
+    bottom: 2%;
+    width: 11%;
+    border-radius: 6px 0 0 6px;
+    transform: skewY(-4deg);
+  }
+
+  .mood-shape-box--red::before {
+    background: #bc4a35;
+  }
+
+  .mood-shape-box--orange {
+    background: #f4ead6;
+  }
+
+  .mood-shape-box--orange::before {
+    background: #cc8544;
+  }
+
+  .mood-shape-box--purple {
+    background: #e7dbf0;
+  }
+
+  .mood-shape-box--purple::before {
+    background: #a687c6;
+  }
+
+  /* 圆形食物 */
+  .mood-shape-ball {
+    aspect-ratio: 1;
+    background: #a2734a;
+    border-radius: 50%;
+  }
+
+  /* 横向食物块（巧克力 bar）：不规则圆角 */
+  .mood-shape-bar {
+    aspect-ratio: 2.4 / 1;
+    background: #6f4a2a;
+    border-radius: 44% 56% 52% 48% / 55% 45% 60% 40%;
+  }
+
+  /* 小饼干块：不规则圆角小方块 */
+  .mood-shape-piece {
+    aspect-ratio: 1 / 0.9;
+    background: #d9b98c;
+    border-radius: 38% 62% 55% 45% / 48% 52% 45% 55%;
+  }
+
+  /* 灰色模糊圆形装饰 */
+  .mood-shape-blur {
+    aspect-ratio: 1;
+    background: #b3afa6;
+    border-radius: 50%;
+    filter: blur(6px);
+  }
+
+  /* ===== 手写标签 + CSS 手绘箭头（无 SVG） ===== */
+  .mood-label {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .mood-label-text {
+    font-family: var(--font-hand);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--color-blue);
+  }
+
+  @media (max-width: 1023px) {
+    .mood-label-text {
+      font-size: 18px;
+    }
+  }
+
+  /* 箭头：弧线 + 箭头尖，纯 CSS 伪元素 */
+  .mood-arrow {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 15px;
+  }
+
+  .mood-arrow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-bottom: 2px solid var(--color-blue);
+    border-radius: 0 0 100% 60%;
+  }
+
+  .mood-arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    bottom: 1px;
+    width: 7px;
+    height: 7px;
+    border-top: 2px solid var(--color-blue);
+    border-right: 2px solid var(--color-blue);
+    transform: rotate(38deg);
+  }
+
+  .mood-arrow--flip {
+    transform: scaleX(-1);
+  }
+
+  /* 标签相对各自产品的位置 */
+  .mood-item-bites .mood-label        { right: -32%; bottom: 10%; }
+  .mood-item-energy-ball .mood-label  { left: 108%; top: 38%; }
+  .mood-item-crackers .mood-label     { left: -36%; bottom: -10%; }
+  .mood-item-cookies .mood-label      { right: -30%; top: 12%; }
+  .mood-item-bars .mood-label         { left: -22%; top: -4%; }
+
+  @media (max-width: 639px) {
+    .mood-item-crackers .mood-label   { left: auto; right: 60%; }
+    .mood-item-cookies .mood-label    { right: -60%; }
+  }
+
+  /* ===== 关闭动效：全部直接显示 ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .mood-title,
+    .mood-btn {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .mood-item {
+      opacity: var(--op, 1);
+      transform: rotate(var(--rot, 0deg));
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>("[data-mood-section]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (section) {
+    if (reduce) {
+      section.classList.add("mood-head-in", "mood-b1", "mood-b2", "mood-b3");
+    } else {
+      const items = [...section.querySelectorAll<HTMLElement>("[data-parallax]")];
+      let ticking = false;
+
+      const update = () => {
+        ticking = false;
+        const rect = section.getBoundingClientRect();
+        const vh = window.innerHeight;
+        if (rect.bottom < 0 || rect.top > vh) return;
+
+        // 标题按钮：section 进入视口即淡入
+        if (rect.top < vh * 0.75) section.classList.add("mood-head-in");
+
+        // 三批元素：随 section 内滚动进度从上到下依次出现
+        const total = Math.max(rect.height - vh, 1);
+        const progress = Math.min(Math.max(-rect.top / total, 0), 1);
+        if (progress > 0.05) section.classList.add("mood-b1");
+        if (progress > 0.38) section.classList.add("mood-b2");
+        if (progress > 0.62) section.classList.add("mood-b3");
+
+        // 轻微 parallax（10–30px）：独立 translate 属性，不与出现动画的 transform 冲突
+        const mid = rect.top + rect.height / 2 - vh / 2;
+        for (const el of items) {
+          const f = parseFloat(el.dataset.parallax || "0");
+          el.style.translate = `0 ${(-mid * f).toFixed(1)}px`;
+        }
+      };
+
+      addEventListener(
+        "scroll",
+        () => {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+          }
+        },
+        { passive: true }
+      );
+      update();
+    }
+  }
+</script>

@@ -1,0 +1,112 @@
+---
+/**
+ * ProductSketch —— 透明背景产品插画占位（SVG 手绘风）
+ * 后续可用真实透明底产品 PNG 替换：把 <svg> 换成 <img src="/media/products/xxx.png">
+ * variant: bag 包装袋 / ball 圆形食物 / crackers 饼干盒 / cookies 曲奇盒 / bars 能量棒盒
+ */
+interface Props {
+  variant: "bag" | "ball" | "crackers" | "cookies" | "bars";
+  class?: string;
+}
+
+const { variant, class: className = "" } = Astro.props;
+---
+
+{
+  variant === "bag" && (
+    <svg class={className} viewBox="0 0 200 250" fill="none" aria-hidden="true">
+      <ellipse cx="100" cy="238" rx="72" ry="9" fill="rgba(31,31,31,0.10)" />
+      <path
+        d="M38 40 L162 40 L172 212 Q173 230 154 232 L46 232 Q27 230 28 212 Z"
+        fill="#f2d27f"
+      />
+      <rect x="33" y="24" width="134" height="18" rx="7" fill="#e0ba5c" />
+      <path d="M42 28v10M58 28v10M74 28v10M90 28v10M106 28v10M122 28v10M138 28v10M154 28v10" stroke="#c9a041" stroke-width="2" stroke-linecap="round" />
+      <path d="M46 62 q8 -8 16 0 q-8 8 -16 0Z" fill="#dcae45" />
+      <path d="M138 70 q9 -7 16 1 q-9 7 -16 -1Z" fill="#dcae45" />
+      <path d="M56 200 q8 -8 16 0 q-8 8 -16 0Z" fill="#dcae45" />
+      <path d="M132 196 q9 -7 16 1 q-9 7 -16 -1Z" fill="#dcae45" />
+      <circle cx="100" cy="60" r="5" fill="#b98a2f" />
+      <circle cx="52" cy="120" r="4" fill="#b98a2f" />
+      <circle cx="152" cy="130" r="4" fill="#b98a2f" />
+      <rect x="55" y="86" width="90" height="86" rx="14" fill="#fdf6e8" />
+      <rect x="68" y="128" width="20" height="20" rx="4" fill="#7a4a21" />
+      <rect x="92" y="122" width="20" height="20" rx="4" fill="#8f5a2b" />
+      <rect x="114" y="130" width="20" height="20" rx="4" fill="#6b3f1c" />
+      <path d="M70 104 q30 -12 60 0" stroke="#b98a2f" stroke-width="3" stroke-linecap="round" />
+    </svg>
+  )
+}
+
+{
+  variant === "ball" && (
+    <svg class={className} viewBox="0 0 120 130" fill="none" aria-hidden="true">
+      <ellipse cx="60" cy="122" rx="38" ry="6" fill="rgba(31,31,31,0.10)" />
+      <circle cx="60" cy="62" r="48" fill="#9c6b3c" />
+      <path d="M38 40 a48 48 0 0 1 44 -14 a40 40 0 0 0 -44 14Z" fill="#b98757" />
+      <ellipse cx="66" cy="66" rx="20" ry="14" fill="#d9a84e" />
+      <circle cx="34" cy="58" r="3.5" fill="#6b4326" />
+      <circle cx="50" cy="88" r="3" fill="#6b4326" />
+      <circle cx="84" cy="42" r="3" fill="#6b4326" />
+      <circle cx="90" cy="82" r="3.5" fill="#7a4a21" />
+      <circle cx="46" cy="34" r="2.5" fill="#7a4a21" />
+      <circle cx="70" cy="96" r="2.5" fill="#7a4a21" />
+    </svg>
+  )
+}
+
+{
+  variant === "crackers" && (
+    <svg class={className} viewBox="0 0 180 245" fill="none" aria-hidden="true">
+      <ellipse cx="92" cy="234" rx="66" ry="8" fill="rgba(31,31,31,0.10)" />
+      <path d="M20 40 L42 26 L42 218 L20 228 Z" fill="#a83a2b" />
+      <rect x="42" y="26" width="118" height="192" rx="6" fill="#f7ead4" />
+      <path d="M60 52 q10 -14 20 0 q-10 12 -20 0Z" fill="#cf4a35" />
+      <path d="M112 74 q12 -12 22 2 q-12 10 -22 -2Z" fill="#cf4a35" />
+      <path d="M66 118 q12 -12 22 2 q-12 10 -22 -2Z" fill="#cf4a35" />
+      <path d="M116 150 q10 -14 20 0 q-10 12 -20 0Z" fill="#cf4a35" />
+      <path d="M60 186 q12 -12 22 2 q-12 10 -22 -2Z" fill="#cf4a35" />
+      <circle cx="100" cy="106" r="4" fill="#8f2f22" />
+      <circle cx="84" cy="160" r="4" fill="#8f2f22" />
+      <circle cx="132" cy="120" r="4" fill="#8f2f22" />
+      <rect x="42" y="196" width="118" height="22" rx="6" fill="#cf4a35" />
+    </svg>
+  )
+}
+
+{
+  variant === "cookies" && (
+    <svg class={className} viewBox="0 0 180 245" fill="none" aria-hidden="true">
+      <ellipse cx="92" cy="234" rx="66" ry="8" fill="rgba(31,31,31,0.10)" />
+      <path d="M20 44 L42 30 L42 216 L20 226 Z" fill="#b56224" />
+      <rect x="42" y="30" width="118" height="188" rx="6" fill="#fbf1de" />
+      <path d="M52 58 q14 -10 24 4 q-14 10 -24 -4Z" fill="#e08a3c" />
+      <path d="M116 66 q12 -12 22 2 q-12 10 -22 -2Z" fill="#e08a3c" />
+      <circle cx="96" cy="128" r="26" fill="#c9803c" />
+      <circle cx="88" cy="120" r="3.5" fill="#7a4a21" />
+      <circle cx="104" cy="132" r="3.5" fill="#7a4a21" />
+      <circle cx="94" cy="142" r="3" fill="#7a4a21" />
+      <circle cx="106" cy="116" r="3" fill="#7a4a21" />
+      <path d="M56 178 q12 -12 22 2 q-12 10 -22 -2Z" fill="#e08a3c" />
+      <path d="M112 184 q14 -10 24 4 q-14 10 -24 -4Z" fill="#e08a3c" />
+      <rect x="42" y="196" width="118" height="22" rx="6" fill="#e08a3c" />
+    </svg>
+  )
+}
+
+{
+  variant === "bars" && (
+    <svg class={className} viewBox="0 0 190 240" fill="none" aria-hidden="true">
+      <ellipse cx="97" cy="230" rx="70" ry="8" fill="rgba(31,31,31,0.10)" />
+      <path d="M24 42 L48 28 L48 214 L24 224 Z" fill="#b79cd1" />
+      <rect x="48" y="28" width="118" height="188" rx="6" fill="#ddc7ec" />
+      <rect x="62" y="96" width="90" height="34" rx="9" fill="#6b4326" transform="rotate(-8 107 113)" />
+      <path d="M74 100 h60" stroke="#8f5a2b" stroke-width="3" stroke-linecap="round" transform="rotate(-8 107 113)" />
+      <rect x="66" y="140" width="82" height="30" rx="8" fill="#7a4a21" transform="rotate(6 107 155)" />
+      <path d="M60 56 q12 -12 22 2 q-12 10 -22 -2Z" fill="#a980c9" />
+      <path d="M118 62 q12 -12 22 2 q-12 10 -22 -2Z" fill="#a980c9" />
+      <circle cx="94" cy="72" r="4" fill="#8f68b3" />
+      <rect x="48" y="194" width="118" height="22" rx="6" fill="#a980c9" />
+    </svg>
+  )
+}

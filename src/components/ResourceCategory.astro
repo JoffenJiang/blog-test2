@@ -1,0 +1,32 @@
+---
+/**
+ * ResourceCategory —— 资源库子页共用模板
+ * 标题 + 说明 + 条目占位列表 + 返回资源库
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionTitle from "./SectionTitle.astro";
+
+interface Props {
+  title: string;
+  lead: string;
+}
+
+const { title, lead } = Astro.props;
+---
+
+<BaseLayout title={`${title} · 资源库`}>
+  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
+    <a href="/resources" class="text-[14px] text-muted transition-colors hover:text-ink">
+      ← 返回资源库
+    </a>
+    <SectionTitle class="mt-6" title={title} lead={lead} />
+
+    <div data-reveal class="mt-12 max-w-[720px] space-y-4">
+      <div class="rounded-2xl bg-card p-7">
+        <p class="text-[15px] leading-relaxed text-ink/70">
+          内容整理中：我会把工作中反复用到的{title}陆续放到这里，欢迎稍后再来。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

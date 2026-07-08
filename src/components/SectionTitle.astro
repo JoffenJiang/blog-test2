@@ -1,24 +1,30 @@
 ---
 /**
- * SectionTitle —— 标题 + 副标题 + 引言，无装饰线
+ * SectionTitle —— 宋体大标题 + 副标题 + 引言，无装饰线
  * 自带 data-reveal 进场
  */
 interface Props {
   title: string;
   subtitle?: string;
   lead?: string;
+  align?: "left" | "center";
   class?: string;
 }
 
-const { title, subtitle, lead, class: className = "" } = Astro.props;
+const { title, subtitle, lead, align = "left", class: className = "" } = Astro.props;
 ---
 
-<div data-reveal class:list={[className]}>
-  <h2 class="text-[26px] font-bold md:text-[34px]">{title}</h2>
-  {subtitle && <p class="mt-2 text-[18px] text-muted md:text-[20px]">{subtitle}</p>}
+<div data-reveal class:list={[align === "center" && "text-center", className]}>
+  <h2 class="font-serif text-[30px] font-bold md:text-[40px]">{title}</h2>
+  {subtitle && <p class="mt-2 text-[17px] text-muted md:text-[19px]">{subtitle}</p>}
   {
     lead && (
-      <p class="mt-5 max-w-[640px] text-[16px] leading-[1.9] text-muted">
+      <p
+        class:list={[
+          "mt-5 max-w-[640px] text-[16px] leading-[1.9] text-muted",
+          align === "center" && "mx-auto",
+        ]}
+      >
         {lead}
       </p>
     )

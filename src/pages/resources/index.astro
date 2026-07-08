@@ -1,0 +1,28 @@
+---
+/**
+ * 资源库 —— 四个分类入口
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionTitle from "../../components/SectionTitle.astro";
+import { resourceNav } from "../../data/navigation";
+---
+
+<BaseLayout title="资源库">
+  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
+    <SectionTitle title="资源库" subtitle="把能复用的东西留下来。" />
+
+    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
+      {
+        resourceNav.map((item) => (
+          <a
+            href={item.href}
+            class="group rounded-2xl bg-card p-7 transition duration-200 hover:-translate-y-1"
+          >
+            <span class="block font-serif text-[22px] font-semibold">{item.label}</span>
+            <span class="mt-2 block text-[14px] leading-relaxed text-muted">{item.desc}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

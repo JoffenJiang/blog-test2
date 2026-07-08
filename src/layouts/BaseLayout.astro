@@ -2,6 +2,7 @@
 /**
  * BaseLayout —— 全站基础布局
  * head 元信息 + Header + Footer + 进场动画观察器
+ * headerVariant="overlay" 时导航透明浮在首屏媒体之上（用于首页视频首屏）
  */
 import "../styles/global.css";
 import Header from "../components/Header.astro";
@@ -11,9 +12,14 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../data/site";
 interface Props {
   title?: string;
   description?: string;
+  headerVariant?: "solid" | "overlay";
 }
 
-const { title, description = SITE_DESCRIPTION } = Astro.props;
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  headerVariant = "solid",
+} = Astro.props;
 const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 ---
 
@@ -26,13 +32,19 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Caveat:wght@500&display=swap"
+    />
     <script is:inline>
       // 尽早标记 JS 可用：进场动画和线条绘制只在有 JS 时才先隐藏
       document.documentElement.classList.add("js");
     </script>
   </head>
-  <body class="flex min-h-screen flex-col bg-bg font-sans text-ink">
-    <Header />
+  <body class="flex min-h-screen flex-col overflow-x-hidden bg-bg font-sans text-ink">
+    <Header variant={headerVariant} />
     <main class="flex-1">
       <slot />
     </main>

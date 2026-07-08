@@ -2,6 +2,7 @@
 /**
  * Footer —— 页脚
  * 小红书 / 邮箱先用文字占位，不放假链接
+ * 无上方分割线，靠底色区分
  */
 import { footerNav } from "../data/navigation";
 import { SITE_TAGLINE } from "../data/site";
@@ -9,11 +10,11 @@ import { SITE_TAGLINE } from "../data/site";
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-card-alt/60">
-  <div class="mx-auto max-w-[1200px] px-5 py-12 md:px-8 md:py-16">
+<footer class="bg-card/60">
+  <div class="mx-auto max-w-[1400px] px-5 py-12 md:px-10 md:py-16">
     <div class="flex flex-col gap-10 md:flex-row md:justify-between">
       <div class="max-w-xs">
-        <p class="text-lg font-semibold">蒋永芳的个人博客</p>
+        <p class="font-serif text-lg font-semibold">蒋永芳的个人博客</p>
         <p class="mt-2 text-[14px] leading-relaxed text-muted">{SITE_TAGLINE}</p>
       </div>
 

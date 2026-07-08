@@ -3,30 +3,14 @@ export interface NavItem {
   href: string;
 }
 
-/** 顶部导航 */
+/** 顶部导航（Wildbran 改版：首页 / 职业发展 / 技能干货 / 资源库 / 生活记录 / 联系我） */
 export const navItems: NavItem[] = [
   { label: "首页", href: "/" },
-  { label: "关于我", href: "/about" },
   { label: "职业发展", href: "/career" },
-  { label: "技能笔记", href: "/skills" },
+  { label: "技能干货", href: "/skills" },
   { label: "资源库", href: "/resources" },
-  { label: "生活杂记", href: "/life" },
-];
-
-/** 首页编号导航（锚点跳转到对应 section） */
-export interface SectionNavItem {
-  num: string;
-  label: string;
-  anchor: string;
-}
-
-export const sectionNav: SectionNavItem[] = [
-  { num: "01", label: "个人简介", anchor: "#about" },
-  { num: "02", label: "职业发展", anchor: "#career" },
-  { num: "03", label: "技能干货", anchor: "#skills" },
-  { num: "04", label: "资源库", anchor: "#resources" },
-  { num: "05", label: "生活杂记", anchor: "#life" },
-  { num: "06", label: "最新更新", anchor: "#latest" },
+  { label: "生活记录", href: "/notes" },
+  { label: "联系我", href: "/contact" },
 ];
 
 /** 页脚栏目 */
@@ -34,5 +18,15 @@ export const footerNav: NavItem[] = [
   { label: "职业发展", href: "/career" },
   { label: "技能干货", href: "/skills" },
   { label: "资源库", href: "/resources" },
-  { label: "生活杂记", href: "/life" },
+  { label: "生活记录", href: "/notes" },
+  { label: "更多视频", href: "/videos" },
+  { label: "联系我", href: "/contact" },
+];
+
+/** 资源库四个分类入口 */
+export const resourceNav: (NavItem & { desc: string })[] = [
+  { label: "模板", href: "/resources/templates", desc: "拿来即用的文档与页面模板" },
+  { label: "清单", href: "/resources/checklists", desc: "帮你不遗漏关键步骤的检查清单" },
+  { label: "工具", href: "/resources/tools", desc: "亲测好用的效率工具推荐" },
+  { label: "学习资料", href: "/resources/learning", desc: "系统学习某个技能的资料合集" },
 ];
