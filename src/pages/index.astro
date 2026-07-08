@@ -1,17 +1,238 @@
 ---
+/**
+ * 首页 —— 参考 WildBran 的页面节奏：
+ * 强首屏 Hero → 内容选择区 → 职业发展 → 技能干货 → 资源库 → 生活杂记 → 最新文章
+ * 正文区域不使用任何手绘线条 / 箭头 / 分割线装饰
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 
+/** 内容选择区：大卡片入口 */
+const moodCards = [
+  { label: "关于我", desc: "一个仍在拾荒的人", href: "/about", span: "md:col-span-2" },
+  { label: "职业发展", desc: "从连接到重构", href: "/career", span: "md:col-span-2" },
+  { label: "技能干货", desc: "真实工作里长出来的技能树", href: "/skills", span: "md:col-span-2" },
+  { label: "资源库", desc: "把能复用的东西留下来", href: "/resources", span: "md:col-span-3" },
+  { label: "生活杂记", desc: "不止职场，也记录生活", href: "/life", span: "md:col-span-3" },
+];
+
+/** 职业发展：两段经历 */
+const careerCards = [
+  {
+    title: "连接",
+    org: "重庆清控科创 / 阿里云创新中心（重庆）",
+    tags: ["市场活动", "政企协作", "产学研", "政府申报", "资源连接"],
+  },
+  {
+    title: "重构",
+    org: "东莞市将为防伪科技有限公司",
+    tags: ["数字化转型", "飞书系统", "产品管理", "SOP", "财税合规"],
+  },
+];
+
+/** 技能干货：八张卡片 */
+const skillCards = [
+  "Figma 入门",
+  "商业计划书",
+  "市场活动",
+  "B 端产品",
+  "AI 提示词",
+  "财税合规",
+  "多维表格",
+  "SOP",
+];
+
+/** 资源库：四个入口 */
+const resourceCards = [
+  { label: "模板", desc: "拿来即用的文档与页面模板" },
+  { label: "清单", desc: "帮你不遗漏关键步骤的检查清单" },
+  { label: "工具", desc: "亲测好用的效率工具推荐" },
+  { label: "学习资料", desc: "系统学习某个技能的资料合集" },
+];
+
+/** 生活杂记：四个分类 */
+const lifeCards = [
+  { label: "汉服与审美", desc: "衣冠之美，也是一种表达" },
+  { label: "旅行与城市", desc: "在路上观察不同的生活方式" },
+  { label: "生活灵感", desc: "日常里捡到的小小闪光" },
+  { label: "内容复盘", desc: "记录与写作本身的回顾" },
+];
+
+/** 最新文章 */
+const latestPosts = [
+  {
+    num: "01",
+    title: "我从 0 学 Figma：先掌握这几个功能就够用",
+    category: "技能干货",
+  },
+  {
+    num: "02",
+    title: "商业计划书不是排版，而是把一门生意讲清楚",
+    category: "技能干货",
+  },
+  {
+    num: "03",
+    title: "市场活动不是热闹，而是服务业务目标",
+    category: "职业发展",
+  },
+  {
+    num: "04",
+    title: "B 端产品需求从提出到上线，要经历什么",
+    category: "技能干货",
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <!-- ===== Hero：大标题、大留白、干净首屏 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 pb-24 pt-20 md:px-8 md:pb-36 md:pt-32">
+    <div data-reveal>
+      <h1 class="max-w-[900px] text-[36px] font-bold leading-[1.3] md:text-[64px]">
+        在真实问题里学习，<br />在生活缝隙里记录。
+      </h1>
+      <p class="mt-8 max-w-[640px] text-[16px] leading-[1.9] text-muted md:text-[17px]">
+        我是蒋永芳。这里记录我的职业发展、技能学习、资源沉淀和生活碎片。从政企项目到企业数字化，从市场活动到产品流程，从工具学习到日常观察，我想把一路捡到的经验、方法和灵感，慢慢放在这里。
+      </p>
+    </div>
+    <div data-reveal class="mt-12 flex flex-wrap gap-4">
+      <Button href="/career" variant="solid">阅读职业故事</Button>
+      <Button href="/skills">查看技能笔记</Button>
+      <Button href="/resources">进入资源库</Button>
+    </div>
+  </section>
+
+  <!-- ===== 内容选择区：今天想读点什么？ ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 py-16 md:px-8 md:py-24">
+    <SectionTitle title="今天想读点什么？" />
+    <div data-reveal class="mt-10 grid gap-5 md:grid-cols-6">
+      {
+        moodCards.map((card) => (
+          <a
+            href={card.href}
+            class:list={[
+              "group flex min-h-[180px] flex-col justify-end rounded-xl bg-card p-7 transition duration-200 hover:-translate-y-1 hover:bg-card-alt md:min-h-[220px]",
+              card.span,
+            ]}
+          >
+            <span class="text-[22px] font-semibold md:text-[26px]">{card.label}</span>
+            <span class="mt-1.5 text-[14px] text-muted">{card.desc}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===== 职业发展 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 py-16 md:px-8 md:py-24">
+    <SectionTitle
+      title="职业发展"
+      subtitle="从连接到重构。"
+      lead="第一份工作让我学会连接政府、企业、高校、创业者与产业资源；第二份工作让我走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。"
+    />
+    <div data-reveal class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        careerCards.map((card) => (
+          <article class="rounded-xl bg-card p-8 transition duration-200 hover:-translate-y-1 md:p-10">
+            <h3 class="text-[28px] font-bold md:text-[34px]">{card.title}</h3>
+            <p class="mt-3 text-[15px] text-muted">{card.org}</p>
+            <ul class="mt-6 flex flex-wrap gap-2">
+              {card.tags.map((tag) => (
+                <li class="rounded-full bg-card-alt px-3 py-1 text-[13px] text-ink/70">
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===== 技能干货 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 py-16 md:px-8 md:py-24">
+    <SectionTitle title="技能干货" subtitle="从真实工作里长出来的技能树。" />
+    <div data-reveal class="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
+      {
+        skillCards.map((skill, i) => (
+          <a
+            href="/skills"
+            class:list={[
+              "flex min-h-[130px] items-end rounded-xl p-6 text-[17px] font-semibold transition duration-200 hover:-translate-y-1 md:min-h-[150px]",
+              i % 3 === 1 ? "bg-card-alt hover:bg-warm/60" : "bg-card hover:bg-card-alt",
+              // 偶数列在桌面端轻微下移，形成有节奏但不凌乱的排布
+              i % 2 === 1 && "md:translate-y-4",
+            ]}
+          >
+            {skill}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===== 资源库 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 py-16 md:px-8 md:py-24">
+    <SectionTitle title="资源库" subtitle="把能复用的东西留下来。" />
+    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
+      {
+        resourceCards.map((card) => (
+          <a
+            href="/resources"
+            class="group rounded-xl bg-card p-7 transition duration-200 hover:-translate-y-1 hover:bg-card-alt"
+          >
+            <span class="block text-[20px] font-semibold">{card.label}</span>
+            <span class="mt-2 block text-[14px] leading-relaxed text-muted">
+              {card.desc}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===== 生活杂记：更柔和的暖调 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 py-16 md:px-8 md:py-24">
+    <SectionTitle title="生活杂记" subtitle="不止职场，也记录生活。" />
+    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
+      {
+        lifeCards.map((card) => (
+          <a
+            href="/life"
+            class="group rounded-xl bg-warm/50 p-7 transition duration-200 hover:-translate-y-1 hover:bg-warm/80"
+          >
+            <span class="block text-[18px] font-semibold">{card.label}</span>
+            <span class="mt-2 block text-[14px] leading-relaxed text-ink/60">
+              {card.desc}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===== 最新文章：故事列表 ===== -->
+  <section class="mx-auto max-w-[1200px] px-5 pb-24 pt-16 md:px-8 md:pb-32 md:pt-24">
+    <SectionTitle title="最近写了什么" />
+    <div data-reveal class="mt-10">
+      <ul class="space-y-2">
+        {
+          latestPosts.map((post) => (
+            <li>
+              <a
+                href="/skills"
+                class="group flex flex-col gap-2 rounded-xl px-5 py-6 transition duration-200 hover:bg-card md:flex-row md:items-baseline md:gap-8 md:px-7"
+              >
+                <span class="num text-[13px] text-muted">{post.num}</span>
+                <span class="flex-1 text-[19px] font-semibold leading-snug transition-colors group-hover:text-ink md:text-[22px]">
+                  {post.title}
+                </span>
+                <span class="text-[13px] text-muted">{post.category}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

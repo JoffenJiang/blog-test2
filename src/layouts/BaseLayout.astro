@@ -1,0 +1,64 @@
+---
+/**
+ * BaseLayout —— 全站基础布局
+ * head 元信息 + Header + Footer + 进场动画观察器
+ */
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE_DESCRIPTION } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      // 尽早标记 JS 可用：进场动画和线条绘制只在有 JS 时才先隐藏
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col bg-bg font-sans text-ink">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Section 进场：进入视口加 .is-visible，只播一次
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const targets = document.querySelectorAll("[data-reveal]");
+
+      if (reduce || !("IntersectionObserver" in window)) {
+        targets.forEach((el) => el.classList.add("is-visible"));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -5% 0px" }
+        );
+        targets.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

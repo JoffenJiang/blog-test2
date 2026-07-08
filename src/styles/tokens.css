@@ -1,0 +1,24 @@
+/*
+ * 设计 Token —— 全站唯一的颜色 / 字体来源
+ * 通过 Tailwind 4 的 @theme 注册，同时生成对应工具类：
+ * 如 bg-bg / text-ink / border-border / text-muted / bg-card-alt 等
+ */
+@theme {
+  /* 清空 Tailwind 默认调色板，防止误用高饱和色 */
+  --color-*: initial;
+
+  --color-bg: #faf7f2;
+  --color-ink: #05080d;
+  --color-card: #ffffff;
+  --color-card-alt: #f3efe8;
+  --color-paper: #fffdf8;
+  --color-muted: #6f737a;
+  --color-border: rgba(5, 8, 13, 0.12);
+  --color-line: rgba(5, 8, 13, 0.65);
+  --color-soft-line: rgba(5, 8, 13, 0.18);
+  --color-warm: #e8dccb;
+  --color-soft-gray: #d8d5cf;
+
+  --font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
+    sans-serif;
+}

@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* ===== 基础排版：面向中文长文阅读 ===== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-size: 17px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+
+  ::selection {
+    background: var(--color-warm);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* 编号数字（01 / 02 / №）：等宽数字 + 拉开字距 */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+/* ===== 导航 hover 手绘线 =====
+ * 全站唯一的手绘线条：只在导航项 hover / focus 时画出，离开即消失
+ * 桌面端专用（移动端菜单不渲染此 SVG）
+ */
+.nav-link .nav-scribble {
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+  width: 100%;
+  min-width: 48px;
+  height: 10px;
+  opacity: 0;
+  pointer-events: none;
+  color: var(--color-line);
+}
+
+.nav-scribble path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.nav-link:hover .nav-scribble,
+.nav-link:focus-visible .nav-scribble {
+  opacity: 1;
+}
+
+.nav-link:hover .nav-scribble path,
+.nav-link:focus-visible .nav-scribble path {
+  stroke-dashoffset: 0;
+}
+
+/* ===== Section 进场：淡入 + 轻微上移，只播一次 ===== */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== 用户关闭动效：直接显示，不做绘制动画 ===== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .nav-scribble path {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+}
