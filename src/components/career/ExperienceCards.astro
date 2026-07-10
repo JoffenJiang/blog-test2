@@ -1,0 +1,304 @@
+---
+/**
+ * ExperienceCards —— 两段工作经历堆叠卡片（Wildbran Manufacturing 式）
+ *
+ * 滚动叙事（桌面端，滚动进度驱动、双向可逆）：
+ *  1. 卡片一初始无边框无底色（与页面背景一体），正常阅读；
+ *     内容读完（卡片底边到达视口底）后钉住（sticky），
+ *     随卡片二上滑覆盖，逐渐显出浅灰底色并轻微倾斜（--cover 0→1）
+ *  2. 卡片二底色比卡片一略深一档，滑入覆盖卡片一；
+ *     读完后钉住，随尾部留白滚动：先加深颜色（--dark），
+ *     再翻转并向上飞出消失（--fly）
+ *
+ * 卡片内部：Wildbran 文章页式左对齐长文（衬线大标题 + 灰色 meta +
+ * 分节 h2 + 蓝色强调句 .career-highlight），不放图片
+ *
+ * 移动端（<768px）与 prefers-reduced-motion：取消钉住与飞出，
+ * 两张卡片静态上下排列并直接带底色
+ */
+import { firstArticle, secondArticle } from "../../data/career";
+
+const cards = [
+  { article: firstArticle, mod: "first" },
+  { article: secondArticle, mod: "second" },
+] as const;
+---
+
+<section class="exp-stage" data-exp-stage>
+  {
+    cards.map(({ article, mod }) => (
+      <article
+        class:list={["exp-card", `exp-card--${mod}`]}
+        data-exp-card={mod}
+      >
+        <header class="exp-article-header">
+          <p class="exp-article-eyebrow num">{article.eyebrow}</p>
+          <h1 class="exp-article-title">{article.title}</h1>
+          <p class="exp-article-meta">{article.meta}</p>
+        </header>
+
+        <div class="exp-article-body">
+          {article.blocks.map((b) =>
+            b.type === "h2" ? <h2 set:html={b.html} /> : <p set:html={b.html} />
+          )}
+        </div>
+      </article>
+    ))
+  }
+
+  <!-- 尾部留白：驱动卡片二加深 → 翻转飞出 -->
+  <div class="exp-outro" data-exp-outro aria-hidden="true"></div>
+</section>
+
+<style>
+  .exp-stage {
+    position: relative;
+    background: var(--color-bg);
+    padding: clamp(72px, 8vw, 120px) 24px 0;
+  }
+
+  .exp-card {
+    position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+    border-radius: 12px;
+    padding: clamp(56px, 6vw, 96px) clamp(28px, 7vw, 96px);
+    color: #242424;
+  }
+
+  /* ===== 卡片一：初始透明（页面背景），--cover 驱动上色 + 倾斜 ===== */
+  .exp-card--first {
+    z-index: 1;
+    /* --cover 0 → 完全透明；1 → 浅灰卡片色 */
+    background: color-mix(
+      in srgb,
+      #eceae2 calc(var(--cover, 0) * 100%),
+      transparent
+    );
+    transform: rotate(calc(var(--cover, 0) * -2.2deg)) scale(calc(1 - var(--cover, 0) * 0.02));
+    transform-origin: 50% 30%;
+    opacity: calc(1 - var(--gone, 0));
+  }
+
+  /* ===== 卡片二：比卡片一略深一档，--dark 加深，--fly 翻转飞出 ===== */
+  .exp-card--second {
+    z-index: 2;
+    margin-top: clamp(48px, 8vh, 96px);
+    background: color-mix(in srgb, #d6d1c3 calc(var(--dark, 0) * 100%), #e4e0d5);
+    transform: translateY(calc(var(--fly, 0) * -160vh))
+      rotate(calc(var(--fly, 0) * -9deg));
+    transform-origin: 30% 60%;
+    box-shadow: 0 -18px 48px rgba(31, 31, 31, calc(var(--cover-shadow, 0) * 0.12));
+  }
+
+  /* 尾部留白（高度即卡片二飞出的滚动行程） */
+  .exp-outro {
+    height: 150vh;
+  }
+
+  /* ===== 卡片内部：Wildbran 文章页式左对齐长文 ===== */
+  .exp-article-header,
+  .exp-article-body {
+    text-align: left;
+  }
+
+  .exp-article-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #8f959e;
+    margin-bottom: 24px;
+  }
+
+  .exp-article-title {
+    font-family: var(--font-serif);
+    font-size: clamp(44px, 6vw, 82px);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    color: #242424;
+    margin: 0;
+  }
+
+  .exp-article-meta {
+    margin-top: 24px;
+    color: #8f959e;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .exp-article-body {
+    max-width: 800px;
+    margin-top: clamp(44px, 5vw, 64px);
+    font-size: 17px;
+    line-height: 1.9;
+    color: #242424;
+  }
+
+  .exp-article-body :global(p) {
+    margin: 0 0 1.45em;
+  }
+
+  .exp-article-body :global(h2) {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    margin: 2.4em 0 0.8em;
+    font-weight: 600;
+    color: #242424;
+  }
+
+  /* 蓝色强调句 / 灰色说明（与 MD 文档一致） */
+  .exp-article-body :global(.career-highlight) {
+    color: #245bdb;
+    font-weight: 600;
+  }
+
+  .exp-article-body :global(.career-muted) {
+    color: #8f959e;
+  }
+
+  /* ===== 桌面端滚动叙事：JS 标记 .is-scrub 后 sticky 生效 ===== */
+  @media (min-width: 768px) {
+    .exp-stage.is-scrub .exp-card {
+      position: sticky;
+      top: var(--stick, 0px);
+      will-change: transform;
+    }
+  }
+
+  /* ===== 移动端 / 关闭动效：静态排列，直接带底色 ===== */
+  @media (max-width: 767px) {
+    .exp-card--first {
+      background: #eceae2;
+      transform: none;
+      opacity: 1;
+    }
+
+    .exp-card--second {
+      background: #e4e0d5;
+      transform: none;
+      margin-top: 40px;
+      box-shadow: none;
+    }
+
+    .exp-outro {
+      height: 0;
+    }
+
+    .exp-stage {
+      padding-bottom: 72px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .exp-stage.is-scrub .exp-card {
+      position: relative;
+      top: auto;
+    }
+
+    .exp-card--first {
+      background: #eceae2;
+      transform: none;
+      opacity: 1;
+    }
+
+    .exp-card--second {
+      background: #e4e0d5;
+      transform: none;
+    }
+
+    .exp-outro {
+      height: 0;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * 滚动进度驱动（scrub，双向可逆）：
+   * --stick   每张卡片的 sticky top（视口高 - 卡片高 → 底边贴住视口底钉住）
+   * --cover   卡片二覆盖进度 → 卡片一上色 + 倾斜（0~1）
+   * --gone    卡片一被完全覆盖后隐藏（避免飞出后露出）
+   * --dark    尾部留白前 35% → 卡片二加深
+   * --fly     尾部留白 25% 起 → 卡片二翻转 + 上飞 + 消失
+   */
+  const stage = document.querySelector<HTMLElement>("[data-exp-stage]");
+  const first = stage?.querySelector<HTMLElement>('[data-exp-card="first"]');
+  const second = stage?.querySelector<HTMLElement>('[data-exp-card="second"]');
+  const outro = stage?.querySelector<HTMLElement>("[data-exp-outro]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const desktop = window.matchMedia("(min-width: 768px)");
+
+  if (stage && first && second && outro && !reduce) {
+    stage.classList.add("is-scrub");
+
+    const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
+
+    /* 卡片高于视口时：top = 视口高 - 卡片高（底边钉在视口底） */
+    const measure = () => {
+      const vh = window.innerHeight;
+      for (const card of [first, second]) {
+        const h = card.offsetHeight;
+        card.style.setProperty("--stick", `${Math.min(0, vh - h)}px`);
+      }
+    };
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      if (!desktop.matches) {
+        for (const v of ["--cover", "--gone", "--dark", "--fly", "--cover-shadow"]) {
+          first.style.removeProperty(v);
+          second.style.removeProperty(v);
+        }
+        return;
+      }
+
+      const vh = window.innerHeight;
+      const stageRect = stage.getBoundingClientRect();
+      if (stageRect.bottom < 0 || stageRect.top > vh) return;
+
+      /* 覆盖进度：卡片二顶边从视口底(vh)走到视口顶(0) */
+      const r2 = second.getBoundingClientRect();
+      const cover = clamp01(1 - r2.top / vh);
+      first.style.setProperty("--cover", cover.toFixed(3));
+      /* 完全覆盖后再隐藏卡片一（用户不可见时淡出） */
+      first.style.setProperty("--gone", clamp01((cover - 0.96) / 0.04).toFixed(3));
+      second.style.setProperty("--cover-shadow", clamp01(cover * 2 - cover * cover).toFixed(3));
+
+      /* 尾部留白进度：驱动卡片二加深 → 翻转飞出 */
+      const ro = outro.getBoundingClientRect();
+      const travel = Math.max(ro.height, 1);
+      const p2 = clamp01((vh - ro.top) / travel);
+      const dark = clamp01(p2 / 0.35);
+      const flyLin = clamp01((p2 - 0.25) / 0.7);
+      const fly = flyLin * flyLin; /* ease-in：起飞逐渐加速 */
+      second.style.setProperty("--dark", dark.toFixed(3));
+      second.style.setProperty("--fly", fly.toFixed(3));
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    measure();
+    /* 字体加载 / 视口变化后重测卡片高度 */
+    const ro2 = new ResizeObserver(() => {
+      measure();
+      update();
+    });
+    ro2.observe(first);
+    ro2.observe(second);
+    addEventListener("resize", () => {
+      measure();
+      update();
+    });
+    addEventListener("scroll", onScroll, { passive: true });
+    update();
+  }
+</script>

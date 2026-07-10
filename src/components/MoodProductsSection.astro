@@ -2,30 +2,30 @@
 /**
  * MoodProductsSection —— 高保真参考 Wildbran "What are you in the mood for?"
  *
- * 结构：135vh（移动端 125vh）的 section + 内部 100svh sticky scene；
- *       中间标题按钮固定视觉中心，10 个主视觉占位符围绕成不规则椭圆环。
- * 动效：标题/按钮先淡入 → 随滚动进度分三批出现（顶部排 → 两侧小件 → 底部排）；
- *       顶部元素做 10–30px 轻微 parallax；
- *       底部三张图（cookies / burst / bars）完整露出、贴近 scene 底部，位置固定不随滚动上移。
- *       prefers-reduced-motion 时全部直接显示、无位移。
+ * 结构模型（视觉舞台 + 底部退场空间，不是 100vh 裁切画布）：
+ *   section.mood-products-section        整个区块，min-height = 100svh + 米白退场空间
+ *     div.mood-products-canvas           产品视觉舞台（同高，横向裁切、纵向完整）
+ *       div.mood-center                  标题 + 按钮，居中在首屏 100svh 内
+ *       figure.mood-product--xxx         产品视觉组（绝对定位）
+ *         div.mood-product-composite     组内复合层：产品图 + callout，overflow visible
+ *           div.mood-product-img         产品图层（占位形状 / 未来的真实 img）
+ *           figcaption.mood-product-callout   箭头 + 手写文字
+ *   底部三组产品用 --mood-bottom-safe 抬离底边，callout 落在组的 padding-bottom 区内，
+ *   保证在进入下一个暗色板块前完整可见；下一板块正常衔接，不覆盖本区。
  *
- * ★ 结构（对齐 Wildbran 的 .home-products-img-wrap.is--bites > img.home-products-img）：
- *   <figure class="mood-item mood-item-bites is--bites">   ← 产品视觉组 wrapper
- *     <div class="mood-product-img"> 形状/图片 </div>       ← 产品图层
- *     <figcaption class="mood-product-label"> 箭头+文字 </figcaption> ← 标签绑定在组内
- *   </figure>
- *   定位 / 批次出现 / parallax / 滚动动效全部只作用在 wrapper（figure）上，
- *   标签相对 wrapper 绝对定位，与产品图一起移动，不参与全局布局。
+ * 动效：标题/按钮先淡入 → 随滚动分三批出现（顶部排 → 两侧小件 → 底部排）→
+ *       顶部/装饰元素随滚动做 10–30px 轻微 parallax；
+ *       prefers-reduced-motion 时全部直接显示。
  *
  * ★ 替换真实图片：把 .mood-product-img 里的 <div class="mood-shape ..."> 换成
  *   <img class="mood-img" src="/media/products/xxx.png" alt="" /> 即可，
- *   wrapper 的位置 / 尺寸 / 旋转 / 动效不用改。
+ *   组的位置 / 尺寸 / 旋转 / 动效不用改。
  */
 import PillButton from "./PillButton.astro";
 
 interface Layer {
-  /** 位置与尺寸由同名 class 控制（见下方 <style>） */
-  name: string;
+  /** 组名：定位 class 为 .mood-product--{key} */
+  key: string;
   /** 占位符形状 class */
   shape: string;
   /** 出现批次：1 顶部排 / 2 两侧小件 / 3 底部排 */
@@ -34,17 +34,17 @@ interface Layer {
   stagger: string;
   /** 滑入起点与最终旋转角 */
   vars: string;
-  /** parallax 强度（顶部/装饰元素，滚动时 10–30px 位移） */
+  /** parallax 强度（顶部/装饰元素） */
   parallax?: number;
   /** 手写标签（仅 5 个产品有） */
   label?: string;
-  /** 箭头形态（1:1 参考原站：绕圈 / 波浪 / 上扬 / 下弯 / 下勾） */
+  /** 箭头形态（对照原站：绕圈 / 闪电 / 左弓上扬 / 下弯 / 回勾） */
   labelArrow?: keyof typeof arrows;
-  /** 标签排列：箭头在文字前 / 文字在箭头前 / 箭头在文字上方 */
+  /** callout 排列：箭头在前 / 文字在前 / 箭头在文字上方 */
   labelLayout?: "arrow-text" | "text-arrow" | "arrow-over-text";
 }
 
-/** 蓝色手绘箭头（五种形态，均指向文字） */
+/** 蓝色手绘箭头（五种形态，均从图片向外画、头指向文字） */
 const arrows = {
   loop:   { vb: "0 0 36 20", line: "M2 13 C 3 5, 12 4, 12 10 C 12 16, 4 16, 5 10 C 6 3, 18 4, 30 8", head: "M26 4.5 30.5 8 25 10.5" },
   zigzag: { vb: "0 0 30 22", line: "M4 3 Q 12 4 15 7 Q 7 8 6 11 Q 13 14 18 15", head: "M13.5 11 19 15.5 12.5 17.5" },
@@ -54,27 +54,27 @@ const arrows = {
 };
 
 const layers: Layer[] = [
-  { name: "mood-item-bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "Bites", labelArrow: "loop", labelLayout: "arrow-text" },
-  { name: "mood-item-top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.45", parallax: 0.06 },
-  { name: "mood-item-energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05 },
-  { name: "mood-item-crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "Crackers", labelArrow: "zigzag", labelLayout: "arrow-text" },
-  { name: "mood-item-left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
-  { name: "mood-item-right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg", parallax: 0.065 },
-  { name: "mood-item-cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "Cookies", labelArrow: "curl", labelLayout: "arrow-over-text" },
-  { name: "mood-item-burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "Energy Balls", labelArrow: "rise", labelLayout: "arrow-text" },
-  { name: "mood-item-bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "Bars", labelArrow: "hook", labelLayout: "text-arrow" },
-  { name: "mood-item-bottom-blur", shape: "mood-shape-blur", batch: 3, stagger: ".3s", vars: "--sy:60px;--op:.45", parallax: 0.06 },
+  { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "Bites", labelArrow: "loop", labelLayout: "arrow-text" },
+  { key: "top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.45", parallax: 0.06 },
+  { key: "energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05 },
+  { key: "crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "Crackers", labelArrow: "zigzag", labelLayout: "arrow-text" },
+  { key: "left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
+  { key: "right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg", parallax: 0.065 },
+  { key: "cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "Cookies", labelArrow: "curl", labelLayout: "arrow-over-text" },
+  { key: "burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "Energy Balls", labelArrow: "rise", labelLayout: "arrow-text" },
+  { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "Bars", labelArrow: "hook", labelLayout: "text-arrow" },
+  { key: "bottom-blur", shape: "mood-shape-blur", batch: 3, stagger: ".3s", vars: "--sy:60px;--op:.45", parallax: 0.06 },
 ];
 ---
 
 <section
   data-mood-section
-  class="mood-section mood-products-section relative bg-bg"
+  class="mood-products-section"
   aria-label="What are you in the mood for?"
 >
-  <div class="mood-sticky mood-products-scene">
-    <!-- 视觉中心：标题 + 按钮 -->
-    <div class="mood-center relative z-10 flex flex-col items-center text-center">
+  <div class="mood-products-canvas">
+    <!-- 视觉中心：标题 + 按钮（居中在首屏 100svh 内） -->
+    <div class="mood-center">
       <h2 class="mood-title font-serif font-bold">
         What are you in<br />the mood for?
       </h2>
@@ -83,50 +83,52 @@ const layers: Layer[] = [
       </div>
     </div>
 
-    <!-- 10 个主视觉占位符（椭圆环绕，替换真实图片见文件头注释） -->
+    <!-- 10 个产品视觉组（椭圆环绕，图 + 箭头 + 文字为一个整体） -->
     {
       layers.map((l) => (
         <figure
-          class:list={["mood-item", l.name, `is--${l.name.replace("mood-item-", "")}`]}
+          class:list={["mood-product", `mood-product--${l.key}`, `is--${l.key}`]}
           data-batch={l.batch}
           data-parallax={l.parallax}
           style={`${l.vars};--stg:${l.stagger}`}
         >
-          <div class="mood-product-img">
-            <div class:list={["mood-shape", l.shape]} />
+          <div class="mood-product-composite">
+            <div class="mood-product-img">
+              <div class:list={["mood-shape", l.shape]} />
+            </div>
+            {l.label && l.labelArrow && (
+              <figcaption
+                class:list={[
+                  "mood-product-callout",
+                  l.labelLayout === "arrow-over-text" && "mood-product-callout--column",
+                ]}
+              >
+                {l.labelLayout !== "text-arrow" && (
+                  <svg
+                    class="mood-product-arrow"
+                    viewBox={arrows[l.labelArrow].vb}
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d={arrows[l.labelArrow].line} />
+                    <path d={arrows[l.labelArrow].head} />
+                  </svg>
+                )}
+                <span class="mood-product-label">{l.label}</span>
+                {l.labelLayout === "text-arrow" && (
+                  <svg
+                    class="mood-product-arrow"
+                    viewBox={arrows[l.labelArrow].vb}
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d={arrows[l.labelArrow].line} />
+                    <path d={arrows[l.labelArrow].head} />
+                  </svg>
+                )}
+              </figcaption>
+            )}
           </div>
-          {l.label && l.labelArrow && (
-            <figcaption
-              class:list={[
-                "mood-product-label",
-                l.labelLayout === "arrow-over-text" && "mood-product-label--column",
-              ]}
-            >
-              {l.labelLayout !== "text-arrow" && (
-                <svg
-                  class="mood-arrow-svg"
-                  viewBox={arrows[l.labelArrow].vb}
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d={arrows[l.labelArrow].line} />
-                  <path d={arrows[l.labelArrow].head} />
-                </svg>
-              )}
-              <span class="mood-label-text">{l.label}</span>
-              {l.labelLayout === "text-arrow" && (
-                <svg
-                  class="mood-arrow-svg"
-                  viewBox={arrows[l.labelArrow].vb}
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d={arrows[l.labelArrow].line} />
-                  <path d={arrows[l.labelArrow].head} />
-                </svg>
-              )}
-            </figcaption>
-          )}
         </figure>
       ))
     }
@@ -134,32 +136,42 @@ const layers: Layer[] = [
 </section>
 
 <style>
-  /* ===== 骨架：135vh section + 100svh sticky scene =====
-   * section 的 overflow 用 clip 而不是 hidden：clip 不产生滚动容器，sticky 才能生效
-   * 底部留白由底部三张图滚动上移产生，section 不写大 padding-bottom */
+  /* ===== 骨架：视觉舞台 + 底部米白退场空间 =====
+   * min-height = 100svh（主要视觉舞台）+ clamp(...)（Wildbran 式退场空间）
+   * 下一个暗色板块在退场空间之后正常衔接，不覆盖本区 */
   .mood-products-section {
-    height: 125vh;
-    overflow: clip;
+    --mood-exit-buffer: clamp(140px, 16svh, 240px);
+    --mood-bottom-safe: clamp(120px, 15svh, 220px);
+    position: relative;
+    z-index: 1;
+    background: var(--color-bg);
+    min-height: calc(100svh + var(--mood-exit-buffer));
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
-  @media (min-width: 768px) {
-    .mood-products-section {
-      height: 135vh;
-    }
-  }
-
-  .mood-products-scene {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100svh;
+  .mood-products-canvas {
+    position: relative;
+    min-height: calc(100svh + var(--mood-exit-buffer));
+    background: var(--color-bg);
     overflow: hidden;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
   }
 
-  /* ===== 中间标题 ===== */
+  /* ===== 中间标题：居中在首屏 100svh 内 ===== */
+  .mood-center {
+    position: relative;
+    z-index: 10;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
   .mood-title {
     max-width: 620px;
     font-size: 36px;
@@ -199,8 +211,8 @@ const layers: Layer[] = [
     transform: none;
   }
 
-  /* ===== 主视觉元素：初始隐藏，按批次出现 ===== */
-  .mood-item {
+  /* ===== 产品视觉组：初始隐藏，按批次出现（动画只作用在组整体上） ===== */
+  .mood-product {
     position: absolute;
     margin: 0;
     opacity: 0;
@@ -213,74 +225,72 @@ const layers: Layer[] = [
     pointer-events: none;
   }
 
-  .mood-b1 .mood-item[data-batch="1"],
-  .mood-b2 .mood-item[data-batch="2"],
-  .mood-b3 .mood-item[data-batch="3"] {
+  .mood-b1 .mood-product[data-batch="1"],
+  .mood-b2 .mood-product[data-batch="2"],
+  .mood-b3 .mood-product[data-batch="3"] {
     opacity: var(--op, 1);
     transform: translate(0, 0) scale(1) rotate(var(--rot, 0deg));
   }
 
-  /* ===== 顶部 / 两侧元素位置（保持不变） ===== */
-  .mood-item-bites        { left: 5%;   top: 5%;   width: 210px; }
-  .mood-item-top-blur     { left: 24%;  top: -2%;  width: 68px; }
-  .mood-item-energy-ball  { left: 46%;  top: 3%;   width: 96px; }
-  .mood-item-crackers     { right: 7%;  top: 4%;   width: 210px; }
-  .mood-item-left-bar     { left: -4%;  top: 45%;  width: 170px; }
-  .mood-item-right-cracker{ right: -1%; top: 43%;  width: 84px; }
-  .mood-item-bottom-blur  { right: 25%; bottom: 4vh; width: 62px; }
-
-  /* ===== 底部三张图：初始完整露出，贴近 scene 底部 =====
-   * 距 scene 底部 3–6vh（约 24–64px），滚动时由 JS scrub 上移 */
-  .mood-item-cookies {
-    left: 13%;
-    bottom: 6vh;
-    width: clamp(210px, 18vw, 290px);
+  /* 组内复合层：产品图 + callout，一个整体，不裁切 callout */
+  .mood-product-composite {
+    position: relative;
+    width: 100%;
+    overflow: visible;
   }
 
-  .mood-item-burst {
-    left: 46%;
-    bottom: 3vh;
-    width: clamp(120px, 11vw, 170px);
+  /* 底部三组：给 callout 预留 padding-bottom，callout 不超出组的盒子 */
+  .mood-product--cookies .mood-product-composite,
+  .mood-product--burst .mood-product-composite,
+  .mood-product--bars .mood-product-composite {
+    padding-bottom: 64px;
   }
 
-  .mood-item-bars {
-    right: 10%;
-    bottom: 6vh;
-    width: clamp(220px, 20vw, 320px);
-  }
+  /* ===== 各组位置与尺寸 =====
+   * 顶部 / 两侧：围绕标题的椭圆环
+   * 底部三组：用 --mood-bottom-safe 抬离 section 底边，完整露出 */
+  .mood-product--bites        { left: 5%;   top: 4%;   width: 210px; }
+  .mood-product--top-blur     { left: 24%;  top: -1%;  width: 68px; }
+  .mood-product--energy-ball  { left: 46%;  top: 2.5%; width: 96px; }
+  .mood-product--crackers     { right: 7%;  top: 3.5%; width: 210px; }
+  .mood-product--left-bar     { left: -4%;  top: 38%;  width: 170px; }
+  .mood-product--right-cracker{ right: -1%; top: 36%;  width: 84px; }
+  .mood-product--cookies      { left: 13%;  bottom: var(--mood-bottom-safe); width: clamp(210px, 18vw, 290px); }
+  .mood-product--burst        { left: 46%;  bottom: clamp(110px, 13svh, 190px); width: clamp(120px, 11vw, 170px); }
+  .mood-product--bars         { right: 10%; bottom: var(--mood-bottom-safe); width: clamp(220px, 20vw, 320px); }
+  .mood-product--bottom-blur  { right: 25%; bottom: clamp(80px, 10svh, 160px); width: 62px; }
 
   @media (max-width: 1023px) {
-    .mood-item-bites        { width: 150px; }
-    .mood-item-top-blur     { width: 52px; }
-    .mood-item-energy-ball  { width: 72px; }
-    .mood-item-crackers     { width: 150px; }
-    .mood-item-left-bar     { width: 120px; }
-    .mood-item-right-cracker{ width: 62px; }
-    .mood-item-cookies      { width: clamp(150px, 18vw, 290px); }
-    .mood-item-burst        { width: clamp(96px, 11vw, 170px); }
-    .mood-item-bars         { width: clamp(160px, 20vw, 320px); }
-    .mood-item-bottom-blur  { width: 48px; }
+    .mood-product--bites        { width: 150px; }
+    .mood-product--top-blur     { width: 52px; }
+    .mood-product--energy-ball  { width: 72px; }
+    .mood-product--crackers     { width: 150px; }
+    .mood-product--left-bar     { width: 120px; }
+    .mood-product--right-cracker{ width: 62px; }
+    .mood-product--cookies      { width: clamp(150px, 18vw, 290px); }
+    .mood-product--burst        { width: clamp(96px, 11vw, 170px); }
+    .mood-product--bars         { width: clamp(160px, 20vw, 320px); }
+    .mood-product--bottom-blur  { width: 48px; }
   }
 
   @media (max-width: 639px) {
-    .mood-item-bites        { width: 104px; left: 2%; }
-    .mood-item-top-blur     { width: 40px; }
-    .mood-item-energy-ball  { width: 54px; }
-    .mood-item-crackers     { width: 104px; right: 2%; }
-    .mood-item-left-bar,
-    .mood-item-right-cracker { display: none; }
-    .mood-item-cookies      { width: 116px; left: 6%; bottom: 5vh; }
-    .mood-item-burst        { width: 78px; left: 45%; bottom: 3vh; }
-    .mood-item-bars         { width: 126px; right: 5%; bottom: 5vh; }
-    .mood-item-bottom-blur  { width: 36px; }
+    .mood-product--bites        { width: 104px; left: 2%; }
+    .mood-product--top-blur     { width: 40px; }
+    .mood-product--energy-ball  { width: 54px; }
+    .mood-product--crackers     { width: 104px; right: 2%; }
+    .mood-product--left-bar,
+    .mood-product--right-cracker { display: none; }
+    .mood-product--cookies      { width: 116px; left: 6%; }
+    .mood-product--burst        { width: 78px; left: 45%; }
+    .mood-product--bars         { width: 126px; right: 5%; }
+    .mood-product--bottom-blur  { width: 36px; }
   }
 
-  /* ===== 产品图层：占满 wrapper 宽度，后续在这里面换真实 <img> ===== */
+  /* ===== 产品图层与形状占位符 ===== */
   .mood-product-img {
     width: 100%;
   }
 
-  /* ===== 形状占位符（纯 CSS，后续整体换成 <img class="mood-img">） ===== */
   .mood-shape {
     width: 100%;
   }
@@ -387,10 +397,8 @@ const layers: Layer[] = [
     filter: blur(6px);
   }
 
-  /* ===== 手写标签：绑定在产品视觉组内部 =====
-   * 相对 wrapper（figure.mood-item）绝对定位，紧贴产品图，
-   * 与产品图一起定位 / 出现 / parallax，不基于 scene 布局 */
-  .mood-product-label {
+  /* ===== callout：蓝色手绘箭头 + 黑色手写文字，绑定在组内 ===== */
+  .mood-product-callout {
     position: absolute;
     display: flex;
     align-items: center;
@@ -399,21 +407,20 @@ const layers: Layer[] = [
     margin: 0;
   }
 
-  /* Cookies：箭头在文字上方 */
-  .mood-product-label--column {
+  .mood-product-callout--column {
     flex-direction: column;
     align-items: flex-start;
     gap: 3px;
   }
 
-  .mood-label-text {
+  .mood-product-label {
     font-family: var(--font-hand);
     font-size: 22px;
     line-height: 1;
     color: var(--color-ink);
   }
 
-  .mood-arrow-svg {
+  .mood-product-arrow {
     display: block;
     width: 32px;
     height: auto;
@@ -421,7 +428,7 @@ const layers: Layer[] = [
     color: var(--color-blue);
   }
 
-  .mood-arrow-svg path {
+  .mood-product-arrow path {
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -430,28 +437,27 @@ const layers: Layer[] = [
   }
 
   @media (max-width: 1023px) {
-    .mood-label-text {
+    .mood-product-label {
       font-size: 18px;
     }
 
-    .mood-arrow-svg {
+    .mood-product-arrow {
       width: 26px;
     }
   }
 
-  /* 各产品组内标签的位置：箭头尾部贴住图片边缘，从图片向外画、头指向文字
-   * （对照原站五组：Bites 右下 / Crackers 左下方 / Energy Balls 上方 /
-   *   Cookies 左下 / Bars 右下，文字都落在箭头所指方向） */
-  .is--bites .mood-product-label    { right: -42%; bottom: 12%; }
-  .is--crackers .mood-product-label { left: 14%; bottom: -15%; }
-  .is--cookies .mood-product-label  { left: -12%; bottom: -27%; }
-  .is--burst .mood-product-label    { left: -8%; top: -28%; }
-  .is--bars .mood-product-label     { right: -4%; bottom: -22%; }
+  /* 各组 callout 位置：贴近产品图但不接触；
+   * 底部三组的 callout 落在 composite 的 padding-bottom 区内，不会被裁切 */
+  .is--bites .mood-product-callout    { right: -42%; top: 62%; }
+  .is--crackers .mood-product-callout { left: 14%; bottom: -42px; }
+  .is--cookies .mood-product-callout  { left: -12%; bottom: 2px; }
+  .is--burst .mood-product-callout    { left: -8%; top: -50px; }
+  .is--bars .mood-product-callout     { right: -4%; bottom: 14px; }
 
   @media (max-width: 639px) {
-    .is--crackers .mood-product-label { left: 0; bottom: -26%; }
-    .is--cookies .mood-product-label  { left: -14%; bottom: -26%; }
-    .is--bars .mood-product-label     { right: 4%; bottom: -26%; }
+    .is--crackers .mood-product-callout { left: 0; bottom: -36px; }
+    .is--cookies .mood-product-callout  { left: -14%; bottom: 0; }
+    .is--bars .mood-product-callout     { right: 4%; bottom: 8px; }
   }
 
   /* ===== 关闭动效：全部直接显示、无位移 ===== */
@@ -463,7 +469,7 @@ const layers: Layer[] = [
       transition: none;
     }
 
-    .mood-item {
+    .mood-product {
       opacity: var(--op, 1);
       transform: rotate(var(--rot, 0deg));
       transition: none;
@@ -491,12 +497,14 @@ const layers: Layer[] = [
         // 标题按钮：section 进入视口即淡入
         if (rect.top < vh * 0.75) section.classList.add("mood-head-in");
 
-        // 三批元素：随 section 内滚动进度从上到下依次出现
-        const total = Math.max(rect.height - vh, 1);
-        const progress = Math.min(Math.max(-rect.top / total, 0), 1);
-        if (progress > 0.05) section.classList.add("mood-b1");
-        if (progress > 0.38) section.classList.add("mood-b2");
-        if (progress > 0.6) section.classList.add("mood-b3");
+        // 三批元素：随 section 滚入视口的进度从上到下依次出现
+        const progress = Math.min(
+          Math.max((vh * 0.7 - rect.top) / rect.height, 0),
+          1
+        );
+        if (progress > 0.15) section.classList.add("mood-b1");
+        if (progress > 0.35) section.classList.add("mood-b2");
+        if (progress > 0.5) section.classList.add("mood-b3");
 
         // 顶部 / 装饰元素：轻微 parallax（10–30px）
         // translate 属性独立于出现动画的 transform，互不冲突

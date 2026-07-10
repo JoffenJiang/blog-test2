@@ -1,0 +1,198 @@
+---
+/**
+ * SkillsAccordion —— FAQs（Wildbran FAQ 式布局）
+ * 左侧衬线超大 "FAQs" 标题（桌面端吸顶），右侧手风琴：
+ * 细分割线 + 蓝色圆形 chevron 按钮（展开时旋转 180°）
+ * 展开内容为分点排版（加粗小标题 + 说明文字），不使用卡片框
+ */
+import { skillGroups } from "../../data/career";
+---
+
+<section class="career-faqs" data-skills>
+  <div class="career-faqs__inner">
+    <h2 data-reveal class="career-faqs__title font-serif">FAQs</h2>
+
+    <div class="career-faqs__list">
+      {
+        skillGroups.map((group, i) => (
+          <div class="career-faq">
+            <button
+              type="button"
+              class="career-faq__trigger"
+              aria-expanded="false"
+              aria-controls={`faq-panel-${i}`}
+            >
+              <span class="career-faq__label">{group.title}</span>
+              <span class="career-faq__button" aria-hidden="true">
+                <svg viewBox="0 0 12 8" fill="none">
+                  <path
+                    d="M1.5 1.75 6 6.25l4.5-4.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
+            <div class="career-faq__content" id={`faq-panel-${i}`} role="region">
+              <div class="career-faq__content-inner">
+                <dl class="career-faq__points">
+                  {group.items.map((item) => (
+                    <div class="career-faq__point">
+                      <dt>{item.name}</dt>
+                      <dd>{item.desc}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .career-faqs {
+    background: var(--color-bg);
+    padding: clamp(96px, 14vh, 180px) 24px;
+  }
+
+  .career-faqs__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    gap: 48px;
+  }
+
+  @media (min-width: 900px) {
+    .career-faqs__inner {
+      grid-template-columns: 1fr 1.15fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .career-faqs__title {
+      position: sticky;
+      top: 120px;
+    }
+  }
+
+  /* 衬线超大标题（对应 Wildbran 的 "FAQs" 花体大字） */
+  .career-faqs__title {
+    font-size: clamp(64px, 8vw, 120px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  /* ===== 手风琴条目 ===== */
+  .career-faq {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .career-faq__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 26px 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .career-faq__label {
+    font-size: clamp(20px, 2.2vw, 26px);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* 蓝色圆形 chevron 按钮：展开时旋转 180° */
+  .career-faq__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    color: #fff;
+    transition: transform 0.35s ease;
+  }
+
+  .career-faq__button svg {
+    width: 12px;
+    height: 8px;
+  }
+
+  .career-faq.is-open .career-faq__button {
+    transform: rotate(180deg);
+  }
+
+  /* ===== 展开内容：grid-rows 过渡 + 淡入 ===== */
+  .career-faq__content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s ease;
+  }
+
+  .career-faq__content-inner {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .career-faq.is-open .career-faq__content {
+    grid-template-rows: 1fr;
+  }
+
+  .career-faq.is-open .career-faq__content-inner {
+    opacity: 1;
+    transition-delay: 0.15s;
+  }
+
+  /* 分点排版：加粗小标题 + 说明文字，无卡片框 */
+  .career-faq__points {
+    padding: 4px 0 32px;
+  }
+
+  .career-faq__point + .career-faq__point {
+    margin-top: 22px;
+  }
+
+  .career-faq__point dt {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .career-faq__point dd {
+    margin-top: 4px;
+    font-size: 15px;
+    line-height: 1.85;
+    color: rgba(36, 36, 36, 0.7);
+    max-width: 560px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .career-faq__content,
+    .career-faq__content-inner,
+    .career-faq__button {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // accordion 开合
+  document.querySelectorAll<HTMLElement>("[data-skills] .career-faq").forEach((item) => {
+    const trigger = item.querySelector<HTMLButtonElement>(".career-faq__trigger");
+    trigger?.addEventListener("click", () => {
+      const open = item.classList.toggle("is-open");
+      trigger.setAttribute("aria-expanded", String(open));
+    });
+  });
+</script>

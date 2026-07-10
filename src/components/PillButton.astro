@@ -6,10 +6,12 @@
 interface Props {
   href: string;
   variant?: "blue" | "light";
+  /** 下载链接（如简历 PDF）时置为 true */
+  download?: boolean;
   class?: string;
 }
 
-const { href, variant = "blue", class: className = "" } = Astro.props;
+const { href, variant = "blue", download = false, class: className = "" } = Astro.props;
 
 const styles =
   variant === "light"
@@ -22,6 +24,7 @@ const circle =
 
 <a
   href={href}
+  download={download || undefined}
   class:list={[
     "group inline-flex items-center gap-3 rounded-full py-2 pl-6 pr-2 text-[15px] font-medium transition-all duration-200 hover:-translate-y-0.5",
     styles,

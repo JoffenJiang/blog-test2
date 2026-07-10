@@ -1,0 +1,121 @@
+---
+/**
+ * /skills/[slug] —— 技能干货文章详情页
+ * 长文排版：kicker + 衬线大标题 + 分类/阅读时长 meta + 左对齐正文
+ * 正文暂为占位段落，后续按 slug 补充真实内容
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Media from "../../components/Media.astro";
+import { skillPosts } from "../../data/skillPosts";
+
+export function getStaticPaths() {
+  return skillPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<BaseLayout title={post.title} description={post.excerpt}>
+  <article class="sk-post">
+    <header class="sk-post__header">
+      <p class="sk-post__kicker num">{post.kicker}</p>
+      <h1 class="sk-post__title font-serif">{post.title}</h1>
+      <p class="sk-post__meta">
+        <span class="sk-post__tag">{post.category}</span>
+        <span class="num">{post.readTime}</span>
+      </p>
+    </header>
+
+    <Media src={post.cover} ph={post.ph} class="sk-post__cover" />
+
+    <div class="sk-post__body">
+      <p>{post.excerpt}</p>
+      <p class="sk-post__placeholder">正文内容整理中，敬请期待。</p>
+    </div>
+
+    <div class="sk-post__back">
+      <a href="/skills">← 返回技能干货</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .sk-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: clamp(56px, 8vh, 96px) 24px clamp(80px, 12vh, 140px);
+  }
+
+  .sk-post__kicker {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .sk-post__title {
+    margin-top: 20px;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .sk-post__meta {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+  }
+
+  .sk-post__tag {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(63, 111, 255, 0.12);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: normal;
+    color: var(--color-blue);
+  }
+
+  .sk-post :global(.sk-post__cover) {
+    margin-top: 40px;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .sk-post__body {
+    margin-top: clamp(36px, 5vh, 56px);
+    font-size: 17px;
+    line-height: 1.9;
+    text-align: left;
+  }
+
+  .sk-post__body p {
+    margin-bottom: 1.45em;
+  }
+
+  .sk-post__placeholder {
+    color: var(--color-muted);
+  }
+
+  .sk-post__back {
+    margin-top: 56px;
+  }
+
+  .sk-post__back a {
+    font-size: 15px;
+    color: var(--color-blue);
+  }
+
+  .sk-post__back a:hover {
+    opacity: 0.75;
+  }
+</style>

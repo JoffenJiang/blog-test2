@@ -1,62 +1,420 @@
 ---
 /**
- * 技能干货列表 —— 全部文章卡片
+ * /skills —— 技能干货（Wildbran Blog 式）
+ * 首屏：精选文章轮播（左衬线大标题 + 中间大图 + 右侧露出下一张的文字边缘，
+ *       蓝色圆形左右切换按钮，标题与图片可点击进入文章）
+ * 下方：分类胶囊过滤栏（全部 / 飞书 / 设计 / …）+ 三列文章卡片网格
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SectionTitle from "../components/SectionTitle.astro";
 import Media from "../components/Media.astro";
-import { posts } from "../data/posts";
+import { skillCategories, skillPosts, featuredSkillPosts } from "../data/skillPosts";
 ---
 
-<BaseLayout title="技能干货">
-  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
-    <SectionTitle
-      title="技能干货"
-      subtitle="从真实工作里长出来的技能树。"
-      lead="这些文章来自真实的工作场景：方法、流程和工具笔记，都验证过一遍才写下来。"
-    />
-
-    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      {
-        posts.map((post) => (
-          <article class="group rounded-lg bg-[#e4e0d4] p-3">
-            <span class="relative block overflow-hidden rounded-md">
-              <Media
-                src={post.cover}
-                ph={post.ph}
-                class="aspect-[4/3] w-full rounded-md transition-transform duration-500 ease-out group-hover:scale-[0.94]"
-              />
-              <span class="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink">
-                <svg
-                  class="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:scale-[0.8]"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M3 11 11 3M4.5 3H11v6.5"
-                    stroke="currentColor"
-                    stroke-width="1.6"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </span>
-            </span>
-            <span class="mt-4 flex items-center justify-between px-1">
-              <span class="rounded-full bg-blue/10 px-3 py-1 text-[12px] font-medium text-blue">
-                {post.category}
-              </span>
-              <span class="num text-[11px] uppercase tracking-[0.15em] text-muted">
-                {post.readTime}
-              </span>
-            </span>
-            <h2 class="mt-3 truncate px-1 pb-2 text-[17px] font-semibold leading-snug">{post.title}</h2>
-          </article>
-        ))
-      }
+<BaseLayout
+  title="技能干货"
+  description="从真实工作里长出来的技能树：飞书、设计、财税合规、市场活动、个人理财、产品经理和 AI 应用。"
+>
+  <!-- ===== 首屏轮播 ===== -->
+  <section class="sk-hero" data-sk-hero>
+    <div class="sk-hero__viewport">
+      <div class="sk-hero__track" data-sk-track>
+        {
+          featuredSkillPosts.map((post) => (
+            <article class="sk-hero__slide">
+              <div class="sk-hero__text">
+                <p class="sk-hero__kicker num">{post.kicker}</p>
+                <h2 class="sk-hero__title font-serif">
+                  <a href={`/skills/${post.slug}`}>{post.title}</a>
+                </h2>
+                <p class="sk-hero__excerpt">{post.excerpt}</p>
+                <div class="sk-hero__arrows" aria-hidden="false">
+                  <button type="button" class="sk-hero__arrow" data-sk-prev aria-label="上一篇">
+                    <svg viewBox="0 0 14 14" fill="none">
+                      <path d="M9 2.5 4.5 7 9 11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                  <button type="button" class="sk-hero__arrow" data-sk-next aria-label="下一篇">
+                    <svg viewBox="0 0 14 14" fill="none">
+                      <path d="M5 2.5 9.5 7 5 11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <a class="sk-hero__media" href={`/skills/${post.slug}`} aria-label={post.title}>
+                <Media src={post.cover} ph={post.ph} class="sk-hero__img" />
+              </a>
+            </article>
+          ))
+        }
+      </div>
     </div>
+  </section>
 
-    <p data-reveal class="mt-12 text-[14px] text-muted">正文内容整理中，敬请期待。</p>
+  <!-- ===== 分类过滤 + 文章卡片网格 ===== -->
+  <section class="sk-grid-section" data-sk-filter>
+    <div class="sk-grid-section__inner">
+      <div class="sk-cats" role="group" aria-label="文章分类">
+        {
+          skillCategories.map((cat, i) => (
+            <button
+              type="button"
+              class:list={["sk-cat", i === 0 && "is-active"]}
+              data-cat={cat}
+              aria-pressed={i === 0 ? "true" : "false"}
+            >
+              {cat}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="sk-grid">
+        {
+          skillPosts.map((post) => (
+            <article class="sk-card group" data-cat={post.category}>
+              <a
+                class="sk-card__media"
+                href={`/skills/${post.slug}`}
+                aria-label={post.title}
+              >
+                <Media
+                  src={post.cover}
+                  ph={post.ph}
+                  class="sk-card__img transition-transform duration-500 ease-out group-hover:scale-[0.94]"
+                />
+                <span class="sk-card__go">
+                  <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path
+                      d="M3 11 11 3M4.5 3H11v6.5"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </a>
+              <div class="sk-card__meta">
+                <span class="sk-card__tag">{post.category}</span>
+                <span class="sk-card__time num">{post.readTime}</span>
+              </div>
+              <h3 class="sk-card__title">
+                <a href={`/skills/${post.slug}`}>{post.title}</a>
+              </h3>
+            </article>
+          ))
+        }
+      </div>
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* ===== 首屏轮播 ===== */
+  .sk-hero {
+    background: var(--color-bg);
+    padding: clamp(48px, 8vh, 96px) 0 clamp(56px, 9vh, 110px);
+  }
+
+  .sk-hero__viewport {
+    overflow: hidden;
+  }
+
+  .sk-hero__track {
+    display: flex;
+    transition: transform 0.65s cubic-bezier(0.45, 0.05, 0.2, 1);
+  }
+
+  /* 每张 88% 宽：右侧自然露出下一张的文字边缘 */
+  .sk-hero__slide {
+    flex: 0 0 88%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min(500px, 40vw);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+    padding: 0 clamp(24px, 5vw, 80px);
+  }
+
+  .sk-hero__kicker {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .sk-hero__title {
+    margin-top: 18px;
+    font-size: clamp(32px, 3.6vw, 58px);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .sk-hero__title a {
+    transition: opacity 0.2s ease;
+  }
+
+  .sk-hero__title a:hover {
+    opacity: 0.75;
+  }
+
+  .sk-hero__excerpt {
+    margin-top: 20px;
+    max-width: 480px;
+    font-size: 16px;
+    line-height: 1.85;
+    color: rgba(36, 36, 36, 0.7);
+  }
+
+  /* 蓝色圆形左右切换按钮 */
+  .sk-hero__arrows {
+    margin-top: 36px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .sk-hero__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .sk-hero__arrow:hover {
+    transform: translateY(-2px);
+  }
+
+  .sk-hero__arrow svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .sk-hero__media {
+    display: block;
+  }
+
+  .sk-hero__media :global(.sk-hero__img) {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    border-radius: 6px;
+    transition: transform 0.5s ease;
+  }
+
+  .sk-hero__media:hover :global(.sk-hero__img) {
+    transform: scale(0.97);
+  }
+
+  @media (max-width: 767px) {
+    .sk-hero__slide {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .sk-hero__media {
+      order: -1;
+    }
+  }
+
+  /* ===== 分类过滤 + 卡片网格 ===== */
+  .sk-grid-section {
+    background: var(--color-bg);
+    padding: 0 20px clamp(80px, 12vh, 140px);
+  }
+
+  .sk-grid-section__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* 分类胶囊栏：居中，选中蓝底白字 */
+  .sk-cats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .sk-cat {
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    font-size: 14px;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .sk-cat:hover {
+    border-color: rgba(31, 31, 31, 0.3);
+  }
+
+  .sk-cat.is-active {
+    background: var(--color-blue);
+    border-color: var(--color-blue);
+    color: #fff;
+  }
+
+  /* 三列卡片网格 */
+  .sk-grid {
+    margin-top: 40px;
+    display: grid;
+    gap: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .sk-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sk-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .sk-card {
+    border-radius: 10px;
+    background: #e4e0d4;
+    padding: 12px 12px 28px;
+  }
+
+  .sk-card.is-hidden {
+    display: none;
+  }
+
+  .sk-card__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .sk-card__media :global(.sk-card__img) {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  /* 右下白色圆形 ↗ 按钮 */
+  .sk-card__go {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-ink);
+  }
+
+  .sk-card__go svg {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.3s ease;
+  }
+
+  .sk-card:hover .sk-card__go svg {
+    transform: translate(2px, -2px);
+  }
+
+  .sk-card__meta {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+
+  .sk-card__tag {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(63, 111, 255, 0.12);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-blue);
+  }
+
+  .sk-card__time {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+  }
+
+  .sk-card__title {
+    margin-top: 14px;
+    padding: 0 6px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .sk-card__title a:hover {
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-hero__track {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // ===== 首屏轮播：左右切换（循环） =====
+  const hero = document.querySelector<HTMLElement>("[data-sk-hero]");
+  const track = hero?.querySelector<HTMLElement>("[data-sk-track]");
+
+  if (hero && track) {
+    const slides = track.children.length;
+    let index = 0;
+
+    const go = (dir: number) => {
+      index = (index + dir + slides) % slides;
+      track.style.transform = `translateX(${-index * 88}%)`;
+    };
+
+    hero.querySelectorAll("[data-sk-prev]").forEach((b) =>
+      b.addEventListener("click", () => go(-1))
+    );
+    hero.querySelectorAll("[data-sk-next]").forEach((b) =>
+      b.addEventListener("click", () => go(1))
+    );
+  }
+
+  // ===== 分类过滤：点击胶囊即时过滤卡片 =====
+  const filterRoot = document.querySelector<HTMLElement>("[data-sk-filter]");
+
+  if (filterRoot) {
+    const buttons = [...filterRoot.querySelectorAll<HTMLButtonElement>(".sk-cat")];
+    const cards = [...filterRoot.querySelectorAll<HTMLElement>(".sk-card")];
+
+    for (const btn of buttons) {
+      btn.addEventListener("click", () => {
+        const cat = btn.dataset.cat;
+        for (const b of buttons) {
+          const active = b === btn;
+          b.classList.toggle("is-active", active);
+          b.setAttribute("aria-pressed", String(active));
+        }
+        for (const card of cards) {
+          card.classList.toggle(
+            "is-hidden",
+            cat !== "全部" && card.dataset.cat !== cat
+          );
+        }
+      });
+    }
+  }
+</script>

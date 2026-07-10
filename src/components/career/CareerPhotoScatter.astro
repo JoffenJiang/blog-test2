@@ -1,0 +1,195 @@
+---
+/**
+ * CareerPhotoScatter —— 相册散开（无任何文字，前有留白）
+ * 16 张拍立得照片初始堆叠成一垒，随滚动向四周散开（不是普通 grid）
+ * 实现：sticky 舞台 + 滚动进度 --p 驱动每张照片从中心到目标位置的插值
+ * 移动端只显示 8 张、散开幅度减半；照片缺失时显示渐变占位
+ */
+import Media from "../Media.astro";
+
+interface Photo {
+  src: string;
+  ph: "warm" | "sage" | "blue" | "rose";
+  /** 散开目标位移（相对屏幕中心） */
+  dx: string;
+  dy: string;
+  /** 初始 / 最终旋转角 */
+  r0: number;
+  r: number;
+  /** <640px 时隐藏 */
+  hideMobile?: boolean;
+}
+
+const phs = ["warm", "sage", "blue", "rose"] as const;
+
+const targets: [string, string, number, number][] = [
+  ["-36vw", "-26vh", -3, -14],
+  ["-18vw", "-32vh", 2, 9],
+  ["4vw", "-30vh", -1, -7],
+  ["24vw", "-28vh", 3, 12],
+  ["38vw", "-16vh", -2, -10],
+  ["-40vw", "-2vh", 1, 8],
+  ["40vw", "2vh", -3, 11],
+  ["-34vw", "22vh", 2, -12],
+  ["-14vw", "30vh", -2, 8],
+  ["8vw", "32vh", 3, -9],
+  ["28vw", "26vh", -1, 13],
+  ["42vw", "18vh", 2, -8],
+  ["-26vw", "-16vh", -2, 10],
+  ["20vw", "-19vh", 1, -11],
+  ["-8vw", "33vh", 3, 7],
+  ["27vw", "13vh", -3, -13],
+];
+
+const photos: Photo[] = targets.map(([dx, dy, r0, r], i) => ({
+  src: `/media/career-photo-${String(i + 1).padStart(2, "0")}.jpg`,
+  ph: phs[i % phs.length],
+  dx,
+  dy,
+  r0,
+  r,
+  hideMobile: i >= 8,
+}));
+---
+
+<section class="career-photo-scatter" data-photo-scatter>
+  <div class="career-photo-scatter__sticky">
+    <div class="career-photo-stack" data-photo-stack>
+      {
+        photos.map((p, i) => (
+          <figure
+            class:list={[
+              "career-photo",
+              `career-photo--${String(i + 1).padStart(2, "0")}`,
+              p.hideMobile && "career-photo--desktop",
+            ]}
+            style={`--dx:${p.dx};--dy:${p.dy};--r0:${p.r0}deg;--r:${p.r}deg;--z:${i}`}
+          >
+            <Media src={p.src} ph={p.ph} class="career-photo__img" />
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 舞台：170vh 的滚动距离驱动散开进度 --p；margin-top 为进场前的留白页面 */
+  .career-photo-scatter {
+    position: relative;
+    height: 170vh;
+    margin-top: 30vh;
+    background: var(--color-bg);
+    overflow: clip;
+  }
+
+  .career-photo-scatter__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .career-photo-scatter__title {
+    position: relative;
+    z-index: 0;
+    text-align: center;
+    font-size: clamp(30px, 4.5vw, 52px);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .career-photo-stack {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    --amp: 1;
+  }
+
+  /* 拍立得：白边 + 底部留白 + 轻微投影 */
+  .career-photo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: var(--z, 0);
+    width: clamp(120px, 13vw, 185px);
+    margin: 0;
+    padding: 7px 7px 26px;
+    background: #fffdf8;
+    border-radius: 4px;
+    box-shadow: 0 10px 24px rgba(31, 31, 31, 0.16);
+    transform: translate(
+        calc(-50% + var(--dx) * var(--p, 0) * var(--amp)),
+        calc(-50% + var(--dy) * var(--p, 0) * var(--amp))
+      )
+      rotate(calc(var(--r0) + (var(--r) - var(--r0)) * var(--p, 0)));
+    will-change: transform;
+  }
+
+  .career-photo :global(.career-photo__img) {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 639px) {
+    .career-photo-scatter {
+      height: 150vh;
+    }
+
+    .career-photo--desktop {
+      display: none;
+    }
+
+    .career-photo-stack {
+      --amp: 0.55;
+    }
+
+    .career-photo {
+      width: 108px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .career-photo-stack {
+      --p: 1;
+    }
+  }
+</style>
+
+<script>
+  // 滚动进度驱动散开：--p 从 0（堆叠）到 1（散开）
+  const section = document.querySelector<HTMLElement>("[data-photo-scatter]");
+  const stack = section?.querySelector<HTMLElement>("[data-photo-stack]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (section && stack && !reduce) {
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const total = Math.max(rect.height - vh, 1);
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      stack.style.setProperty("--p", p.toFixed(3));
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>

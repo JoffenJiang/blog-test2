@@ -1,0 +1,249 @@
+---
+/**
+ * GrowthDirections —— 五个能力步骤卡片（Wildbran 5 Steps 式横向卡片）
+ * 桌面端：sticky 舞台，纵向滚动驱动横向推进（scrub）
+ * 移动端（<768px）：原生横向滚动 + scroll-snap
+ *
+ * 卡片版式：大色块（棕红 / 米灰交替）
+ *   左上：能力名 kicker ｜ 右上：小字说明
+ *   中间：漂浮的灰色占位形状（后续可替换为图片）
+ *   左下：衬线大字主文案 ｜ 右下：手写体 Step N
+ */
+import { growthSteps } from "../../data/career";
+
+/** 每张卡片中间占位形状的轮廓（模拟不同零食形状） */
+const shapes = [
+  "border-radius: 50%; aspect-ratio: 1 / 1.45; rotate: 24deg;",
+  "border-radius: 16px; aspect-ratio: 1; rotate: -12deg;",
+  "border-radius: 58% 42% 55% 45% / 48% 55% 45% 52%; aspect-ratio: 1 / 0.92; rotate: 8deg;",
+  "border-radius: 20px; aspect-ratio: 2.2 / 1; rotate: -18deg;",
+  "border-radius: 50%; aspect-ratio: 1; rotate: 0deg;",
+];
+---
+
+<section class="career-growth" data-growth>
+  <div class="career-growth__sticky">
+    <div class="career-growth__viewport">
+      <div class="career-growth__track" data-growth-track>
+        {
+          growthSteps.map((s, i) => (
+            <article
+              class="career-growth-card"
+              style={`--card-bg:${s.bg};--card-fg:${s.fg};--card-fg-muted:${s.fgMuted}`}
+            >
+              <div class="career-growth-card__top">
+                <p class="career-growth-card__kicker num">{s.title}</p>
+                <p class="career-growth-card__desc">{s.desc}</p>
+              </div>
+
+              <span class="career-growth-card__shape floaty" style={shapes[i]} aria-hidden="true" />
+
+              <div class="career-growth-card__foot">
+                <h3 class="career-growth-card__main font-serif">{s.main}</h3>
+                <span class="career-growth-card__step font-hand">Step {s.num}</span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .career-growth {
+    position: relative;
+    background: var(--color-bg);
+  }
+
+  .career-growth__track {
+    display: flex;
+    gap: 20px;
+    padding: 48px 24px;
+  }
+
+  .career-growth-card {
+    position: relative;
+    flex-shrink: 0;
+    width: min(88vw, 1160px);
+    min-height: min(68vh, 620px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--card-bg);
+    color: var(--card-fg);
+    border-radius: 10px;
+    padding: clamp(24px, 3vw, 44px);
+    overflow: hidden;
+  }
+
+  .career-growth-card__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .career-growth-card__kicker {
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    color: var(--card-fg-muted);
+  }
+
+  .career-growth-card__desc {
+    max-width: 300px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--card-fg);
+  }
+
+  /* 中间漂浮占位形状（半透明同色系，后续可换图片） */
+  .career-growth-card__shape {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(140px, 18vw, 230px);
+    translate: -50% -50%;
+    background: color-mix(in srgb, var(--card-fg) 22%, var(--card-bg));
+    pointer-events: none;
+  }
+
+  .career-growth-card__foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  /* 左下：衬线大字主文案 */
+  .career-growth-card__main {
+    max-width: 640px;
+    font-size: clamp(28px, 3.4vw, 48px);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  /* 右下：手写体 Step N */
+  .career-growth-card__step {
+    flex-shrink: 0;
+    font-size: clamp(30px, 3.2vw, 46px);
+    line-height: 1;
+    color: var(--card-fg);
+  }
+
+  /* ===== 桌面端：sticky + 纵向滚动驱动横向推进 ===== */
+  @media (min-width: 768px) {
+    .career-growth {
+      /* 高度 = 视口 + 轨道横向溢出（JS 精确测量后写入） */
+      height: calc(100vh + var(--track-overflow, 2600px));
+    }
+
+    .career-growth__sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .career-growth__track {
+      padding: 0 40px;
+      will-change: transform;
+    }
+  }
+
+  /* ===== 移动端：原生横向滚动 + snap ===== */
+  @media (max-width: 767px) {
+    .career-growth__viewport {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .career-growth-card {
+      width: 84vw;
+      min-height: 480px;
+      scroll-snap-align: center;
+    }
+
+    .career-growth-card__top {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .career-growth-card__foot {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .career-growth {
+      height: auto;
+    }
+
+    .career-growth__sticky {
+      position: static;
+      height: auto;
+    }
+
+    .career-growth__viewport {
+      overflow-x: auto;
+    }
+  }
+</style>
+
+<script>
+  // 桌面端：纵向滚动进度 → 轨道横向位移（scrub）
+  const section = document.querySelector<HTMLElement>("[data-growth]");
+  const track = section?.querySelector<HTMLElement>("[data-growth-track]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const desktop = window.matchMedia("(min-width: 768px)");
+
+  if (section && track && !reduce) {
+    const measure = () => {
+      if (!desktop.matches) {
+        section.style.removeProperty("--track-overflow");
+        track.style.transform = "";
+        return;
+      }
+      const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
+      section.style.setProperty("--track-overflow", `${overflow}px`);
+    };
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      if (!desktop.matches) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const total = Math.max(rect.height - vh, 1);
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
+      track.style.transform = `translateX(${(-p * overflow).toFixed(1)}px)`;
+    };
+
+    measure();
+    addEventListener("resize", () => {
+      measure();
+      update();
+    });
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>

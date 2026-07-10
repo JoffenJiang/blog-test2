@@ -1,0 +1,230 @@
+---
+/**
+ * FutureCareerThinking —— 未来职业发展思考（大标题过场页）
+ * 居中衬线超大标题（后半句棕红强调）→ 蓝色手写向下箭头 → 衬线副标题
+ * 四周漂浮不同形状的灰色占位符（后续可替换为图片），带轻微 parallax + floaty
+ */
+
+/** 漂浮占位形状：shape 决定轮廓，pos 定位，f 为 parallax 系数 */
+const frags = [
+  { shape: "square", style: "left:6%; top:12%; --tilt:-8deg;", f: 0.06, size: 120, mobile: false },
+  { shape: "cup", style: "left:48%; top:8%; --tilt:2deg;", f: 0.04, size: 72, mobile: true },
+  { shape: "blur-round", style: "right:16%; top:14%; --tilt:0deg;", f: 0.05, size: 88, mobile: false },
+  { shape: "oval", style: "right:7%; top:34%; --tilt:24deg;", f: 0.08, size: 110, mobile: true },
+  { shape: "blur-soft", style: "left:9%; top:52%; --tilt:0deg;", f: 0.05, size: 76, mobile: false },
+  { shape: "ball", style: "left:30%; bottom:16%; --tilt:0deg;", f: 0.07, size: 96, mobile: true },
+  { shape: "blur-dot", style: "left:57%; bottom:22%; --tilt:0deg;", f: 0.04, size: 44, mobile: false },
+  { shape: "square-sm", style: "right:24%; bottom:30%; --tilt:14deg;", f: 0.09, size: 74, mobile: false },
+  { shape: "bar", style: "right:4%; bottom:6%; --tilt:-16deg;", f: 0.06, size: 150, mobile: true },
+  { shape: "blob", style: "left:2%; bottom:2%; --tilt:6deg;", f: 0.05, size: 130, mobile: false },
+] as const;
+---
+
+<section class="career-future" data-career-future>
+  {
+    frags.map((frag) => (
+      <span
+        class:list={[
+          "career-future__frag",
+          `career-future__frag--${frag.shape}`,
+          "floaty",
+          !frag.mobile && "career-future__frag--desktop",
+        ]}
+        style={`${frag.style} --size:${frag.size}px;`}
+        data-frag={frag.f}
+        aria-hidden="true"
+      />
+    ))
+  }
+
+  <div data-reveal class="career-future__inner">
+    <h2 class="career-future__title font-serif">
+      未来的自己到底<br />想成为一个<span class="career-future__hl">什么样的人？</span>
+    </h2>
+
+    <svg
+      class="career-future__arrow"
+      viewBox="0 0 24 64"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 2c-4 7 5 9-1 16s4 9-1 16 4 9-1 16"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M5 51l6 10 6-10"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+
+    <p class="career-future__sub font-serif">
+      五个我需要沉淀的能力，<br />或许能帮我找到方向。
+    </p>
+  </div>
+</section>
+
+<style>
+  .career-future {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    overflow: clip;
+    padding: 120px 24px;
+  }
+
+  .career-future__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+    text-align: center;
+  }
+
+  .career-future__title {
+    font-size: clamp(40px, 6.5vw, 88px);
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+  }
+
+  .career-future__hl {
+    color: var(--color-brown);
+  }
+
+  /* 蓝色手写波浪箭头 */
+  .career-future__arrow {
+    width: 22px;
+    height: 60px;
+    margin: clamp(32px, 5vh, 56px) auto 0;
+    display: block;
+    color: var(--color-blue);
+  }
+
+  .career-future__sub {
+    margin-top: clamp(32px, 5vh, 56px);
+    font-size: clamp(22px, 2.8vw, 34px);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ===== 漂浮占位形状（灰色系，后续可替换成图片） ===== */
+  .career-future__frag {
+    position: absolute;
+    z-index: 1;
+    width: var(--size);
+    pointer-events: none;
+  }
+
+  /* 方片（饼干干脆面式） */
+  .career-future__frag--square,
+  .career-future__frag--square-sm {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: #d9d4c8;
+  }
+
+  /* 小纸杯（巧克力杯式的梯形圆） */
+  .career-future__frag--cup {
+    aspect-ratio: 1 / 0.82;
+    border-radius: 30% 30% 46% 46%;
+    background: #c8c2b4;
+  }
+
+  /* 椭圆长饼 */
+  .career-future__frag--oval {
+    aspect-ratio: 1 / 1.7;
+    border-radius: 50%;
+    background: #d3cdc0;
+  }
+
+  /* 圆球 */
+  .career-future__frag--ball {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #cfc9bb;
+  }
+
+  /* 长条 bar */
+  .career-future__frag--bar {
+    aspect-ratio: 2.4 / 1;
+    border-radius: 18px;
+    background: #d9d4c8;
+  }
+
+  /* 不规则 blob */
+  .career-future__frag--blob {
+    aspect-ratio: 1 / 0.9;
+    border-radius: 58% 42% 55% 45% / 48% 55% 45% 52%;
+    background: #d3cdc0;
+  }
+
+  /* 失焦模糊件（远景景深感） */
+  .career-future__frag--blur-round,
+  .career-future__frag--blur-soft,
+  .career-future__frag--blur-dot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #ccc6b8;
+    opacity: 0.55;
+    filter: blur(7px);
+  }
+
+  @media (max-width: 767px) {
+    .career-future__frag--desktop {
+      display: none;
+    }
+
+    .career-future__frag {
+      width: calc(var(--size) * 0.6);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .career-future__frag {
+      translate: none !important;
+    }
+  }
+</style>
+
+<script>
+  // 漂浮件轻微 parallax：随滚动上下位移（translate 属性，不影响 transform 旋转/浮动）
+  const section = document.querySelector<HTMLElement>("[data-career-future]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (section && !reduce) {
+    const frags = [...section.querySelectorAll<HTMLElement>("[data-frag]")];
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const mid = rect.top + rect.height / 2 - vh / 2;
+      for (const el of frags) {
+        const f = parseFloat(el.dataset.frag || "0");
+        el.style.translate = `0 ${(-mid * f).toFixed(1)}px`;
+      }
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>

@@ -1,28 +1,457 @@
 ---
 /**
- * 资源库 —— 四个分类入口
+ * /resources 资源库 —— Wildbran Our Products 式横向分组大卡片
+ * 首屏：无视频的纯色标题屏（大衬线标题 + 一句说明）
+ * 主体：横向滚动分组卡片（桌面端 sticky + 纵向滚动驱动横向推进；移动端原生横滑）
+ *   每张卡片：左上衬线标题｜左侧竖排选项卡（缩略图 + 文字，选中棕红底白字）
+ *   中间大图（随选项卡切换占位渐变）｜左下三条可展开信息行（蓝色双箭头圆按钮）
+ * 文字全部为「我是工具」占位，图片为渐变占位，后续替换内容
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import SectionTitle from "../../components/SectionTitle.astro";
-import { resourceNav } from "../../data/navigation";
+
+const phs = ["warm", "sage", "blue", "rose"] as const;
+
+/** 4 个分组 × 每组 3 个选项卡；文字统一占位 */
+const groups = phs.map((ph, g) => ({
+  title: "我是工具",
+  tabs: [0, 1, 2].map((t) => ({
+    label: "我是工具",
+    ph: phs[(g + t) % phs.length],
+  })),
+  rows: ["我是工具", "我是工具", "我是工具"],
+}));
+
+const gradients: Record<string, string> = {
+  warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
+  sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
+  blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
+  rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
+};
 ---
 
-<BaseLayout title="资源库">
-  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
-    <SectionTitle title="资源库" subtitle="把能复用的东西留下来。" />
+<BaseLayout title="资源库" description="把能复用的工具、模板和方法留下来。">
+  <!-- ===== 首屏：无视频标题屏 ===== -->
+  <section class="res-hero">
+    <div data-reveal class="res-hero__inner">
+      <h1 class="res-hero__title font-serif">你在找什么工具？</h1>
+      <p class="res-hero__desc">
+        这里是我的资源库——亲测好用的工具、模板和方法，都会慢慢沉淀到这一页。
+      </p>
+    </div>
+  </section>
 
-    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
-      {
-        resourceNav.map((item) => (
-          <a
-            href={item.href}
-            class="group rounded-2xl bg-card p-7 transition duration-200 hover:-translate-y-1"
-          >
-            <span class="block font-serif text-[22px] font-semibold">{item.label}</span>
-            <span class="mt-2 block text-[14px] leading-relaxed text-muted">{item.desc}</span>
-          </a>
-        ))
-      }
+  <!-- ===== 横向分组大卡片 ===== -->
+  <section class="res-groups" data-res-groups>
+    <div class="res-groups__sticky">
+      <div class="res-groups__viewport">
+        <div class="res-groups__track" data-res-track>
+          {
+            groups.map((group, gi) => (
+              <article class="res-card" data-res-card>
+                <div class="res-card__side">
+                  <h2 class="res-card__title font-serif">{group.title}</h2>
+
+                  <div class="res-card__tabs" role="tablist">
+                    {group.tabs.map((tab, ti) => (
+                      <button
+                        type="button"
+                        role="tab"
+                        class:list={["res-tab", ti === 0 && "is-active"]}
+                        aria-selected={ti === 0 ? "true" : "false"}
+                        data-ph={tab.ph}
+                      >
+                        <span class="res-tab__thumb" style={`background-image:${gradients[tab.ph]}`} />
+                        <span class="res-tab__label">{tab.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div class="res-card__rows">
+                    {group.rows.map((row, ri) => (
+                      <div class="res-row">
+                        <button
+                          type="button"
+                          class="res-row__trigger"
+                          aria-expanded="false"
+                          aria-controls={`res-row-${gi}-${ri}`}
+                        >
+                          <span class="res-row__label">{row}</span>
+                          <span class="res-row__button" aria-hidden="true">
+                            <svg viewBox="0 0 14 10" fill="none">
+                              <path
+                                d="M2 1.5 5.5 5 2 8.5M8 1.5 11.5 5 8 8.5"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                        <div class="res-row__content" id={`res-row-${gi}-${ri}`} role="region">
+                          <div class="res-row__content-inner">
+                            <p>我是工具</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  class="res-card__media"
+                  data-res-media
+                  style={`background-image:${gradients[group.tabs[0].ph]}`}
+                  aria-hidden="true"
+                />
+              </article>
+            ))
+          }
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* ===== 首屏标题屏 ===== */
+  .res-hero {
+    background: var(--color-bg);
+    padding: clamp(80px, 14vh, 160px) 24px clamp(40px, 7vh, 80px);
+  }
+
+  .res-hero__inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .res-hero__title {
+    font-size: clamp(44px, 6.5vw, 92px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .res-hero__desc {
+    margin-top: 24px;
+    font-size: 16px;
+    line-height: 1.9;
+    color: rgba(36, 36, 36, 0.65);
+  }
+
+  /* ===== 横向分组卡片 ===== */
+  .res-groups {
+    position: relative;
+    background: var(--color-bg);
+  }
+
+  .res-groups__track {
+    display: flex;
+    gap: 16px;
+    padding: 48px 24px;
+  }
+
+  .res-card {
+    position: relative;
+    flex-shrink: 0;
+    width: min(90vw, 1160px);
+    min-height: min(76vh, 660px);
+    display: grid;
+    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 64px);
+    background: #e5e2d9;
+    border-radius: 14px;
+    padding: clamp(24px, 3vw, 44px);
+  }
+
+  .res-card__side {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .res-card__title {
+    font-size: clamp(30px, 3vw, 42px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* 竖排选项卡：白底圆角，选中棕红底白字 */
+  .res-card__tabs {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .res-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px 8px 8px;
+    border-radius: 8px;
+    background: var(--color-white);
+    color: var(--color-ink);
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .res-tab__thumb {
+    display: block;
+    width: 34px;
+    height: 42px;
+    border-radius: 4px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+
+  .res-tab.is-active {
+    background: var(--color-brown);
+    color: #fff;
+  }
+
+  /* 左下三条可展开信息行 */
+  .res-card__rows {
+    margin-top: auto;
+    padding-top: 32px;
+  }
+
+  .res-row {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .res-row__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .res-row__label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  /* 蓝色圆形双箭头按钮 */
+  .res-row__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    color: #fff;
+    transition: transform 0.3s ease;
+  }
+
+  .res-row__button svg {
+    width: 13px;
+    height: 9px;
+  }
+
+  .res-row.is-open .res-row__button {
+    transform: rotate(90deg);
+  }
+
+  .res-row__content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease;
+  }
+
+  .res-row__content-inner {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .res-row.is-open .res-row__content {
+    grid-template-rows: 1fr;
+  }
+
+  .res-row.is-open .res-row__content-inner {
+    opacity: 1;
+    transition-delay: 0.12s;
+  }
+
+  .res-row__content-inner p {
+    padding-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(36, 36, 36, 0.68);
+  }
+
+  /* 中间大图占位：随选项卡切换渐变 */
+  .res-card__media {
+    align-self: center;
+    width: 100%;
+    max-width: 620px;
+    justify-self: center;
+    aspect-ratio: 4 / 3.4;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* ===== 桌面端：sticky + 纵向滚动驱动横向推进 ===== */
+  @media (min-width: 768px) {
+    .res-groups {
+      height: calc(100vh + var(--track-overflow, 3000px));
+    }
+
+    .res-groups__sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .res-groups__track {
+      padding: 0 40px;
+      will-change: transform;
+    }
+  }
+
+  /* ===== 移动端：原生横向滚动 + snap ===== */
+  @media (max-width: 767px) {
+    .res-groups__viewport {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .res-card {
+      width: 88vw;
+      min-height: auto;
+      grid-template-columns: 1fr;
+      scroll-snap-align: center;
+    }
+
+    .res-card__media {
+      order: -1;
+      max-width: none;
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .res-groups {
+      height: auto;
+    }
+
+    .res-groups__sticky {
+      position: static;
+      height: auto;
+    }
+
+    .res-groups__viewport {
+      overflow-x: auto;
+    }
+
+    .res-row__content,
+    .res-row__content-inner,
+    .res-row__button {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // ===== 桌面端：纵向滚动进度 → 轨道横向位移（scrub） =====
+  const section = document.querySelector<HTMLElement>("[data-res-groups]");
+  const track = section?.querySelector<HTMLElement>("[data-res-track]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const desktop = window.matchMedia("(min-width: 768px)");
+
+  if (section && track && !reduce) {
+    const measure = () => {
+      if (!desktop.matches) {
+        section.style.removeProperty("--track-overflow");
+        track.style.transform = "";
+        return;
+      }
+      const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
+      section.style.setProperty("--track-overflow", `${overflow}px`);
+    };
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      if (!desktop.matches) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const total = Math.max(rect.height - vh, 1);
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
+      track.style.transform = `translateX(${(-p * overflow).toFixed(1)}px)`;
+    };
+
+    measure();
+    addEventListener("resize", () => {
+      measure();
+      update();
+    });
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+
+  // ===== 选项卡切换：换中间大图占位渐变 =====
+  const gradientMap: Record<string, string> = {
+    warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
+    sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
+    blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
+    rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-res-card]").forEach((card) => {
+    const tabs = [...card.querySelectorAll<HTMLButtonElement>(".res-tab")];
+    const media = card.querySelector<HTMLElement>("[data-res-media]");
+
+    for (const tab of tabs) {
+      tab.addEventListener("click", () => {
+        for (const t of tabs) {
+          const active = t === tab;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", String(active));
+        }
+        if (media && tab.dataset.ph) {
+          media.style.backgroundImage = gradientMap[tab.dataset.ph] ?? "";
+        }
+      });
+    }
+  });
+
+  // ===== 信息行展开 / 收起 =====
+  document.querySelectorAll<HTMLElement>(".res-row").forEach((row) => {
+    const trigger = row.querySelector<HTMLButtonElement>(".res-row__trigger");
+    trigger?.addEventListener("click", () => {
+      const open = row.classList.toggle("is-open");
+      trigger.setAttribute("aria-expanded", String(open));
+    });
+  });
+</script>

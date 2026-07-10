@@ -161,6 +161,9 @@ const featured = posts.filter((p) => p.featured);
    * 外层顶满浏览器宽度、四角直角，不露页面底色 */
   .career-section {
     position: relative;
+    /* 正常接在 MoodProductsSection 的退场空间之后，不上移、不覆盖 */
+    z-index: 0;
+    margin-top: 0;
     /* main 无内边距/宽度限制，100% 即真正 full-bleed，
      * 避免 100vw 因滚动条宽度产生横向溢出 */
     width: 100%;

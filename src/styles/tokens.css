@@ -19,10 +19,12 @@
   --color-border: rgba(31, 31, 31, 0.12);
   --color-line: rgba(31, 31, 31, 0.65);
   --color-warm: #e8dccb;
+  --color-brown: #8a3f32;
 
   --font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
     sans-serif;
   --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
     serif;
   --font-hand: Caveat, "Bradley Hand", "Comic Sans MS", cursive;
+  --font-art: "Ma Shan Zheng", "Kaiti SC", "STKaiti", "KaiTi", cursive;
 }

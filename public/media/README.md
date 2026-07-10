@@ -31,3 +31,8 @@
 
 ## 生活记录页
 - note-hanfu.jpg / note-travel.jpg / note-inspiration.jpg / note-review.jpg
+
+## 职业发展页（/career）
+- career-avatar.png            简历 CTA 右侧职业头像（竖版 3:4，建议透明底或纯色底）
+- career-photo-01.jpg ~ career-photo-16.jpg   相册散开的拍立得照片（4:3，现场/活动/工作照）
+- career-step-01.jpg ~ career-step-05.jpg     五个方向步骤卡片中间配图（4:3）
