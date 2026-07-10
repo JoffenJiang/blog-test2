@@ -12,9 +12,9 @@ export interface ArticleBlock {
 
 /** 第一段工作经历：从被迫承接，到主动连接（左对齐长文卡片） */
 export const firstArticle = {
-  eyebrow: "FIRST EXPERIENCE",
+  eyebrow: "第一段工作经历",
   title: "从被迫承接，到主动连接",
-  meta: "我的第一段工作经历 · 市场活动 / 政企协作 / 产学研 / 政府申报 / 资源连接",
+  meta: "市场活动 / 政企协作 / 产学研 / 政府申报 / 资源连接",
   blocks: [
     { type: "p", html: "我的第一份正式工作，开始得有些偶然。" },
     { type: "p", html: "在校期间，我曾参加过阿里云创新中心（重庆）CloudX云智能学院的青云计划，并成为这个项目的第一批校代表。那时候的我大概也没有想到，这段原本属于校园实践的经历，后来会以一种很奇妙的方式，成为我进入职场的敲门砖。" },
@@ -75,9 +75,9 @@ export const firstArticle = {
 
 /** 第二段工作经历：在系统化里，重新理解管理（左对齐长文卡片，内容来自《工作经历.md》） */
 export const secondArticle = {
-  eyebrow: "SECOND EXPERIENCE",
+  eyebrow: "第二段工作经历",
   title: "在系统化里，重新理解管理",
-  meta: "我的第二份工作 · 数字化转型 / 飞书系统 / 产品管理 / SOP / 财税合规 / 流程重构",
+  meta: "数字化转型 / 飞书系统 / 产品管理 / SOP / 财税合规 / 流程重构",
   blocks: [
     { type: "p", html: '如果说第一份工作教会我“连接”，那么第二份工作更多教会我的，是<span class="career-highlight">如何在复杂和混乱之中，重新搭建秩序</span>。' },
     { type: "p", html: "这是我职业技能成长很快的一段时期。很大程度上，我愿意把这份成长归因于我遇到了一位很好的引航人——我的领导。他给了我极大的自由发挥空间，也允许我在不熟悉的领域里自主学习、反复试错；但同时，他又会在关键节点帮我答疑解惑，提醒我方向有没有偏，逻辑有没有断，判断有没有过于理想化。对一个仍然在快速成长阶段的人来说，这种“不直接替你走路，但会在你快要走偏时扶一把”的引导，是很珍贵的。" },
@@ -141,69 +141,6 @@ export const secondArticle = {
   ] satisfies ArticleBlock[],
 };
 
-/** 五个方向步骤卡片（Wildbran 5 Steps 风格：大色块 + 白色衬线主文案 + 右上小字说明 + 手写 Step N） */
-export interface GrowthStep {
-  num: number;
-  /** 能力名（卡片左上 kicker） */
-  title: string;
-  /** 卡片主文案（趣味化大字） */
-  main: string;
-  /** 右上角小字说明 */
-  desc: string;
-  /** 卡片底色 / 文字色 */
-  bg: string;
-  fg: string;
-  fgMuted: string;
-}
-
-export const growthSteps: GrowthStep[] = [
-  {
-    num: 1,
-    title: "经营意识",
-    main: "别只埋头干活，抬头看看钱从哪来、往哪去。",
-    desc: "从项目视角走到经营视角：理解企业怎么赚钱、怎么增长、怎么控成本，看见每一个管理动作背后的商业意义。",
-    bg: "#8a3f32",
-    fg: "#f8f1ea",
-    fgMuted: "rgba(248, 241, 234, 0.78)",
-  },
-  {
-    num: 2,
-    title: "系统化管理能力",
-    main: "救火英雄很酷，但防火系统更酷。",
-    desc: "真正有价值的管理不是临时救火，而是把混乱理顺，把经验沉淀成标准，把标准变成团队共同执行的机制。",
-    bg: "#e5e1d6",
-    fg: "#242424",
-    fgMuted: "rgba(36, 36, 36, 0.7)",
-  },
-  {
-    num: 3,
-    title: "产品与数字化能力",
-    main: "工具会过时，判断力不会。",
-    desc: "不止会用工具，更要判断什么样的工具适合什么样的业务场景，让数字化和 AI 真正提升组织效率。",
-    bg: "#8a3f32",
-    fg: "#f8f1ea",
-    fgMuted: "rgba(248, 241, 234, 0.78)",
-  },
-  {
-    num: 4,
-    title: "团队管理与组织协同能力",
-    main: "一个人的优秀是及格线，一群人的靠谱才是分数线。",
-    desc: "职业经理人最终面对的不是一个人的优秀，而是一群人如何把事情做好：理解人、激励人、培养人，在不同诉求之间建立共识。",
-    bg: "#e5e1d6",
-    fg: "#242424",
-    fgMuted: "rgba(36, 36, 36, 0.7)",
-  },
-  {
-    num: 5,
-    title: "财务、合规与风险意识",
-    main: "跑得快很重要，刹车灵才敢加速。",
-    desc: "企业发展不能只看速度，也要看边界。成熟的管理者既要把业务做起来，也要让业务稳健、可持续地走下去。",
-    bg: "#8a3f32",
-    fg: "#f8f1ea",
-    fgMuted: "rgba(248, 241, 234, 0.78)",
-  },
-];
-
 /** 能力沉淀 accordion */
 export interface SkillItem {
   name: string;
@@ -217,7 +154,7 @@ export interface SkillGroup {
 
 export const skillGroups: SkillGroup[] = [
   {
-    title: "第一段经历技能点总结",
+    title: "第一段工作经历",
     items: [
       { name: "市场品牌与活动策划能力", desc: "包括活动主题规划、方案撰写、物料对接、嘉宾邀约、人员协调、现场执行、活动复盘与资料归档。" },
       { name: "项目统筹与组织协调能力", desc: "能够围绕创新创业大赛、行业研讨、投融资路演、双选会、企业服务等主题，推进从策划到落地的完整流程。" },
@@ -228,7 +165,7 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    title: "第二段经历技能点总结",
+    title: "第二段工作经历",
     items: [
       { name: "企业数字化系统搭建能力", desc: "包括飞书权限、审批、知识库、多维表格、自动化、业务流程线上化、跨部门协作系统搭建。" },
       { name: "流程梳理与 SOP 沉淀能力", desc: "包括业务节点拆解、第一责任人确认、流程标准化、知识库搭建、部门 SOP 模板设计与完善。" },

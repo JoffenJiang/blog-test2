@@ -51,10 +51,11 @@ const cards = [
 </section>
 
 <style>
+  /* 顶部间距与 contact / blog 页一致（py-16 md:py-24 → 64/96px） */
   .exp-stage {
     position: relative;
     background: var(--color-bg);
-    padding: clamp(72px, 8vw, 120px) 24px 0;
+    padding: clamp(64px, 9vh, 96px) 24px 0;
   }
 
   .exp-card {
@@ -80,11 +81,11 @@ const cards = [
     opacity: calc(1 - var(--gone, 0));
   }
 
-  /* ===== 卡片二：比卡片一略深一档，--dark 加深，--fly 翻转飞出 ===== */
+  /* ===== 卡片二：底色与页脚一致（bg-card/60 ≈ #f0ebe2），--dark 加深，--fly 翻转飞出 ===== */
   .exp-card--second {
     z-index: 2;
     margin-top: clamp(48px, 8vh, 96px);
-    background: color-mix(in srgb, #d6d1c3 calc(var(--dark, 0) * 100%), #e4e0d5);
+    background: color-mix(in srgb, #d9d3c5 calc(var(--dark, 0) * 100%), #f0ebe2);
     transform: translateY(calc(var(--fly, 0) * -160vh))
       rotate(calc(var(--fly, 0) * -9deg));
     transform-origin: 30% 60%;
@@ -112,10 +113,10 @@ const cards = [
 
   .exp-article-title {
     font-family: var(--font-serif);
-    font-size: clamp(44px, 6vw, 82px);
-    line-height: 1.1;
+    font-size: clamp(36px, 5vw, 54px);
+    line-height: 1.15;
     font-weight: 600;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
     color: #242424;
     margin: 0;
   }
@@ -127,11 +128,13 @@ const cards = [
     line-height: 1.6;
   }
 
+  /* 正文统一 15px，行间距 / 字间距 auto */
   .exp-article-body {
     max-width: 800px;
     margin-top: clamp(44px, 5vw, 64px);
-    font-size: 17px;
-    line-height: 1.9;
+    font-size: 15px;
+    line-height: normal;
+    letter-spacing: normal;
     color: #242424;
   }
 
@@ -141,9 +144,9 @@ const cards = [
 
   .exp-article-body :global(h2) {
     font-family: var(--font-serif);
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.2;
-    margin: 2.4em 0 0.8em;
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 2.2em 0 0.8em;
     font-weight: 600;
     color: #242424;
   }
@@ -176,7 +179,7 @@ const cards = [
     }
 
     .exp-card--second {
-      background: #e4e0d5;
+      background: #f0ebe2;
       transform: none;
       margin-top: 40px;
       box-shadow: none;
@@ -204,7 +207,7 @@ const cards = [
     }
 
     .exp-card--second {
-      background: #e4e0d5;
+      background: #f0ebe2;
       transform: none;
     }
 

@@ -54,15 +54,15 @@ const arrows = {
 };
 
 const layers: Layer[] = [
-  { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "Bites", labelArrow: "loop", labelLayout: "arrow-text" },
+  { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "日常杂记", labelArrow: "loop", labelLayout: "arrow-text" },
   { key: "top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.45", parallax: 0.06 },
   { key: "energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05 },
-  { key: "crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "Crackers", labelArrow: "zigzag", labelLayout: "arrow-text" },
+  { key: "crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "职业ootd", labelArrow: "zigzag", labelLayout: "arrow-text" },
   { key: "left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
   { key: "right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg", parallax: 0.065 },
-  { key: "cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "Cookies", labelArrow: "curl", labelLayout: "arrow-over-text" },
-  { key: "burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "Energy Balls", labelArrow: "rise", labelLayout: "arrow-text" },
-  { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "Bars", labelArrow: "hook", labelLayout: "text-arrow" },
+  { key: "cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "汉服ootd", labelArrow: "curl", labelLayout: "arrow-over-text" },
+  { key: "burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "环游记", labelArrow: "rise", labelLayout: "arrow-text" },
+  { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "梦到什么发什么系列", labelArrow: "hook", labelLayout: "text-arrow" },
   { key: "bottom-blur", shape: "mood-shape-blur", batch: 3, stagger: ".3s", vars: "--sy:60px;--op:.45", parallax: 0.06 },
 ];
 ---
@@ -70,16 +70,15 @@ const layers: Layer[] = [
 <section
   data-mood-section
   class="mood-products-section"
-  aria-label="What are you in the mood for?"
+  aria-label="趣味杂货铺"
 >
   <div class="mood-products-canvas">
     <!-- 视觉中心：标题 + 按钮（居中在首屏 100svh 内） -->
     <div class="mood-center">
-      <h2 class="mood-title font-serif font-bold">
-        What are you in<br />the mood for?
-      </h2>
+      <h2 class="mood-title font-serif font-bold">趣味杂货铺</h2>
+      <p class="mood-sub">收集我的日常，工作、拍照、汉服、旅行和美食都有一点。</p>
       <div class="mood-btn mt-8">
-        <PillButton href="/our-products">Explore Our Products</PillButton>
+        <PillButton href="/notes" label="来看看吧" />
       </div>
     </div>
 
@@ -172,27 +171,31 @@ const layers: Layer[] = [
     text-align: center;
   }
 
+  /* 标题字号统一约 36px（移动端略小） */
   .mood-title {
     max-width: 620px;
-    font-size: 36px;
-    line-height: 1.05;
+    font-size: 30px;
+    line-height: 1.2;
   }
 
   @media (min-width: 640px) {
     .mood-title {
-      font-size: 48px;
-      line-height: 1;
+      font-size: 36px;
     }
   }
 
-  @media (min-width: 1024px) {
-    .mood-title {
-      font-size: 60px;
-    }
+  /* 标题下副文案：15px 说明句 */
+  .mood-sub {
+    margin-top: 14px;
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: rgba(36, 36, 36, 0.65);
   }
 
-  /* 标题 / 按钮进场 */
+  /* 标题 / 副文案 / 按钮进场 */
   .mood-title,
+  .mood-sub,
   .mood-btn {
     opacity: 0;
     transform: translateY(24px);
@@ -201,11 +204,16 @@ const layers: Layer[] = [
       transform 0.7s ease;
   }
 
+  .mood-sub {
+    transition-delay: 0.1s;
+  }
+
   .mood-btn {
     transition-delay: 0.2s;
   }
 
   .mood-head-in .mood-title,
+  .mood-head-in .mood-sub,
   .mood-head-in .mood-btn {
     opacity: 1;
     transform: none;
@@ -256,7 +264,8 @@ const layers: Layer[] = [
   .mood-product--left-bar     { left: -4%;  top: 38%;  width: 170px; }
   .mood-product--right-cracker{ right: -1%; top: 36%;  width: 84px; }
   .mood-product--cookies      { left: 13%;  bottom: var(--mood-bottom-safe); width: clamp(210px, 18vw, 290px); }
-  .mood-product--burst        { left: 46%;  bottom: clamp(110px, 13svh, 190px); width: clamp(120px, 11vw, 170px); }
+  /* 环游记（burst）组整体下移一档，贴近底排（对照 Wildbran） */
+  .mood-product--burst        { left: 46%;  bottom: clamp(56px, 7svh, 110px); width: clamp(120px, 11vw, 170px); }
   .mood-product--bars         { right: 10%; bottom: var(--mood-bottom-safe); width: clamp(220px, 20vw, 320px); }
   .mood-product--bottom-blur  { right: 25%; bottom: clamp(80px, 10svh, 160px); width: 62px; }
 
@@ -413,9 +422,10 @@ const layers: Layer[] = [
     gap: 3px;
   }
 
+  /* 中文标签使用中文手写体（font-art：马善政楷体系） */
   .mood-product-label {
-    font-family: var(--font-hand);
-    font-size: 22px;
+    font-family: var(--font-art);
+    font-size: 20px;
     line-height: 1;
     color: var(--color-ink);
   }
@@ -463,6 +473,7 @@ const layers: Layer[] = [
   /* ===== 关闭动效：全部直接显示、无位移 ===== */
   @media (prefers-reduced-motion: reduce) {
     .mood-title,
+    .mood-sub,
     .mood-btn {
       opacity: 1;
       transform: none;

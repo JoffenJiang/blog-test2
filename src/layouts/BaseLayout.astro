@@ -13,12 +13,14 @@ interface Props {
   title?: string;
   description?: string;
   headerVariant?: "solid" | "overlay";
+  headerTone?: "bg" | "white";
 }
 
 const {
   title,
   description = SITE_DESCRIPTION,
   headerVariant = "solid",
+  headerTone = "bg",
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 ---
@@ -44,7 +46,7 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
     </script>
   </head>
   <body class="flex min-h-screen flex-col overflow-x-hidden bg-bg font-sans text-ink">
-    <Header variant={headerVariant} />
+    <Header variant={headerVariant} tone={headerTone} />
     <main class="flex-1">
       <slot />
     </main>

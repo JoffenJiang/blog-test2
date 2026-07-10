@@ -4,14 +4,16 @@
  * 视频首屏 → 散落式内容入口 → 暗色职业发展卡片区 → 技能文章卡片区 → 资源库 CTA
  * 素材缺失时使用渐变占位，替换 public/media 下的文件即可
  */
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PillButton from "../components/PillButton.astro";
-import SectionTitle from "../components/SectionTitle.astro";
 import Media from "../components/Media.astro";
 import MoodProductsSection from "../components/MoodProductsSection.astro";
-import { posts } from "../data/posts";
 
-const featured = posts.filter((p) => p.featured);
+/* 首页精选：技能干货集合里 featured 的 4 篇 */
+const featuredSkillPosts = (await getCollection("skills"))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout headerVariant="overlay">
@@ -44,11 +46,11 @@ const featured = posts.filter((p) => p.featured);
             在真实问题里学习，<br />在生活缝隙里记录。
           </h1>
           <p class="mt-5 max-w-[600px] text-[14px] leading-[1.9] text-white/85 md:text-[15px]">
-            我是蒋永芳。这里记录我的职业发展、技能学习、资源沉淀和生活碎片。从政企项目到企业数字化，从市场活动到产品流程，从工具学习到日常观察，我想把一路实践的经验、方法和灵感，慢慢放在这里。
+            这里记录我的职业发展、技能学习、资源沉淀和生活碎片。从政企项目到企业数字化，从市场活动到产品流程，从工具学习到日常观察，我想把一路实践的经验、方法和灵感，慢慢放在这里。
           </p>
         </div>
         <div class="shrink-0">
-          <PillButton href="/videos">更多视频</PillButton>
+          <PillButton href="/videos" variant="hero" icon="play" label="更多视频" />
         </div>
       </div>
     </div>
@@ -70,12 +72,12 @@ const featured = posts.filter((p) => p.featured);
         从连接到重构
       </p>
       <div data-reveal class="career-card mt-8">
-        <h2 class="font-serif text-[32px] font-bold md:text-[42px]">职业发展</h2>
+        <h2 class="font-serif text-[30px] font-bold md:text-[36px]">职业发展</h2>
         <p class="mx-auto mt-4 max-w-[560px] text-[15px] leading-[1.9] text-ink/70">
           第一份工作让我学会连接政府、企业、高校、创业者与产业资源；第二份工作让我走进企业内部，学习如何拆解流程、明确责任、沉淀标准，并推动系统真正跑起来。
         </p>
         <div class="mt-7 flex justify-center">
-          <PillButton href="/career">了解更多</PillButton>
+          <PillButton href="/career" label="了解更多" />
         </div>
         <div class="career-card-media">
           <Media src="/media/career-card.jpg" ph="warm" class="h-full w-full" />
@@ -84,21 +86,22 @@ const featured = posts.filter((p) => p.featured);
     </div>
   </section>
 
-  <!-- ===== 4. Skill Stories：技能文章卡片 ===== -->
+  <!-- ===== 4. Skill Stories：技能文章卡片（分类与 /skills 页八大主题一致） ===== -->
   <section class="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-28">
-    <SectionTitle
-      align="center"
-      title="技能干货"
-      subtitle="一些从真实工作里拆出来的方法、流程和工具笔记。"
-    />
+    <div data-reveal class="text-center">
+      <h2 class="font-serif text-[30px] font-bold md:text-[36px]">技能干货</h2>
+      <p class="mt-2 text-[15px] text-muted">
+        一些从真实工作里拆出来的方法、流程和工具笔记。
+      </p>
+    </div>
     <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {
-        featured.map((post) => (
-          <a href="/skills" class="group block rounded-lg bg-[#e4e0d4] p-3">
+        featuredSkillPosts.map((post) => (
+          <a href={`/skills/${post.id}`} class="group block rounded-lg bg-[#e4e0d4] p-3">
             <span class="relative block overflow-hidden rounded-md">
               <Media
-                src={post.cover}
-                ph={post.ph}
+                src={post.data.cover}
+                ph={post.data.ph}
                 class="aspect-[4/3] w-full rounded-md transition-transform duration-500 ease-out group-hover:scale-[0.94]"
               />
               <span class="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink">
@@ -119,15 +122,15 @@ const featured = posts.filter((p) => p.featured);
               </span>
             </span>
             <span class="mt-4 flex items-center justify-between px-1">
-              <span class="rounded-full bg-blue/10 px-3 py-1 text-[12px] font-medium text-blue">
-                {post.category}
+              <span class="rounded-full bg-blue/10 px-2.5 py-[3px] text-[11px] font-medium leading-none text-blue">
+                {post.data.category}
               </span>
               <span class="num text-[11px] uppercase tracking-[0.15em] text-muted">
-                {post.readTime}
+                {post.data.readTime}
               </span>
             </span>
-            <span class="mt-3 block truncate px-1 pb-2 text-[17px] font-semibold leading-snug">
-              {post.title}
+            <span class="mt-3 block truncate px-1 pb-2 text-[15px] font-semibold leading-snug">
+              {post.data.title}
             </span>
           </a>
         ))
@@ -142,15 +145,15 @@ const featured = posts.filter((p) => p.featured);
       class="flex flex-col gap-8 md:flex-row md:items-center md:justify-between"
     >
       <div class="max-w-[640px]">
-        <h2 class="font-serif text-[34px] font-bold leading-[1.35] md:text-[52px]">
+        <h2 class="font-serif text-[30px] font-bold leading-[1.35] md:text-[36px]">
           资源库
         </h2>
-        <p class="mt-4 text-[16px] leading-[1.9] text-muted">
+        <p class="mt-4 text-[15px] leading-[1.9] text-muted">
           我会把工作中反复用到的模板、清单、工具和学习资料整理到这里。
         </p>
       </div>
       <div class="shrink-0">
-        <PillButton href="/resources">到此一游</PillButton>
+        <PillButton href="/resources" label="到此一游" />
       </div>
     </div>
   </section>

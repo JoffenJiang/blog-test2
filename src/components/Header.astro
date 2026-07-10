@@ -10,9 +10,11 @@ import { navItems } from "../data/navigation";
 
 interface Props {
   variant?: "solid" | "overlay";
+  /** 吸顶底色：bg 米白（默认）/ white 纯白（技能干货页） */
+  tone?: "bg" | "white";
 }
 
-const { variant = "solid" } = Astro.props;
+const { variant = "solid", tone = "bg" } = Astro.props;
 const overlay = variant === "overlay";
 
 const normalize = (p: string) =>
@@ -27,16 +29,20 @@ const isActive = (href: string) =>
   class:list={[
     overlay
       ? "absolute inset-x-0 top-0 z-50 text-white"
-      : "sticky top-0 z-50 bg-bg/85 text-ink backdrop-blur-md",
+      : [
+          "sticky top-0 z-50 text-ink backdrop-blur-md",
+          tone === "white" ? "bg-white/90" : "bg-bg/85",
+        ],
   ]}
 >
   <div
     class:list={[
       "mx-auto flex max-w-[1400px] items-center justify-between px-5 md:px-10",
-      overlay ? "h-20" : "h-16",
+      /* overlay：浮在视频首屏上，与视频卡片顶边保持舒适上间距 */
+      overlay ? "h-16 pt-6 md:pt-9" : "h-16",
     ]}
   >
-    <a href="/" class="font-serif text-[19px] font-semibold tracking-wide">蒋永芳</a>
+    <a href="/" class="font-serif text-[19px] font-semibold tracking-wide">Joffen-Blog</a>
 
     <nav class="hidden md:block" aria-label="主导航">
       <ul class="flex items-center gap-7">
