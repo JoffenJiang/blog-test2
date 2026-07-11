@@ -39,8 +39,9 @@
   letter-spacing: 0.12em;
 }
 
-/* ===== 导航 hover 手绘线（蓝色随机线条） =====
+/* ===== 导航 hover 手绘线 =====
  * 只在导航项 hover / focus 时画出，离开即消失
+ * 颜色随导航场景切换：浅色页（header--solid）蓝色；深色视频首屏（header--overlay）白色
  * 桌面端专用（移动端菜单不渲染此 SVG）
  */
 .nav-link .nav-scribble {
@@ -54,6 +55,10 @@
   opacity: 0;
   pointer-events: none;
   color: var(--color-blue);
+}
+
+.header--overlay .nav-link .nav-scribble {
+  color: #fff;
 }
 
 .nav-scribble path {

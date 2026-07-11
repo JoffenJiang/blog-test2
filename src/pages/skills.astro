@@ -214,8 +214,8 @@ const posts = (await getCollection("skills")).sort(
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
     background: var(--color-blue);
     color: #fff;
@@ -228,8 +228,8 @@ const posts = (await getCollection("skills")).sort(
   }
 
   .sk-hero__arrow svg {
-    width: 7px;
-    height: 7px;
+    width: 9px;
+    height: 9px;
   }
 
   @media (max-width: 767px) {
@@ -270,11 +270,12 @@ const posts = (await getCollection("skills")).sort(
     gap: 8px;
   }
 
+  /* 默认无填充（透出页面背景），选中才填蓝色 */
   .sk-cat {
     padding: 5px 16px;
     border-radius: 999px;
     border: 1px solid var(--color-border);
-    background: var(--color-white);
+    background: transparent;
     font-size: 13px;
     line-height: 1.5;
     color: var(--color-ink);

@@ -85,7 +85,7 @@ const gradients: Record<string, string> = {
     --amp: 1;
   }
 
-  /* 照片：无阴影、无白框，尺寸随图片自适应 */
+  /* 照片：白色相纸边框（拍立得式，底边留白更宽），无阴影，尺寸随图片自适应 */
   .career-photo {
     position: absolute;
     left: 50%;
@@ -93,6 +93,9 @@ const gradients: Record<string, string> = {
     z-index: var(--z, 0);
     width: var(--w);
     margin: 0;
+    padding: 7px 7px 26px;
+    background: #fffdf8;
+    border-radius: 2px;
     transform: translate(
         calc(-50% + var(--dx, 0px) * var(--p, 0) * var(--amp)),
         calc(-50% + var(--dy, 0px) * var(--p, 0) * var(--amp))
@@ -105,18 +108,19 @@ const gradients: Record<string, string> = {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 3px;
   }
 
-  /* 图片缺失：隐藏 img，figure 退化为渐变占位（按 --ar 比例） */
+  /* 图片缺失：隐藏 img，相纸内显示渐变占位（按 --ar 比例） */
   .career-photo img.is-missing {
     display: none;
   }
 
-  .career-photo:has(img.is-missing) {
+  .career-photo:has(img.is-missing)::after {
+    content: "";
+    display: block;
     aspect-ratio: var(--ar);
     background: var(--fallback);
-    border-radius: 3px;
+    background-size: cover;
   }
 
   @media (max-width: 639px) {
@@ -197,6 +201,8 @@ const gradients: Record<string, string> = {
 
     if (!reduce) {
       let ticking = false;
+      /* 散开进度只进不退：向上回滚时相片保持散开状态 */
+      let maxP = 0;
 
       const update = () => {
         ticking = false;
@@ -205,7 +211,8 @@ const gradients: Record<string, string> = {
         if (rect.bottom < 0 || rect.top > vh) return;
         const total = Math.max(rect.height - vh, 1);
         const p = Math.min(Math.max(-rect.top / total, 0), 1);
-        stack.style.setProperty("--p", p.toFixed(3));
+        maxP = Math.max(maxP, p);
+        stack.style.setProperty("--p", maxP.toFixed(3));
       };
 
       addEventListener(

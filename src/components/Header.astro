@@ -27,10 +27,11 @@ const isActive = (href: string) =>
 
 <header
   class:list={[
+    /* header--overlay / header--solid：控制 hover 手绘线颜色（深色页黑线 / 浅色页蓝线） */
     overlay
-      ? "absolute inset-x-0 top-0 z-50 text-white"
+      ? "header--overlay absolute inset-x-0 top-0 z-50 text-white"
       : [
-          "sticky top-0 z-50 text-ink backdrop-blur-md",
+          "header--solid sticky top-0 z-50 text-ink backdrop-blur-md",
           tone === "white" ? "bg-white/90" : "bg-bg/85",
         ],
   ]}
@@ -38,11 +39,12 @@ const isActive = (href: string) =>
   <div
     class:list={[
       "mx-auto flex max-w-[1400px] items-center justify-between px-5 md:px-10",
-      /* overlay：浮在视频首屏上，与视频卡片顶边保持舒适上间距 */
-      overlay ? "h-16 pt-6 md:pt-9" : "h-16",
+      /* overlay：浮在视频首屏上，与视频卡片顶边保持 Wildbran 式的大上间距（高度自适应） */
+      overlay ? "pt-10 md:pt-16" : "h-16",
     ]}
   >
-    <a href="/" class="font-serif text-[19px] font-semibold tracking-wide">Joffen-Blog</a>
+    <!-- Logo：马克笔手写体（Caveat，与站内手写批注同款）；overlay 首屏上为白色 -->
+    <a href="/" class="font-hand text-[27px] font-medium leading-none tracking-wide">Joffen-Blog</a>
 
     <nav class="hidden md:block" aria-label="主导航">
       <ul class="flex items-center gap-7">

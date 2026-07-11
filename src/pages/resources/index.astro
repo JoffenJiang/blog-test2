@@ -1,25 +1,17 @@
 ---
 /**
- * /resources 资源库 —— Wildbran Our Products 式横向分组大卡片
- * 首屏：无视频的纯色标题屏（大衬线标题 + 一句说明）
- * 主体：横向滚动分组卡片（桌面端 sticky + 纵向滚动驱动横向推进；移动端原生横滑）
- *   每张卡片：左上衬线标题｜左侧竖排选项卡（缩略图 + 文字，选中棕红底白字）
- *   中间大图（随选项卡切换占位渐变）｜左下三条可展开信息行（蓝色双箭头圆按钮）
- * 文字全部为「我是工具」占位，图片为渐变占位，后续替换内容
+ * /resources 资源库 —— 8 个资源集合横向大卡片 + 详情抽屉
+ *
+ * 主页面负责「浏览」：横向滚动的集合卡片（左上标题、竖排资源条目选项卡、
+ *   中间大图占位、左下蓝色圆形详情入口行）
+ * 抽屉负责「深入」：点击蓝色入口后缩放浮现——左侧内容面板（顶部 tab 条 +
+ *   Key Stats 胶囊 + 分层内容 + 资源卡），右侧灰色蒙版（点击关闭）
+ *
+ * 数据：src/data/resourceGroups.ts（来源：需求/资源库规划.md）
+ * 图片均为渐变占位，后续替换
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
-
-const phs = ["warm", "sage", "blue", "rose"] as const;
-
-/** 4 个分组 × 每组 3 个选项卡；文字统一占位 */
-const groups = phs.map((ph, g) => ({
-  title: "我是工具",
-  tabs: [0, 1, 2].map((t) => ({
-    label: "我是工具",
-    ph: phs[(g + t) % phs.length],
-  })),
-  rows: ["我是工具", "我是工具", "我是工具"],
-}));
+import { resourceGroups } from "../../data/resourceGroups";
 
 const gradients: Record<string, string> = {
   warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
@@ -27,6 +19,8 @@ const gradients: Record<string, string> = {
   blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
   rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
 };
+
+const phs = ["warm", "sage", "blue", "rose"] as const;
 ---
 
 <BaseLayout title="资源库" description="把能复用的工具、模板和方法留下来。">
@@ -40,60 +34,56 @@ const gradients: Record<string, string> = {
     </div>
   </section>
 
-  <!-- ===== 横向分组大卡片 ===== -->
+  <!-- ===== 横向资源集合大卡片 ===== -->
   <section class="res-groups" data-res-groups>
     <div class="res-groups__sticky">
       <div class="res-groups__viewport">
         <div class="res-groups__track" data-res-track>
           {
-            groups.map((group, gi) => (
+            resourceGroups.map((group, gi) => (
               <article class="res-card" data-res-card>
                 <div class="res-card__side">
                   <h2 class="res-card__title font-serif">{group.title}</h2>
 
                   <div class="res-card__tabs" role="tablist">
-                    {group.tabs.map((tab, ti) => (
+                    {group.items.map((item, ti) => (
                       <button
                         type="button"
                         role="tab"
                         class:list={["res-tab", ti === 0 && "is-active"]}
                         aria-selected={ti === 0 ? "true" : "false"}
-                        data-ph={tab.ph}
+                        data-ph={phs[(gi + ti) % phs.length]}
                       >
-                        <span class="res-tab__thumb" style={`background-image:${gradients[tab.ph]}`} />
-                        <span class="res-tab__label">{tab.label}</span>
+                        <span
+                          class="res-tab__thumb"
+                          style={`background-image:${gradients[phs[(gi + ti) % phs.length]]}`}
+                        />
+                        <span class="res-tab__label">{item}</span>
                       </button>
                     ))}
                   </div>
 
                   <div class="res-card__rows">
-                    {group.rows.map((row, ri) => (
-                      <div class="res-row">
-                        <button
-                          type="button"
-                          class="res-row__trigger"
-                          aria-expanded="false"
-                          aria-controls={`res-row-${gi}-${ri}`}
-                        >
-                          <span class="res-row__label">{row}</span>
-                          <span class="res-row__button" aria-hidden="true">
-                            <svg viewBox="0 0 14 10" fill="none">
-                              <path
-                                d="M2 1.5 5.5 5 2 8.5M8 1.5 11.5 5 8 8.5"
-                                stroke="currentColor"
-                                stroke-width="1.6"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-                        <div class="res-row__content" id={`res-row-${gi}-${ri}`} role="region">
-                          <div class="res-row__content-inner">
-                            <p>我是工具</p>
-                          </div>
-                        </div>
-                      </div>
+                    {group.tabs.map((tab, ti) => (
+                      <button
+                        type="button"
+                        class="res-row"
+                        data-drawer-open={group.key}
+                        data-drawer-tab={ti}
+                      >
+                        <span class="res-row__label">{tab.label}</span>
+                        <span class="res-row__button" aria-hidden="true">
+                          <svg viewBox="0 0 14 10" fill="none">
+                            <path
+                              d="M2 1.5 5.5 5 2 8.5M8 1.5 11.5 5 8 8.5"
+                              stroke="currentColor"
+                              stroke-width="1.6"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -101,7 +91,7 @@ const gradients: Record<string, string> = {
                 <div
                   class="res-card__media"
                   data-res-media
-                  style={`background-image:${gradients[group.tabs[0].ph]}`}
+                  style={`background-image:${gradients[group.ph]}`}
                   aria-hidden="true"
                 />
               </article>
@@ -111,6 +101,97 @@ const gradients: Record<string, string> = {
       </div>
     </div>
   </section>
+
+  <!-- ===== 详情抽屉：左侧内容面板 + 右侧灰色蒙版 ===== -->
+  <div class="res-drawer" data-res-drawer hidden>
+    <div class="res-drawer__mask" data-drawer-close></div>
+
+    <aside class="res-drawer__panel" role="dialog" aria-modal="true">
+      {
+        resourceGroups.map((group) => (
+          <div class="res-drawer__group" data-drawer-group={group.key} hidden>
+            <!-- 顶部 tab 条 -->
+            <div class="res-drawer__tabs" role="tablist">
+              {group.tabs.map((tab, ti) => (
+                <button
+                  type="button"
+                  role="tab"
+                  class="res-drawer__tabbtn"
+                  data-tab-btn={ti}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div class="res-drawer__body">
+              <p class="res-drawer__eyebrow">{group.title}</p>
+
+              <h3 class="res-drawer__stats-title font-serif">Key Stats</h3>
+              <div class="res-drawer__stats">
+                {group.stats.map((s) => (
+                  <span class="res-drawer__stat">{s}</span>
+                ))}
+              </div>
+
+              {group.tabs.map((tab, ti) => (
+                <section class="res-drawer__content" data-tab-panel={ti} hidden>
+                  {tab.lead && <p class="res-drawer__lead">{tab.lead}</p>}
+                  {tab.paras?.map((p) => (
+                    <p class="res-drawer__para">{p}</p>
+                  ))}
+                  {tab.steps && (
+                    <ol class="res-drawer__steps">
+                      {tab.steps.map((s) => (
+                        <li>{s}</li>
+                      ))}
+                    </ol>
+                  )}
+                  {tab.resources && (
+                    <div class="res-drawer__resources">
+                      {tab.resources.map((r) => (
+                        <div class="res-drawer__resource">
+                          <p class="res-drawer__resource-name">{r.name}</p>
+                          <dl class="res-drawer__resource-meta">
+                            <div>
+                              <dt>类型</dt>
+                              <dd>{r.type}</dd>
+                            </div>
+                            <div>
+                              <dt>难度</dt>
+                              <dd>{r.level}</dd>
+                            </div>
+                            <div>
+                              <dt>适合</dt>
+                              <dd>{r.fit}</dd>
+                            </div>
+                          </dl>
+                          <p class="res-drawer__resource-note">我的备注：{r.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              ))}
+
+              {group.note && <p class="res-drawer__note">{group.note}</p>}
+            </div>
+          </div>
+        ))
+      }
+
+      <button type="button" class="res-drawer__close" data-drawer-close aria-label="关闭详情">
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M3 3l8 8M11 3l-8 8"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </aside>
+  </div>
 </BaseLayout>
 
 <style>
@@ -140,7 +221,7 @@ const gradients: Record<string, string> = {
     color: rgba(36, 36, 36, 0.65);
   }
 
-  /* ===== 横向分组卡片 ===== */
+  /* ===== 横向集合卡片 ===== */
   .res-groups {
     position: relative;
     background: var(--color-bg);
@@ -176,7 +257,7 @@ const gradients: Record<string, string> = {
     letter-spacing: -0.02em;
   }
 
-  /* 竖排选项卡：白底圆角，选中棕红底白字 */
+  /* 竖排资源条目：白底圆角，选中棕红底白字 */
   .res-card__tabs {
     margin-top: 28px;
     display: flex;
@@ -214,25 +295,26 @@ const gradients: Record<string, string> = {
     color: #fff;
   }
 
-  /* 左下三条可展开信息行 */
+  /* 左下详情入口行：蓝色圆形双箭头 */
   .res-card__rows {
     margin-top: auto;
     padding-top: 32px;
   }
 
   .res-row {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .res-row__trigger {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 14px 0;
+    border-bottom: 1px solid var(--color-border);
     text-align: left;
     cursor: pointer;
+  }
+
+  .res-row:first-child {
+    border-top: 1px solid var(--color-border);
   }
 
   .res-row__label {
@@ -240,7 +322,6 @@ const gradients: Record<string, string> = {
     font-weight: 500;
   }
 
-  /* 蓝色圆形双箭头按钮 */
   .res-row__button {
     display: flex;
     align-items: center;
@@ -254,44 +335,16 @@ const gradients: Record<string, string> = {
     transition: transform 0.3s ease;
   }
 
+  .res-row:hover .res-row__button {
+    transform: scale(1.12);
+  }
+
   .res-row__button svg {
     width: 13px;
     height: 9px;
   }
 
-  .res-row.is-open .res-row__button {
-    transform: rotate(90deg);
-  }
-
-  .res-row__content {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.4s ease;
-  }
-
-  .res-row__content-inner {
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 0.35s ease;
-  }
-
-  .res-row.is-open .res-row__content {
-    grid-template-rows: 1fr;
-  }
-
-  .res-row.is-open .res-row__content-inner {
-    opacity: 1;
-    transition-delay: 0.12s;
-  }
-
-  .res-row__content-inner p {
-    padding-bottom: 16px;
-    font-size: 14px;
-    line-height: 1.8;
-    color: rgba(36, 36, 36, 0.68);
-  }
-
-  /* 中间大图占位：随选项卡切换渐变 */
+  /* 中间大图占位 */
   .res-card__media {
     align-self: center;
     width: 100%;
@@ -301,13 +354,13 @@ const gradients: Record<string, string> = {
     border-radius: 8px;
     background-size: cover;
     background-position: center;
-    transition: background-image 0.3s ease, opacity 0.3s ease;
+    transition: background-image 0.3s ease;
   }
 
   /* ===== 桌面端：sticky + 纵向滚动驱动横向推进 ===== */
   @media (min-width: 768px) {
     .res-groups {
-      height: calc(100vh + var(--track-overflow, 3000px));
+      height: calc(100vh + var(--track-overflow, 7000px));
     }
 
     .res-groups__sticky {
@@ -348,6 +401,227 @@ const gradients: Record<string, string> = {
     }
   }
 
+  /* ===== 详情抽屉 ===== */
+  .res-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .res-drawer[hidden] {
+    display: none;
+  }
+
+  /* 右侧灰色蒙版 */
+  .res-drawer__mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(31, 31, 31, 0.45);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    cursor: pointer;
+  }
+
+  /* 左侧内容面板：缩放 + 滑入浮现 */
+  .res-drawer__panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: min(620px, 100vw);
+    background: var(--color-bg);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateX(-32px) scale(0.96);
+    transform-origin: left center;
+    transition: transform 0.4s cubic-bezier(0.3, 0.6, 0.2, 1), opacity 0.3s ease;
+  }
+
+  .res-drawer.is-open .res-drawer__mask {
+    opacity: 1;
+  }
+
+  .res-drawer.is-open .res-drawer__panel {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* 顶部 tab 条：选中蓝底白字 */
+  .res-drawer__tabs {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+  }
+
+  .res-drawer__tabbtn {
+    flex: 1;
+    padding: 20px 12px;
+    background: #e9e4d8;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-ink);
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .res-drawer__tabbtn.is-active {
+    background: var(--color-blue);
+    color: #fff;
+  }
+
+  .res-drawer__body {
+    padding: 32px clamp(20px, 5vw, 44px) 56px;
+  }
+
+  .res-drawer__eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--color-muted);
+  }
+
+  .res-drawer__stats-title {
+    margin-top: 18px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  .res-drawer__stats {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .res-drawer__stat {
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: var(--color-brown);
+    color: #f8f1ea;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* tab 内容 */
+  .res-drawer__content {
+    margin-top: 32px;
+  }
+
+  .res-drawer__lead {
+    font-size: 16px;
+    font-weight: 600;
+    color: #245bdb;
+    line-height: 1.7;
+  }
+
+  .res-drawer__para {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(36, 36, 36, 0.8);
+  }
+
+  .res-drawer__steps {
+    margin-top: 18px;
+    padding-left: 22px;
+    list-style: decimal;
+  }
+
+  .res-drawer__steps li {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(36, 36, 36, 0.85);
+  }
+
+  /* 资源卡：浅底圆角 */
+  .res-drawer__resources {
+    margin-top: 18px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .res-drawer__resource {
+    background: #eee9df;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .res-drawer__resource-name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .res-drawer__resource-meta {
+    margin-top: 10px;
+    display: grid;
+    gap: 4px;
+  }
+
+  .res-drawer__resource-meta div {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .res-drawer__resource-meta dt {
+    flex-shrink: 0;
+    color: var(--color-muted);
+  }
+
+  .res-drawer__resource-meta dd {
+    color: rgba(36, 36, 36, 0.85);
+  }
+
+  .res-drawer__resource-note {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #245bdb;
+  }
+
+  /* 固定提示（财税合规免责） */
+  .res-drawer__note {
+    margin-top: 32px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--color-brown);
+    background: #efe9dd;
+    border-radius: 0 8px 8px 0;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: rgba(36, 36, 36, 0.75);
+  }
+
+  /* 关闭按钮：蓝色圆形 ×，悬浮在面板右缘中部 */
+  .res-drawer__close {
+    position: fixed;
+    left: min(620px, calc(100vw - 24px));
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .res-drawer__close:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .res-drawer__close svg {
+    width: 15px;
+    height: 15px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .res-groups {
       height: auto;
@@ -362,9 +636,8 @@ const gradients: Record<string, string> = {
       overflow-x: auto;
     }
 
-    .res-row__content,
-    .res-row__content-inner,
-    .res-row__button {
+    .res-drawer__mask,
+    .res-drawer__panel {
       transition: none;
     }
   }
@@ -420,7 +693,7 @@ const gradients: Record<string, string> = {
     update();
   }
 
-  // ===== 选项卡切换：换中间大图占位渐变 =====
+  // ===== 资源条目选项卡：切换中间大图占位渐变 =====
   const gradientMap: Record<string, string> = {
     warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
     sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
@@ -446,12 +719,59 @@ const gradients: Record<string, string> = {
     }
   });
 
-  // ===== 信息行展开 / 收起 =====
-  document.querySelectorAll<HTMLElement>(".res-row").forEach((row) => {
-    const trigger = row.querySelector<HTMLButtonElement>(".res-row__trigger");
-    trigger?.addEventListener("click", () => {
-      const open = row.classList.toggle("is-open");
-      trigger.setAttribute("aria-expanded", String(open));
+  // ===== 详情抽屉：打开 / 关闭 / tab 切换 =====
+  const drawer = document.querySelector<HTMLElement>("[data-res-drawer]");
+
+  if (drawer) {
+    const groups = [...drawer.querySelectorAll<HTMLElement>("[data-drawer-group]")];
+
+    const activateTab = (group: HTMLElement, index: number) => {
+      group.querySelectorAll<HTMLButtonElement>("[data-tab-btn]").forEach((b) => {
+        b.classList.toggle("is-active", Number(b.dataset.tabBtn) === index);
+      });
+      group.querySelectorAll<HTMLElement>("[data-tab-panel]").forEach((p) => {
+        p.hidden = Number(p.dataset.tabPanel) !== index;
+      });
+    };
+
+    const open = (key: string, tabIndex: number) => {
+      for (const g of groups) g.hidden = g.dataset.drawerGroup !== key;
+      const group = groups.find((g) => g.dataset.drawerGroup === key);
+      if (group) activateTab(group, tabIndex);
+      drawer.hidden = false;
+      document.body.style.overflow = "hidden";
+      requestAnimationFrame(() => drawer.classList.add("is-open"));
+      drawer.querySelector<HTMLElement>(".res-drawer__panel")?.scrollTo(0, 0);
+    };
+
+    const close = () => {
+      drawer.classList.remove("is-open");
+      document.body.style.overflow = "";
+      setTimeout(() => {
+        drawer.hidden = true;
+      }, 380);
+    };
+
+    /* 卡片入口行 → 打开对应集合与 tab */
+    document.querySelectorAll<HTMLButtonElement>("[data-drawer-open]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        open(btn.dataset.drawerOpen || "", Number(btn.dataset.drawerTab || 0));
+      });
     });
-  });
+
+    /* 面板内 tab 切换 */
+    for (const group of groups) {
+      group.querySelectorAll<HTMLButtonElement>("[data-tab-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => activateTab(group, Number(btn.dataset.tabBtn)));
+      });
+    }
+
+    /* 蒙版 / 关闭按钮 / Esc 关闭 */
+    drawer.querySelectorAll<HTMLElement>("[data-drawer-close]").forEach((el) => {
+      el.addEventListener("click", close);
+    });
+    addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !drawer.hidden) close();
+    });
+  }
 </script>
