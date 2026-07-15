@@ -1,27 +1,26 @@
 ---
 /**
  * Footer —— 页脚
- * 小红书 / 邮箱先用文字占位，不放假链接
- * 无上方分割线，靠底色区分
+ * 底色与页面背景一致（米白页 bg / 白色页 white），上下 padding 94px
+ * 左列：导航栏目；右列：邮箱 / 小红书 / Instagram（先文字占位，不放假链接）
  */
-import { footerNav } from "../data/navigation";
-import { SITE_TAGLINE } from "../data/site";
+import { navItems } from "../data/navigation";
 
-const year = new Date().getFullYear();
+interface Props {
+  /** 与页面背景一致：bg 米白（默认）/ white 纯白 */
+  tone?: "bg" | "white";
+}
+
+const { tone = "bg" } = Astro.props;
 ---
 
-<footer class="bg-card/60">
-  <div class="mx-auto max-w-[1400px] px-5 py-12 md:px-10 md:py-16">
+<footer class:list={[tone === "white" ? "bg-white" : "bg-bg"]}>
+  <div class="mx-auto max-w-[1400px] px-5 py-[94px] md:px-10">
     <div class="flex flex-col gap-10 md:flex-row md:justify-between">
-      <div class="max-w-xs">
-        <p class="font-serif text-lg font-semibold">蒋永芳的个人博客</p>
-        <p class="mt-2 text-[14px] leading-relaxed text-muted">{SITE_TAGLINE}</p>
-      </div>
-
       <nav aria-label="页脚导航">
-        <ul class="grid grid-cols-2 gap-x-12 gap-y-3 text-[15px]">
+        <ul class="space-y-3 text-[15px]">
           {
-            footerNav.map((item) => (
+            navItems.map((item) => (
               <li>
                 <a href={item.href} class="text-ink/80 transition-colors hover:text-ink">
                   {item.label}
@@ -32,14 +31,11 @@ const year = new Date().getFullYear();
         </ul>
       </nav>
 
-      <div class="space-y-2 text-[14px] text-muted">
-        <p>小红书：链接整理中</p>
-        <p>邮箱：联系方式整理中</p>
+      <div class="space-y-3 text-[15px] text-ink/80 md:text-right">
+        <p>邮箱：整理中</p>
+        <p>小红书：整理中</p>
+        <p>Instagram：整理中</p>
       </div>
     </div>
-
-    <p class="mt-12 text-[13px] text-muted">
-      © {year} 蒋永芳 · 用 Astro 搭建
-    </p>
   </div>
 </footer>

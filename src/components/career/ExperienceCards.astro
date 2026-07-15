@@ -99,9 +99,12 @@ const cards = [
     height: 150vh;
   }
 
-  /* ===== 卡片内部：Wildbran 文章页式左对齐长文 ===== */
+  /* ===== 卡片内部：Wildbran 文章页式左对齐长文 =====
+   * 文章列整体在卡片内水平居中（左右留白相等），文字本身左对齐 */
   .exp-article-header,
   .exp-article-body {
+    max-width: 800px;
+    margin-inline: auto;
     text-align: left;
   }
 
@@ -132,7 +135,6 @@ const cards = [
 
   /* 正文统一 15px，行间距 / 字间距 auto */
   .exp-article-body {
-    max-width: 800px;
     margin-top: clamp(44px, 5vw, 64px);
     font-size: 15px;
     line-height: normal;

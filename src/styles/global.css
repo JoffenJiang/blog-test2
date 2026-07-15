@@ -81,6 +81,15 @@
   stroke-dashoffset: 0;
 }
 
+/* 当前页：手绘线常驻（无需 hover 即完整画出） */
+.nav-link.is-current .nav-scribble {
+  opacity: 1;
+}
+
+.nav-link.is-current .nav-scribble path {
+  stroke-dashoffset: 0;
+}
+
 /* ===== Section 进场：淡入 + 轻微上移，只播一次 ===== */
 .js [data-reveal] {
   opacity: 0;

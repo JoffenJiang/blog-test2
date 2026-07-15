@@ -70,12 +70,12 @@ const layers: Layer[] = [
 <section
   data-mood-section
   class="mood-products-section"
-  aria-label="趣味杂货铺"
+  aria-label="时光日札"
 >
   <div class="mood-products-canvas">
     <!-- 视觉中心：标题 + 按钮（居中在首屏 100svh 内） -->
     <div class="mood-center">
-      <h2 class="mood-title font-serif font-bold">趣味杂货铺</h2>
+      <h2 class="mood-title font-serif font-bold">时光日札</h2>
       <p class="mood-sub">收集我的日常，工作、拍照、汉服、旅行和美食都有一点。</p>
       <div class="mood-btn mt-8">
         <PillButton href="/notes" label="来看看吧" />
@@ -145,6 +145,8 @@ const layers: Layer[] = [
     z-index: 1;
     background: var(--color-bg);
     min-height: calc(100svh + var(--mood-exit-buffer));
+    /* 与上一板块（视频首屏）保留的距离 = 底部退场留白，与下方职业发展板块的间距一致 */
+    margin-top: var(--mood-exit-buffer);
     overflow-x: clip;
     overflow-y: visible;
   }
@@ -153,7 +155,11 @@ const layers: Layer[] = [
     position: relative;
     min-height: calc(100svh + var(--mood-exit-buffer));
     background: var(--color-bg);
-    overflow: hidden;
+    /* 只裁横向（收住 left-bar / right-cracker 的两侧溢出），
+     * 纵向放开：避免顶部装饰（top-blur / energy-ball）在 canvas 上边缘
+     * 被 overflow:hidden 削出一条突兀的硬直线 */
+    overflow-x: clip;
+    overflow-y: visible;
     display: flex;
     align-items: flex-start;
     justify-content: center;

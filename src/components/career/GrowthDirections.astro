@@ -2,7 +2,7 @@
 /**
  * GrowthDirections —— 五个能力步骤卡片 + 调侃总结卡（Wildbran hsteps 式）
  *
- * 六张卡片版式各异、宽高不一（棕红 / 米灰交替，最后一张克莱因蓝）：
+ * 六张卡片版式各异、宽度不一但统一为低矮横向比例（棕红 / 米灰交替，最后一张克莱因蓝）：
  *   1 宽幅棕卡：右上小字说明，中间占位图溢出下边缘，左下衬线大字，右下 Step 1
  *   2 竖幅米卡：左上 Step 2 + 蓝色手绘对话气泡，中下棕色衬线大字 + 手写小注
  *   3 宽幅棕卡：左上白色衬线大字，右上 Step 3，左下小字，拍立得溢出上边缘，圆件溢出右边缘
@@ -20,23 +20,23 @@
   <div class="career-growth__sticky">
     <div class="career-growth__viewport">
       <div class="career-growth__track" data-growth-track>
-        <!-- ===== Step 1：经营意识（宽幅棕卡） ===== -->
+        <!-- ===== Step 1：商业判断与决策力（宽幅棕卡） ===== -->
         <article class="gd-card gd-card--one">
-          <p class="gd-kicker">经营意识</p>
+          <p class="gd-kicker">商业判断与决策力</p>
           <p class="gd-desc gd-card--one__desc">
-            从项目视角走到经营视角：理解企业怎么赚钱、怎么增长、怎么控成本，看见每一个管理动作背后的商业意义。
+            看懂一门生意靠什么赚钱、成本卡在哪里、增长能走多远；信息不完整时敢做选择、拍板推进，判断偏差时也能快速止损、及时修正。
           </p>
           <span class="gd-ph gd-card--one__img" data-pstep="0.5" aria-hidden="true"></span>
           <div class="gd-card--one__foot">
-            <h3 class="gd-h3">别只埋头干活，<br />抬头看看钱从哪来、往哪去。</h3>
-            <span class="gd-step font-hand">Step 1</span>
+            <h3 class="gd-h3">这是所有能力的“总开关”。</h3>
+            <span class="gd-step font-hand">No. 1</span>
           </div>
         </article>
 
-        <!-- ===== Step 2：系统化管理（竖幅米卡 + 气泡涂鸦） ===== -->
+        <!-- ===== Step 2：财务与风险意识（竖幅米卡 + 气泡涂鸦） ===== -->
         <article class="gd-card gd-card--two">
           <div class="gd-card--two__top">
-            <span class="gd-step gd-step--dark font-hand">Step 2</span>
+            <span class="gd-step gd-step--dark font-hand">No. 2</span>
             <div class="gd-bubble" aria-hidden="true">
               <svg viewBox="0 0 110 64" fill="none">
                 <path
@@ -47,56 +47,76 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span class="gd-hand">又双叒<br />起火了？</span>
+              <span class="gd-hand">这个月复式<br />记账了吗？</span>
             </div>
           </div>
-          <p class="gd-note font-art">（先把灭火器放下…）</p>
-          <h3 class="gd-h3 gd-h3--brown">救火英雄很酷，<br />但防火系统更酷。</h3>
+          <p class="gd-note font-art">财务与风险意识</p>
+          <span class="gd-arrow-up" aria-hidden="true">
+            <svg viewBox="0 0 24 44" fill="none">
+              <path d="M5 42 C 1 36, 3 27, 11 28 C 17 29, 15 18, 13 5" />
+              <path d="M7 12 L13 3 L19 11" />
+            </svg>
+          </span>
+          <h3 class="gd-h3 gd-h3--brown">一个懂得管理自己财务边界的人，更容易理解企业为什么要有边界。</h3>
         </article>
 
-        <!-- ===== Step 3：产品与数字化（宽幅棕卡 + 溢出件） ===== -->
+        <!-- ===== Step 3：持续学习力（宽幅棕卡 + 溢出件） ===== -->
         <article class="gd-card gd-card--three">
           <span class="gd-polaroid gd-card--three__polaroid" data-pstep="0.35" aria-hidden="true">
             <span class="gd-polaroid__img"></span>
           </span>
           <span class="gd-ph-round gd-card--three__piece" aria-hidden="true"></span>
           <div class="gd-card--three__head">
-            <h3 class="gd-h3">工具会过时，<br />判断力不会。</h3>
-            <span class="gd-step font-hand">Step 3</span>
+            <h3 class="gd-h3">工具会过期，<br />学习力不会折旧。</h3>
+            <span class="gd-step font-hand">No. 3</span>
+          </div>
+          <div class="gd-card--three__note">
+            <span class="gd-hand-note font-art">持续学习力</span>
+            <svg class="gd-note-arrow" viewBox="0 0 32 26" fill="none" aria-hidden="true">
+              <path d="M30 3 C 26 12, 18 18, 6 19" />
+              <path d="M12 14 L5 19.5 L11 23" />
+            </svg>
           </div>
           <p class="gd-desc gd-card--three__desc">
-            不止会用工具，更要判断什么样的工具适合什么样的业务场景，让数字化和 AI 真正提升组织效率。
+            今天的“熟练技能”，可能很快就会过时；<br />但一个会学习的人，永远有重新出发的能力。
           </p>
         </article>
 
-        <!-- ===== Step 4：团队管理与组织协同（中幅米卡） ===== -->
+        <!-- ===== Step 4：沟通与谈判力（中幅米卡） ===== -->
         <article class="gd-card gd-card--four">
           <span class="gd-ph-round gd-card--four__img" data-pstep="0.45" aria-hidden="true"></span>
+          <div class="gd-card--four__callout" aria-hidden="true">
+            <span class="gd-hand-note font-art">沟通与谈判能力</span>
+            <svg viewBox="0 0 52 44" fill="none">
+              <path d="M45 4 C 43 17, 34 27, 18 33" />
+              <path d="M25 24 L16 34 L27 37" />
+            </svg>
+          </div>
           <div class="gd-card--four__foot">
             <h3 class="gd-h3 gd-h3--brown">
-              一个人的优秀是及格线，<br />一群人的靠谱才是分数线。
+              沟通不是把话说完，<br />而是把事情谈成。
             </h3>
-            <span class="gd-step gd-step--dark font-hand">Step 4</span>
+            <span class="gd-step gd-step--dark font-hand">No. 4</span>
           </div>
         </article>
 
-        <!-- ===== Step 5：财务、合规与风险（宽幅棕卡） ===== -->
+        <!-- ===== Step 5：企业经营意识（宽幅棕卡） ===== -->
         <article class="gd-card gd-card--five">
           <div class="gd-card--five__head">
-            <h3 class="gd-h3">跑得快很重要，<br />刹车灵才敢加速。</h3>
-            <span class="gd-step font-hand">Step 5</span>
+            <h3 class="gd-h3">别只埋头干活，<br />抬头看看钱从哪来、又往哪去。</h3>
+            <span class="gd-step font-hand">No. 5</span>
           </div>
           <span class="gd-ph gd-card--five__img" data-pstep="0.4" aria-hidden="true"></span>
           <p class="gd-desc gd-card--five__desc">
-            企业发展不能只看速度，也要看边界。成熟的管理者既要把业务做起来，也要让业务稳健、可持续地走下去。
+            从项目视角走向经营视角，不只关心任务有没有完成，更追问：这件事创造了什么价值？是带来收入还是节省成本？推动增长还是降低风险？看见每个管理动作背后的商业意义。
           </p>
         </article>
 
         <!-- ===== 第六张：调侃总结卡（克莱因蓝） ===== -->
         <article class="gd-card gd-card--six">
-          <h3 class="gd-h3">很简单。<br />不过是五个能力而已。</h3>
+          <h3 class="gd-h3">方向在线，进度随缘。</h3>
           <p class="gd-desc gd-card--six__desc">
-            练完大概……只需要一整个职业生涯。
+            人生不是竞速游戏，偶尔挂机没关系，只要主线任务还记得。
           </p>
           <span class="gd-polaroid gd-card--six__polaroid" data-pstep="0.3" aria-hidden="true">
             <span class="gd-polaroid__img gd-polaroid__img--blue"></span>
@@ -111,6 +131,9 @@
   .career-growth {
     position: relative;
     background: var(--color-bg);
+    /* 与上方「未来的自己」板块的间距收窄 */
+    margin-top: clamp(40px, 6vh, 72px);
+    --gd-card-height: clamp(440px, 54vh, 620px);
   }
 
   .career-growth__track {
@@ -212,8 +235,8 @@
 
   /* ===== Step 1：宽幅棕卡（图溢出下边缘） ===== */
   .gd-card--one {
-    width: min(80vw, 1150px);
-    height: min(56vh, 560px);
+    width: min(84vw, 1320px);
+    height: var(--gd-card-height);
     background: var(--color-brown);
     padding: clamp(24px, 2.6vw, 40px);
     display: flex;
@@ -248,8 +271,8 @@
 
   /* ===== Step 2：竖幅米卡 ===== */
   .gd-card--two {
-    width: min(46vw, 620px);
-    height: min(56vh, 560px);
+    width: min(56vw, 820px);
+    height: var(--gd-card-height);
     background: #e5e1d6;
     padding: clamp(24px, 2.6vw, 40px);
     display: flex;
@@ -289,10 +312,32 @@
     margin-top: 10px;
   }
 
+  /* 手绘向上箭头：连接「财务与风险意识」小注与下方标题（蓝色涂鸦风，同站内箭头语言） */
+  .gd-arrow-up {
+    align-self: flex-end;
+    width: 22px;
+    margin: 4px 26px 2px 0;
+    color: var(--color-blue);
+  }
+
+  .gd-arrow-up svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .gd-arrow-up path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   /* ===== Step 3：宽幅棕卡（拍立得溢出上边缘、圆件溢出右边缘） ===== */
   .gd-card--three {
-    width: min(72vw, 980px);
-    height: min(56vh, 560px);
+    width: min(78vw, 1120px);
+    height: var(--gd-card-height);
     background: var(--color-brown);
     padding: clamp(24px, 2.6vw, 40px);
     display: flex;
@@ -331,10 +376,38 @@
     color: rgba(248, 241, 234, 0.85);
   }
 
+  /* Step 3 标题下的手写主题批注 + 手绘箭头（浅色，落在深棕卡上） */
+  .gd-card--three__note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    color: #f8f1ea;
+  }
+
+  .gd-card--three__note .gd-hand-note {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .gd-note-arrow {
+    width: 30px;
+    height: auto;
+    color: #f8f1ea;
+  }
+
+  .gd-note-arrow path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   /* ===== Step 4：中幅米卡（圆件溢出上边缘） ===== */
   .gd-card--four {
-    width: min(54vw, 720px);
-    height: min(56vh, 560px);
+    width: min(62vw, 880px);
+    height: var(--gd-card-height);
     background: #e5e1d6;
     padding: clamp(24px, 2.6vw, 40px);
     display: flex;
@@ -350,6 +423,36 @@
     aspect-ratio: 1;
   }
 
+  .gd-card--four__callout {
+    position: absolute;
+    left: 56%;
+    bottom: clamp(132px, 16vh, 172px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--color-blue);
+  }
+
+  .gd-card--four__callout .gd-hand-note {
+    font-size: 18px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .gd-card--four__callout svg {
+    width: 44px;
+    height: auto;
+    margin-top: 4px;
+  }
+
+  .gd-card--four__callout path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .gd-card--four__foot {
     margin-top: auto;
     display: flex;
@@ -360,8 +463,8 @@
 
   /* ===== Step 5：宽幅棕卡 ===== */
   .gd-card--five {
-    width: min(68vw, 920px);
-    height: min(56vh, 560px);
+    width: min(76vw, 1080px);
+    height: var(--gd-card-height);
     background: var(--color-brown);
     padding: clamp(24px, 2.6vw, 40px);
     display: flex;
@@ -394,8 +497,8 @@
 
   /* ===== 第六张：克莱因蓝调侃卡 ===== */
   .gd-card--six {
-    width: min(60vw, 820px);
-    height: min(56vh, 560px);
+    width: min(68vw, 960px);
+    height: var(--gd-card-height);
     background: var(--color-blue);
     padding: clamp(28px, 3vw, 48px);
     display: flex;
@@ -443,15 +546,26 @@
       padding: 90px 40px;
       will-change: transform;
     }
+
+    /* 轨道保持视口正中；上下留白由 track 的对称 padding 提供 */
+    .career-growth__viewport {
+      width: 100%;
+      translate: none;
+    }
   }
 
   /* ===== 移动端：原生横向滚动 + snap ===== */
   @media (max-width: 767px) {
+    .career-growth {
+      margin-top: 64px;
+    }
+
     .career-growth__viewport {
       overflow-x: auto;
       overflow-y: visible;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      translate: none;
     }
 
     .career-growth__track {

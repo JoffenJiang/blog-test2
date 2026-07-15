@@ -21,8 +21,10 @@
   --color-warm: #e8dccb;
   --color-brown: #8a3f32;
 
-  --font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
-    sans-serif;
+  /* 英文优先 Helvetica Neue（无中文字形，自动落到中文字体渲染 CJK），
+   * 中文用思源黑体（Source Han Sans CN，Web 端等价字体 Noto Sans SC） */
+  --font-sans: "Helvetica Neue", "Source Han Sans CN", "Noto Sans SC",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
     serif;
   --font-hand: Caveat, "Bradley Hand", "Comic Sans MS", cursive;

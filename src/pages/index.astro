@@ -18,7 +18,7 @@ const featuredSkillPosts = (await getCollection("skills"))
 
 <BaseLayout headerVariant="overlay">
   <!-- ===== 1. Hero Video：沉浸式视频首屏，导航浮在上方 ===== -->
-  <section class="px-3 pt-3 md:px-4 md:pt-4">
+  <section data-header-overlay-zone class="px-3 pt-3 md:px-4 md:pt-4">
     <div class="relative h-[92vh] min-h-[560px] overflow-hidden rounded-[24px] md:rounded-[32px]">
       <Media ph="dark" class="absolute inset-0" />
       <video
@@ -89,9 +89,9 @@ const featuredSkillPosts = (await getCollection("skills"))
   <!-- ===== 4. Skill Stories：技能文章卡片（分类与 /skills 页八大主题一致） ===== -->
   <section class="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-28">
     <div data-reveal class="text-center">
-      <h2 class="font-serif text-[30px] font-bold md:text-[36px]">技能干货</h2>
+      <h2 class="font-serif text-[30px] font-bold md:text-[36px]">知识花园</h2>
       <p class="mt-2 text-[15px] text-muted">
-        一些从真实工作里拆出来的方法、流程和工具笔记。
+        打破信息壁垒，向外拓宽边界。
       </p>
     </div>
     <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
