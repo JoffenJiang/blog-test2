@@ -1,50 +1,127 @@
 ---
 /**
- * GrowthDirections —— 五个能力步骤卡片（Wildbran 5 Steps 式横向卡片）
- * 桌面端：sticky 舞台，纵向滚动驱动横向推进（scrub）
- * 移动端（<768px）：原生横向滚动 + scroll-snap
+ * GrowthDirections —— 五个能力步骤卡片 + 调侃总结卡（Wildbran hsteps 式）
  *
- * 卡片版式：大色块（棕红 / 米灰交替）
- *   左上：能力名 kicker ｜ 右上：小字说明
- *   中间：漂浮的灰色占位形状（后续可替换为图片）
- *   左下：衬线大字主文案 ｜ 右下：手写体 Step N
+ * 六张卡片版式各异、宽度不一但统一为低矮横向比例（棕红 / 米灰交替，最后一张克莱因蓝）：
+ *   1 宽幅棕卡：右上小字说明，中间占位图溢出下边缘，左下衬线大字，右下 Step 1
+ *   2 竖幅米卡：左上 Step 2 + 蓝色手绘对话气泡，中下棕色衬线大字 + 手写小注
+ *   3 宽幅棕卡：左上白色衬线大字，右上 Step 3，左下小字，拍立得溢出上边缘，圆件溢出右边缘
+ *   4 中幅米卡：占位圆件溢出上边缘，底部衬线大字 + Step 4
+ *   5 宽幅棕卡：左上衬线字 + 右上 Step 5，中间占位图，左下小字
+ *   6 蓝色调侃卡：白色衬线大字 + 左下小字 + 右侧歪斜拍立得
+ *
+ * 桌面端：sticky 舞台，纵向滚动驱动横向推进（横向滚完页面才继续下滚）
+ * 移动端：原生横向滚动 + scroll-snap
+ * 占位图（.gd-ph*）后续可换成真实图片
  */
-import { growthSteps } from "../../data/career";
-
-/** 每张卡片中间占位形状的轮廓（模拟不同零食形状） */
-const shapes = [
-  "border-radius: 50%; aspect-ratio: 1 / 1.45; rotate: 24deg;",
-  "border-radius: 16px; aspect-ratio: 1; rotate: -12deg;",
-  "border-radius: 58% 42% 55% 45% / 48% 55% 45% 52%; aspect-ratio: 1 / 0.92; rotate: 8deg;",
-  "border-radius: 20px; aspect-ratio: 2.2 / 1; rotate: -18deg;",
-  "border-radius: 50%; aspect-ratio: 1; rotate: 0deg;",
-];
 ---
 
 <section class="career-growth" data-growth>
   <div class="career-growth__sticky">
     <div class="career-growth__viewport">
       <div class="career-growth__track" data-growth-track>
-        {
-          growthSteps.map((s, i) => (
-            <article
-              class="career-growth-card"
-              style={`--card-bg:${s.bg};--card-fg:${s.fg};--card-fg-muted:${s.fgMuted}`}
-            >
-              <div class="career-growth-card__top">
-                <p class="career-growth-card__kicker num">{s.title}</p>
-                <p class="career-growth-card__desc">{s.desc}</p>
-              </div>
+        <!-- ===== Step 1：商业判断与决策力（宽幅棕卡） ===== -->
+        <article class="gd-card gd-card--one">
+          <p class="gd-kicker">商业判断与决策力</p>
+          <p class="gd-desc gd-card--one__desc">
+            看懂一门生意靠什么赚钱、成本卡在哪里、增长能走多远；信息不完整时敢做选择、拍板推进，判断偏差时也能快速止损、及时修正。
+          </p>
+          <span class="gd-ph gd-card--one__img" data-pstep="0.5" aria-hidden="true"></span>
+          <div class="gd-card--one__foot">
+            <h3 class="gd-h3">这是所有能力的“总开关”。</h3>
+            <span class="gd-step font-hand">No. 1</span>
+          </div>
+        </article>
 
-              <span class="career-growth-card__shape floaty" style={shapes[i]} aria-hidden="true" />
+        <!-- ===== Step 2：财务与风险意识（竖幅米卡 + 气泡涂鸦） ===== -->
+        <article class="gd-card gd-card--two">
+          <div class="gd-card--two__top">
+            <span class="gd-step gd-step--dark font-hand">No. 2</span>
+            <div class="gd-bubble" aria-hidden="true">
+              <svg viewBox="0 0 110 64" fill="none">
+                <path
+                  d="M14 8 C 40 -2, 96 2, 103 22 C 108 40, 84 56, 48 55 C 38 55, 30 53, 22 50 L 6 60 L 12 44 C 4 36, 4 16, 14 8 Z"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="gd-hand">这个月复式<br />记账了吗？</span>
+            </div>
+          </div>
+          <p class="gd-note font-art">财务与风险意识</p>
+          <span class="gd-arrow-up" aria-hidden="true">
+            <svg viewBox="0 0 24 44" fill="none">
+              <path d="M5 42 C 1 36, 3 27, 11 28 C 17 29, 15 18, 13 5" />
+              <path d="M7 12 L13 3 L19 11" />
+            </svg>
+          </span>
+          <h3 class="gd-h3 gd-h3--brown">一个懂得管理自己财务边界的人，更容易理解企业为什么要有边界。</h3>
+        </article>
 
-              <div class="career-growth-card__foot">
-                <h3 class="career-growth-card__main font-serif">{s.main}</h3>
-                <span class="career-growth-card__step font-hand">Step {s.num}</span>
-              </div>
-            </article>
-          ))
-        }
+        <!-- ===== Step 3：持续学习力（宽幅棕卡 + 溢出件） ===== -->
+        <article class="gd-card gd-card--three">
+          <span class="gd-polaroid gd-card--three__polaroid" data-pstep="0.35" aria-hidden="true">
+            <span class="gd-polaroid__img"></span>
+          </span>
+          <span class="gd-ph-round gd-card--three__piece" aria-hidden="true"></span>
+          <div class="gd-card--three__head">
+            <h3 class="gd-h3">工具会过期，<br />学习力不会折旧。</h3>
+            <span class="gd-step font-hand">No. 3</span>
+          </div>
+          <div class="gd-card--three__note">
+            <span class="gd-hand-note font-art">持续学习力</span>
+            <svg class="gd-note-arrow" viewBox="0 0 32 26" fill="none" aria-hidden="true">
+              <path d="M30 3 C 26 12, 18 18, 6 19" />
+              <path d="M12 14 L5 19.5 L11 23" />
+            </svg>
+          </div>
+          <p class="gd-desc gd-card--three__desc">
+            今天的“熟练技能”，可能很快就会过时；<br />但一个会学习的人，永远有重新出发的能力。
+          </p>
+        </article>
+
+        <!-- ===== Step 4：沟通与谈判力（中幅米卡） ===== -->
+        <article class="gd-card gd-card--four">
+          <span class="gd-ph-round gd-card--four__img" data-pstep="0.45" aria-hidden="true"></span>
+          <div class="gd-card--four__callout" aria-hidden="true">
+            <span class="gd-hand-note font-art">沟通与谈判能力</span>
+            <svg viewBox="0 0 52 44" fill="none">
+              <path d="M45 4 C 43 17, 34 27, 18 33" />
+              <path d="M25 24 L16 34 L27 37" />
+            </svg>
+          </div>
+          <div class="gd-card--four__foot">
+            <h3 class="gd-h3 gd-h3--brown">
+              沟通不是把话说完，<br />而是把事情谈成。
+            </h3>
+            <span class="gd-step gd-step--dark font-hand">No. 4</span>
+          </div>
+        </article>
+
+        <!-- ===== Step 5：企业经营意识（宽幅棕卡） ===== -->
+        <article class="gd-card gd-card--five">
+          <div class="gd-card--five__head">
+            <h3 class="gd-h3">别只埋头干活，<br />抬头看看钱从哪来、又往哪去。</h3>
+            <span class="gd-step font-hand">No. 5</span>
+          </div>
+          <span class="gd-ph gd-card--five__img" data-pstep="0.4" aria-hidden="true"></span>
+          <p class="gd-desc gd-card--five__desc">
+            从项目视角走向经营视角，不只关心任务有没有完成，更追问：这件事创造了什么价值？是带来收入还是节省成本？推动增长还是降低风险？看见每个管理动作背后的商业意义。
+          </p>
+        </article>
+
+        <!-- ===== 第六张：调侃总结卡（克莱因蓝） ===== -->
+        <article class="gd-card gd-card--six">
+          <h3 class="gd-h3">方向在线，进度随缘。</h3>
+          <p class="gd-desc gd-card--six__desc">
+            人生不是竞速游戏，偶尔挂机没关系，只要主线任务还记得。
+          </p>
+          <span class="gd-polaroid gd-card--six__polaroid" data-pstep="0.3" aria-hidden="true">
+            <span class="gd-polaroid__img gd-polaroid__img--blue"></span>
+          </span>
+        </article>
       </div>
     </div>
   </div>
@@ -54,89 +131,405 @@ const shapes = [
   .career-growth {
     position: relative;
     background: var(--color-bg);
+    /* 与上方「未来的自己」板块的间距收窄 */
+    margin-top: clamp(40px, 6vh, 72px);
+    --gd-card-height: clamp(440px, 54vh, 620px);
   }
 
   .career-growth__track {
     display: flex;
+    align-items: center;
     gap: 20px;
     padding: 48px 24px;
   }
 
-  .career-growth-card {
+  /* ===== 卡片基础 ===== */
+  .gd-card {
     position: relative;
     flex-shrink: 0;
-    width: min(88vw, 1160px);
-    min-height: min(68vh, 620px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: var(--card-bg);
-    color: var(--card-fg);
     border-radius: 10px;
-    padding: clamp(24px, 3vw, 44px);
-    overflow: hidden;
+    overflow: visible;
   }
 
-  .career-growth-card__top {
-    display: flex;
-    justify-content: space-between;
-    gap: 32px;
-  }
-
-  .career-growth-card__kicker {
+  .gd-kicker {
     font-size: 13px;
     letter-spacing: 0.24em;
-    color: var(--card-fg-muted);
+    color: rgba(248, 241, 234, 0.78);
   }
 
-  .career-growth-card__desc {
-    max-width: 300px;
-    text-align: left;
+  .gd-h3 {
+    font-family: var(--font-serif);
+    font-size: clamp(26px, 2.8vw, 40px);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: #f8f1ea;
+  }
+
+  .gd-h3--brown {
+    color: var(--color-brown);
+  }
+
+  .gd-desc {
     font-size: 14px;
     line-height: 1.75;
-    color: var(--card-fg);
   }
 
-  /* 中间漂浮占位形状（半透明同色系，后续可换图片） */
-  .career-growth-card__shape {
+  .gd-step {
+    font-size: clamp(28px, 2.6vw, 38px);
+    line-height: 1;
+    color: #f8f1ea;
+    white-space: nowrap;
+  }
+
+  .gd-step--dark {
+    color: var(--color-brown);
+  }
+
+  /* 手写注释（中文用楷体手写） */
+  .gd-note {
+    font-size: 16px;
+    color: var(--color-brown);
+  }
+
+  .gd-hand {
+    font-family: var(--font-art);
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* 占位图：同色系深浅椭圆 / 圆件（后续可换真实图片） */
+  .gd-ph {
+    display: block;
+    background: rgba(248, 241, 234, 0.22);
+    border-radius: 50%;
+  }
+
+  .gd-ph-round {
+    display: block;
+    background: #cfc4ae;
+    border-radius: 50%;
+  }
+
+  /* 拍立得占位：白框 + 渐变图 */
+  .gd-polaroid {
+    display: block;
+    padding: 6px 6px 22px;
+    background: #fffdf8;
+    border-radius: 3px;
+  }
+
+  .gd-polaroid__img {
+    display: block;
+    width: 100%;
+    height: calc(100% - 0px);
+    aspect-ratio: 1;
+    background: linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%);
+    border-radius: 2px;
+  }
+
+  .gd-polaroid__img--blue {
+    background: linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%);
+  }
+
+  /* ===== Step 1：宽幅棕卡（图溢出下边缘） ===== */
+  .gd-card--one {
+    width: min(84vw, 1320px);
+    height: var(--gd-card-height);
+    background: var(--color-brown);
+    padding: clamp(24px, 2.6vw, 40px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 图向下溢出裁掉，保持贴边效果 */
+  }
+
+  .gd-card--one__desc {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: clamp(140px, 18vw, 230px);
-    translate: -50% -50%;
-    background: color-mix(in srgb, var(--card-fg) 22%, var(--card-bg));
-    pointer-events: none;
+    right: clamp(24px, 2.6vw, 40px);
+    top: clamp(24px, 2.6vw, 40px);
+    max-width: 300px;
+    color: #f8f1ea;
   }
 
-  .career-growth-card__foot {
+  .gd-card--one__img {
+    position: absolute;
+    left: 46%;
+    top: 34%;
+    width: clamp(160px, 16vw, 230px);
+    aspect-ratio: 1 / 1.4;
+    rotate: 22deg;
+  }
+
+  .gd-card--one__foot {
+    margin-top: auto;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 32px;
   }
 
-  /* 左下：衬线大字主文案 */
-  .career-growth-card__main {
-    max-width: 640px;
-    font-size: clamp(28px, 3.4vw, 48px);
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
+  /* ===== Step 2：竖幅米卡 ===== */
+  .gd-card--two {
+    width: min(56vw, 820px);
+    height: var(--gd-card-height);
+    background: #e5e1d6;
+    padding: clamp(24px, 2.6vw, 40px);
+    display: flex;
+    flex-direction: column;
   }
 
-  /* 右下：手写体 Step N */
-  .career-growth-card__step {
-    flex-shrink: 0;
-    font-size: clamp(30px, 3.2vw, 46px);
+  .gd-card--two__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .gd-bubble {
+    position: relative;
+    width: 110px;
+    color: var(--color-blue);
+  }
+
+  .gd-bubble svg {
+    display: block;
+    width: 100%;
+  }
+
+  .gd-bubble .gd-hand {
+    position: absolute;
+    left: 22px;
+    top: 14px;
+  }
+
+  .gd-card--two .gd-note {
+    margin-top: auto;
+    align-self: flex-end;
+  }
+
+  .gd-card--two .gd-h3--brown {
+    margin-top: 10px;
+  }
+
+  /* 手绘向上箭头：连接「财务与风险意识」小注与下方标题（蓝色涂鸦风，同站内箭头语言） */
+  .gd-arrow-up {
+    align-self: flex-end;
+    width: 22px;
+    margin: 4px 26px 2px 0;
+    color: var(--color-blue);
+  }
+
+  .gd-arrow-up svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .gd-arrow-up path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ===== Step 3：宽幅棕卡（拍立得溢出上边缘、圆件溢出右边缘） ===== */
+  .gd-card--three {
+    width: min(78vw, 1120px);
+    height: var(--gd-card-height);
+    background: var(--color-brown);
+    padding: clamp(24px, 2.6vw, 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gd-card--three__polaroid {
+    position: absolute;
+    left: 34%;
+    top: -70px;
+    width: clamp(120px, 11vw, 160px);
+    rotate: -8deg;
+  }
+
+  .gd-card--three__piece {
+    position: absolute;
+    right: -44px;
+    top: 52%;
+    width: clamp(80px, 7vw, 110px);
+    aspect-ratio: 1 / 0.8;
+    border-radius: 46% 54% 50% 50% / 60% 55% 45% 40%;
+    background: #5d3325;
+  }
+
+  .gd-card--three__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: 720px;
+  }
+
+  .gd-card--three__desc {
+    margin-top: auto;
+    max-width: 320px;
+    color: rgba(248, 241, 234, 0.85);
+  }
+
+  /* Step 3 标题下的手写主题批注 + 手绘箭头（浅色，落在深棕卡上） */
+  .gd-card--three__note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    color: #f8f1ea;
+  }
+
+  .gd-card--three__note .gd-hand-note {
+    font-size: 18px;
     line-height: 1;
-    color: var(--card-fg);
   }
 
-  /* ===== 桌面端：sticky + 纵向滚动驱动横向推进 ===== */
+  .gd-note-arrow {
+    width: 30px;
+    height: auto;
+    color: #f8f1ea;
+  }
+
+  .gd-note-arrow path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ===== Step 4：中幅米卡（圆件溢出上边缘） ===== */
+  .gd-card--four {
+    width: min(62vw, 880px);
+    height: var(--gd-card-height);
+    background: #e5e1d6;
+    padding: clamp(24px, 2.6vw, 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gd-card--four__img {
+    position: absolute;
+    left: 50%;
+    top: -56px;
+    translate: -50%;
+    width: clamp(110px, 10vw, 150px);
+    aspect-ratio: 1;
+  }
+
+  .gd-card--four__callout {
+    position: absolute;
+    left: 56%;
+    bottom: clamp(132px, 16vh, 172px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--color-blue);
+  }
+
+  .gd-card--four__callout .gd-hand-note {
+    font-size: 18px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .gd-card--four__callout svg {
+    width: 44px;
+    height: auto;
+    margin-top: 4px;
+  }
+
+  .gd-card--four__callout path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .gd-card--four__foot {
+    margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  /* ===== Step 5：宽幅棕卡 ===== */
+  .gd-card--five {
+    width: min(76vw, 1080px);
+    height: var(--gd-card-height);
+    background: var(--color-brown);
+    padding: clamp(24px, 2.6vw, 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gd-card--five__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .gd-card--five__img {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    translate: -50% -50%;
+    width: clamp(130px, 12vw, 180px);
+    aspect-ratio: 1.5 / 1;
+    border-radius: 44% 56% 52% 48% / 55% 45% 60% 40%;
+    rotate: -14deg;
+  }
+
+  .gd-card--five__desc {
+    margin-top: auto;
+    max-width: 360px;
+    color: rgba(248, 241, 234, 0.85);
+  }
+
+  /* ===== 第六张：克莱因蓝调侃卡 ===== */
+  .gd-card--six {
+    width: min(68vw, 960px);
+    height: var(--gd-card-height);
+    background: var(--color-blue);
+    padding: clamp(28px, 3vw, 48px);
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+  }
+
+  .gd-card--six .gd-h3 {
+    color: #fff;
+    max-width: 520px;
+  }
+
+  .gd-card--six__desc {
+    margin-top: auto;
+    max-width: 260px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .gd-card--six__polaroid {
+    position: absolute;
+    right: clamp(24px, 4vw, 64px);
+    top: 50%;
+    translate: 0 -46%;
+    width: clamp(150px, 14vw, 210px);
+    rotate: 9deg;
+  }
+
+  /* ===== 桌面端：sticky + 纵向滚动驱动横向推进（滚完才继续下滚） ===== */
   @media (min-width: 768px) {
     .career-growth {
-      /* 高度 = 视口 + 轨道横向溢出（JS 精确测量后写入） */
-      height: calc(100vh + var(--track-overflow, 2600px));
+      height: calc(100vh + var(--track-overflow, 3200px));
     }
 
     .career-growth__sticky {
@@ -150,34 +543,51 @@ const shapes = [
     }
 
     .career-growth__track {
-      padding: 0 40px;
+      padding: 90px 40px;
       will-change: transform;
+    }
+
+    /* 轨道保持视口正中；上下留白由 track 的对称 padding 提供 */
+    .career-growth__viewport {
+      width: 100%;
+      translate: none;
     }
   }
 
   /* ===== 移动端：原生横向滚动 + snap ===== */
   @media (max-width: 767px) {
-    .career-growth__viewport {
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
+    .career-growth {
+      margin-top: 64px;
     }
 
-    .career-growth-card {
-      width: 84vw;
-      min-height: 480px;
+    .career-growth__viewport {
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      translate: none;
+    }
+
+    .career-growth__track {
+      padding: 90px 20px 60px;
+    }
+
+    .gd-card {
       scroll-snap-align: center;
     }
 
-    .career-growth-card__top {
-      flex-direction: column;
-      gap: 16px;
-    }
+    .gd-card--one { width: 86vw; height: 420px; }
+    .gd-card--two { width: 78vw; height: 420px; }
+    .gd-card--three { width: 86vw; height: 420px; }
+    .gd-card--four { width: 78vw; height: 420px; }
+    .gd-card--five { width: 86vw; height: 420px; }
+    .gd-card--six { width: 82vw; height: 420px; }
 
-    .career-growth-card__foot {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
+    .gd-card--six__polaroid {
+      position: static;
+      translate: none;
+      margin-top: 16px;
+      align-self: flex-end;
     }
   }
 
@@ -198,17 +608,21 @@ const shapes = [
 </style>
 
 <script>
-  // 桌面端：纵向滚动进度 → 轨道横向位移（scrub）
+  // 桌面端：纵向滚动进度 → 轨道横向位移（scrub，滚完才释放页面继续下滚）
+  // [data-pstep] 元素随进度做轻微横向 parallax（对照 Wildbran data-parallax-step）
   const section = document.querySelector<HTMLElement>("[data-growth]");
   const track = section?.querySelector<HTMLElement>("[data-growth-track]");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const desktop = window.matchMedia("(min-width: 768px)");
 
   if (section && track && !reduce) {
+    const psteps = [...track.querySelectorAll<HTMLElement>("[data-pstep]")];
+
     const measure = () => {
       if (!desktop.matches) {
         section.style.removeProperty("--track-overflow");
         track.style.transform = "";
+        for (const el of psteps) el.style.translate = "";
         return;
       }
       const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
@@ -227,6 +641,11 @@ const shapes = [
       const p = Math.min(Math.max(-rect.top / total, 0), 1);
       const overflow = Math.max(track.scrollWidth - window.innerWidth, 0);
       track.style.transform = `translateX(${(-p * overflow).toFixed(1)}px)`;
+      /* 图片轻微横向 parallax：与轨道反向缓动 */
+      for (const el of psteps) {
+        const f = parseFloat(el.dataset.pstep || "0");
+        el.style.translate = `${((p - 0.5) * 120 * f).toFixed(1)}px 0`;
+      }
     };
 
     measure();

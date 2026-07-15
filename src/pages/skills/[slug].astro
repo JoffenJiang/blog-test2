@@ -1,66 +1,112 @@
 ---
 /**
- * /skills/[slug] —— 技能干货文章详情页
- * 长文排版：kicker + 衬线大标题 + 分类/阅读时长 meta + 左对齐正文
- * 正文暂为占位段落，后续按 slug 补充真实内容
+ * /skills/[slug] —— 技能干货文章详情页（Wildbran Blog Post 式版式）
+ * 眉题（中文分类）+ 衬线大标题 + 分类/阅读时长 meta + 封面图 + 正文
+ * 正文排版约定：
+ *   ## 小标题  → 黑色衬线小标题
+ *   **加粗句** → 蓝色重点标出
+ *   figure.post-media → 图片占位符（把图片放到 /media/posts/{slug}-01.jpg 等即可替换）
+ * 文末：「技能干货」四篇推荐卡片
  */
+import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Media from "../../components/Media.astro";
-import { skillPosts } from "../../data/skillPosts";
 
-export function getStaticPaths() {
-  return skillPosts.map((post) => ({
-    params: { slug: post.slug },
+export async function getStaticPaths() {
+  const posts = await getCollection("skills");
+  return posts.map((post) => ({
+    params: { slug: post.id },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
+const { Content } = await render(post);
+
+/* 推荐：其余文章按 order 取 4 篇 */
+const related = (await getCollection("skills"))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
 ---
 
-<BaseLayout title={post.title} description={post.excerpt}>
+<BaseLayout title={post.data.title} description={post.data.excerpt}>
   <article class="sk-post">
     <header class="sk-post__header">
-      <p class="sk-post__kicker num">{post.kicker}</p>
-      <h1 class="sk-post__title font-serif">{post.title}</h1>
+      <p class="sk-post__eyebrow">{post.data.category}</p>
+      <h1 class="sk-post__title font-serif">{post.data.title}</h1>
       <p class="sk-post__meta">
-        <span class="sk-post__tag">{post.category}</span>
-        <span class="num">{post.readTime}</span>
+        <span class="sk-post__tag">{post.data.category}</span>
+        <span class="num">{post.data.readTime}</span>
       </p>
     </header>
 
-    <Media src={post.cover} ph={post.ph} class="sk-post__cover" />
+    <Media src={post.data.cover} ph={post.data.ph} class="sk-post__cover" />
 
     <div class="sk-post__body">
-      <p>{post.excerpt}</p>
-      <p class="sk-post__placeholder">正文内容整理中，敬请期待。</p>
-    </div>
-
-    <div class="sk-post__back">
-      <a href="/skills">← 返回技能干货</a>
+      <Content />
     </div>
   </article>
+
+  <!-- ===== 文末推荐：技能干货 ===== -->
+  <section class="sk-more">
+    <div class="sk-more__inner">
+      <h2 class="sk-more__title font-serif">技能干货</h2>
+      <p class="sk-more__sub">一些从真实工作里拆出来的方法、流程和工具笔记。</p>
+
+      <div class="sk-more__grid">
+        {
+          related.map((p) => (
+            <a href={`/skills/${p.id}`} class="sk-more-card group">
+              <span class="sk-more-card__media">
+                <Media
+                  src={p.data.cover}
+                  ph={p.data.ph}
+                  class="sk-more-card__img transition-transform duration-500 ease-out group-hover:scale-[0.94]"
+                />
+                <span class="sk-more-card__go">
+                  <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path
+                      d="M3 11 11 3M4.5 3H11v6.5"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span class="sk-more-card__meta">
+                <span class="sk-more-card__tag">{p.data.category}</span>
+                <span class="sk-more-card__time num">{p.data.readTime}</span>
+              </span>
+              <span class="sk-more-card__title">{p.data.title}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
   .sk-post {
-    max-width: 800px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: clamp(56px, 8vh, 96px) 24px clamp(80px, 12vh, 140px);
+    padding: clamp(56px, 8vh, 96px) 24px 0;
   }
 
-  .sk-post__kicker {
-    font-size: 12px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
+  .sk-post__eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.2em;
     color: var(--color-muted);
   }
 
   .sk-post__title {
-    margin-top: 20px;
-    font-size: clamp(36px, 5vw, 64px);
+    margin-top: 18px;
+    font-size: clamp(32px, 4.5vw, 48px);
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.25;
     letter-spacing: -0.02em;
   }
 
@@ -68,54 +114,196 @@ const { post } = Astro.props;
     margin-top: 22px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     font-size: 12px;
     letter-spacing: 0.12em;
     color: var(--color-muted);
   }
 
   .sk-post__tag {
-    padding: 4px 12px;
+    padding: 3px 10px;
     border-radius: 999px;
     background: rgba(63, 111, 255, 0.12);
-    font-size: 12.5px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: normal;
     color: var(--color-blue);
   }
 
   .sk-post :global(.sk-post__cover) {
-    margin-top: 40px;
+    margin-top: 36px;
     aspect-ratio: 16 / 9;
     width: 100%;
     border-radius: 8px;
   }
 
+  /* ===== 正文排版 ===== */
   .sk-post__body {
     margin-top: clamp(36px, 5vh, 56px);
-    font-size: 17px;
-    line-height: 1.9;
+    padding-bottom: clamp(56px, 8vh, 88px);
+    font-size: 15px;
+    line-height: 1.95;
     text-align: left;
+    color: #242424;
   }
 
-  .sk-post__body p {
-    margin-bottom: 1.45em;
+  .sk-post__body :global(p) {
+    margin: 0 0 1.4em;
   }
 
-  .sk-post__placeholder {
+  /* 黑色衬线内容小标题 */
+  .sk-post__body :global(h2) {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 2.2em 0 0.9em;
+    color: #1f1f1f;
+  }
+
+  .sk-post__body :global(h3) {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 1.8em 0 0.7em;
+    color: #1f1f1f;
+  }
+
+  /* 蓝色重点：正文加粗句统一标蓝 */
+  .sk-post__body :global(strong) {
+    color: #245bdb;
+    font-weight: 600;
+  }
+
+  /* 图片占位符：16:9 圆角，图片缺失时显示渐变（inline style 双层背景兜底） */
+  .sk-post__body :global(.post-media) {
+    margin: 2em 0;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* ===== 文末推荐 ===== */
+  .sk-more {
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    padding: clamp(64px, 10vh, 110px) 20px clamp(80px, 12vh, 140px);
+  }
+
+  .sk-more__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .sk-more__title {
+    font-size: clamp(28px, 3.5vw, 36px);
+    font-weight: 600;
+  }
+
+  .sk-more__sub {
+    margin-top: 10px;
+    font-size: 15px;
     color: var(--color-muted);
   }
 
-  .sk-post__back {
-    margin-top: 56px;
+  .sk-more__grid {
+    margin-top: 40px;
+    display: grid;
+    gap: 20px;
+    text-align: left;
   }
 
-  .sk-post__back a {
-    font-size: 15px;
+  @media (min-width: 640px) {
+    .sk-more__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sk-more__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .sk-more-card {
+    display: block;
+    border-radius: 10px;
+    background: #e4e0d4;
+    padding: 12px 12px 24px;
+  }
+
+  .sk-more-card__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .sk-more-card__media :global(.sk-more-card__img) {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .sk-more-card__go {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-ink);
+  }
+
+  .sk-more-card__go svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+  }
+
+  .sk-more-card:hover .sk-more-card__go svg {
+    transform: translate(2px, -2px);
+  }
+
+  .sk-more-card__meta {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+
+  .sk-more-card__tag {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(63, 111, 255, 0.12);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
     color: var(--color-blue);
   }
 
-  .sk-post__back a:hover {
-    opacity: 0.75;
+  .sk-more-card__time {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
+  }
+
+  .sk-more-card__title {
+    display: block;
+    margin-top: 12px;
+    padding: 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-ink);
   }
 </style>

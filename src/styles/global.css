@@ -41,6 +41,7 @@
 
 /* ===== 导航 hover 手绘线 =====
  * 只在导航项 hover / focus 时画出，离开即消失
+ * 颜色随导航场景切换：浅色页（header--solid）蓝色；深色视频首屏（header--overlay）白色
  * 桌面端专用（移动端菜单不渲染此 SVG）
  */
 .nav-link .nav-scribble {
@@ -53,7 +54,11 @@
   height: 10px;
   opacity: 0;
   pointer-events: none;
-  color: currentColor;
+  color: var(--color-blue);
+}
+
+.header--overlay .nav-link .nav-scribble {
+  color: #fff;
 }
 
 .nav-scribble path {
@@ -73,6 +78,15 @@
 
 .nav-link:hover .nav-scribble path,
 .nav-link:focus-visible .nav-scribble path {
+  stroke-dashoffset: 0;
+}
+
+/* 当前页：手绘线常驻（无需 hover 即完整画出） */
+.nav-link.is-current .nav-scribble {
+  opacity: 1;
+}
+
+.nav-link.is-current .nav-scribble path {
   stroke-dashoffset: 0;
 }
 

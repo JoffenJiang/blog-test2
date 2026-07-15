@@ -5,24 +5,26 @@
  * 四周漂浮不同形状的灰色占位符（后续可替换为图片），带轻微 parallax + floaty
  */
 
-/** 漂浮占位形状：shape 决定轮廓，pos 定位，f 为 parallax 系数 */
+/** 漂浮占位形状：shape 决定轮廓，pos 定位，f 为 parallax 系数
+ * 全部集中在上半区，环绕标题「未来的自己到底…」并沿箭头向下铺开，
+ * 且都落在底部副标题之上（不出现在副标题下方）。 */
 const frags = [
-  { shape: "square", style: "left:6%; top:12%; --tilt:-8deg;", f: 0.06, size: 120, mobile: false },
-  { shape: "cup", style: "left:48%; top:8%; --tilt:2deg;", f: 0.04, size: 72, mobile: true },
-  { shape: "blur-round", style: "right:16%; top:14%; --tilt:0deg;", f: 0.05, size: 88, mobile: false },
-  { shape: "oval", style: "right:7%; top:34%; --tilt:24deg;", f: 0.08, size: 110, mobile: true },
-  { shape: "blur-soft", style: "left:9%; top:52%; --tilt:0deg;", f: 0.05, size: 76, mobile: false },
-  { shape: "ball", style: "left:30%; bottom:16%; --tilt:0deg;", f: 0.07, size: 96, mobile: true },
-  { shape: "blur-dot", style: "left:57%; bottom:22%; --tilt:0deg;", f: 0.04, size: 44, mobile: false },
-  { shape: "square-sm", style: "right:24%; bottom:30%; --tilt:14deg;", f: 0.09, size: 74, mobile: false },
-  { shape: "bar", style: "right:4%; bottom:6%; --tilt:-16deg;", f: 0.06, size: 150, mobile: true },
-  { shape: "blob", style: "left:2%; bottom:2%; --tilt:6deg;", f: 0.05, size: 130, mobile: false },
+  { shape: "square", style: "left:6%; top:9%; --tilt:-8deg;", f: 0.06, size: 120, mobile: false },
+  { shape: "cup", style: "left:47%; top:8%; --tilt:2deg;", f: 0.04, size: 72, mobile: true },
+  { shape: "blur-round", style: "right:15%; top:7%; --tilt:0deg;", f: 0.05, size: 88, mobile: false },
+  { shape: "oval", style: "right:6%; top:19%; --tilt:24deg;", f: 0.08, size: 110, mobile: true },
+  { shape: "blur-soft", style: "left:8%; top:25%; --tilt:0deg;", f: 0.05, size: 76, mobile: false },
+  { shape: "ball", style: "left:32%; top:46%; --tilt:0deg;", f: 0.07, size: 96, mobile: true },
+  { shape: "blur-dot", style: "left:57%; top:37%; --tilt:0deg;", f: 0.04, size: 44, mobile: false },
+  { shape: "square-sm", style: "right:29%; top:66%; --tilt:14deg;", f: 0.09, size: 74, mobile: false },
+  { shape: "bar", style: "right:8%; top:83%; --tilt:-16deg;", f: 0.06, size: 150, mobile: true },
+  { shape: "blob", style: "left:6%; top:60%; --tilt:6deg;", f: 0.05, size: 130, mobile: false },
 ] as const;
 ---
 
 <section class="career-future" data-career-future>
   {
-    frags.map((frag) => (
+    frags.map((frag, index) => (
       <span
         class:list={[
           "career-future__frag",
@@ -30,34 +32,34 @@ const frags = [
           "floaty",
           !frag.mobile && "career-future__frag--desktop",
         ]}
-        style={`${frag.style} --size:${frag.size}px;`}
+        style={`${frag.style} --size:${frag.size}px; --frag-index:${index};`}
         data-frag={frag.f}
         aria-hidden="true"
       />
     ))
   }
 
-  <div data-reveal class="career-future__inner">
+  <div data-reveal data-future-reveal class="career-future__inner">
     <h2 class="career-future__title font-serif">
       未来的自己到底<br />想成为一个<span class="career-future__hl">什么样的人？</span>
     </h2>
 
     <svg
       class="career-future__arrow"
-      viewBox="0 0 24 64"
+      viewBox="0 0 32 168"
       fill="none"
       aria-hidden="true"
     >
       <path
-        d="M12 2c-4 7 5 9-1 16s4 9-1 16 4 9-1 16"
+        d="M16 4C8 18 24 28 12 45C2 60 23 72 12 90C2 107 23 118 14 136C11 142 12 149 16 156"
         stroke="currentColor"
-        stroke-width="2"
+        stroke-width="3.4"
         stroke-linecap="round"
       />
       <path
-        d="M5 51l6 10 6-10"
+        d="M6 149C9 155 12 161 16 165C20 160 24 154 27 148"
         stroke="currentColor"
-        stroke-width="2"
+        stroke-width="3.4"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
@@ -70,6 +72,7 @@ const frags = [
 </section>
 
 <style>
+  /* 底部大留白：与下方 Step 板块之间保留 Wildbran 式空置区域 */
   .career-future {
     position: relative;
     min-height: 100vh;
@@ -77,21 +80,31 @@ const frags = [
     align-items: center;
     justify-content: center;
     background: var(--color-bg);
-    overflow: clip;
-    padding: 120px 24px;
+    /* 只裁横向（收住两侧漂浮件的横向溢出），纵向放开：
+     * 顶部漂浮件贴近 section 上边缘，随视差轻微上移时不会被裁成「半圆」 */
+    overflow-x: clip;
+    overflow-y: visible;
+    /* 底部退场留白收窄：与下方「五个能力」板块的间距不必过大 */
+    padding: 120px 24px clamp(150px, 22vh, 250px);
   }
 
   .career-future__inner {
     position: relative;
     z-index: 2;
+    width: min(100%, 1000px);
     max-width: 1000px;
     text-align: center;
+    --future-content-gap: clamp(64px, 9vh, 96px);
+    /* 整组（标题 + 箭头 + 副标题）下移，使【标题本身】落在环绕图形的偏上位置；
+     * 箭头与副标题自然向下延伸至底部留白区 */
+    translate: 0 clamp(85px, 14vh, 150px);
   }
 
+  /* 大标题 54px */
   .career-future__title {
-    font-size: clamp(40px, 6.5vw, 88px);
+    font-size: clamp(36px, 5vw, 54px);
     font-weight: 600;
-    line-height: 1.22;
+    line-height: 1.25;
     letter-spacing: -0.02em;
   }
 
@@ -99,20 +112,36 @@ const frags = [
     color: var(--color-brown);
   }
 
-  /* 蓝色手写波浪箭头 */
+  /* 蓝色手写波浪箭头：水平居中，且与上下文字保持相同间距 */
   .career-future__arrow {
-    width: 22px;
-    height: 60px;
-    margin: clamp(32px, 5vh, 56px) auto 0;
+    width: 45px;
+    height: clamp(192px, 25.5vh, 252px);
+    margin: var(--future-content-gap) auto 0;
     display: block;
     color: var(--color-blue);
   }
 
+  /* 箭头指向的副标题 30px；上下使用同一间距变量 */
   .career-future__sub {
-    margin-top: clamp(32px, 5vh, 56px);
-    font-size: clamp(22px, 2.8vw, 34px);
+    margin-top: var(--future-content-gap);
+    font-size: 30px;
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1.6;
+  }
+
+  /* 图形完成错峰入场后，副标题才出现 */
+  :global(.js) .career-future__sub {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.55s ease,
+      transform 0.55s ease;
+  }
+
+  :global(.js) .career-future.is-entered .career-future__sub {
+    opacity: 1;
+    transform: none;
+    transition-delay: 1.35s;
   }
 
   /* ===== 漂浮占位形状（灰色系，后续可替换成图片） ===== */
@@ -120,7 +149,22 @@ const frags = [
     position: absolute;
     z-index: 1;
     width: var(--size);
+    opacity: var(--frag-opacity, 1);
     pointer-events: none;
+  }
+
+  :global(.js) .career-future__frag {
+    opacity: 0;
+    scale: 0.78;
+    transition:
+      opacity 0.55s ease,
+      scale 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--frag-index) * 70ms);
+  }
+
+  :global(.js) .career-future.is-entered .career-future__frag {
+    opacity: var(--frag-opacity, 1);
+    scale: 1;
   }
 
   /* 方片（饼干干脆面式） */
@@ -173,11 +217,15 @@ const frags = [
     aspect-ratio: 1;
     border-radius: 50%;
     background: #ccc6b8;
-    opacity: 0.55;
+    --frag-opacity: 0.55;
     filter: blur(7px);
   }
 
   @media (max-width: 767px) {
+    .career-future__inner {
+      translate: 0 48px;
+    }
+
     .career-future__frag--desktop {
       display: none;
     }
@@ -191,13 +239,41 @@ const frags = [
     .career-future__frag {
       translate: none !important;
     }
+
+    :global(.js) .career-future__frag,
+    :global(.js) .career-future__sub {
+      opacity: var(--frag-opacity, 1);
+      scale: 1;
+      transform: none;
+      transition: none;
+    }
   }
 </style>
 
 <script>
-  // 漂浮件轻微 parallax：随滚动上下位移（translate 属性，不影响 transform 旋转/浮动）
+  // 图形错峰入场完成后再显示副标题；漂浮件继续保留滚动视差
   const section = document.querySelector<HTMLElement>("[data-career-future]");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (section) {
+    const revealTarget = section.querySelector<HTMLElement>("[data-future-reveal]");
+    const enter = () => section.classList.add("is-entered");
+
+    if (reduce || !("IntersectionObserver" in window) || !revealTarget) {
+      enter();
+    } else {
+      const enterObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            enter();
+            enterObserver.disconnect();
+          }
+        },
+        { threshold: 0.2, rootMargin: "0px 0px -5% 0px" }
+      );
+      enterObserver.observe(revealTarget);
+    }
+  }
 
   if (section && !reduce) {
     const frags = [...section.querySelectorAll<HTMLElement>("[data-frag]")];

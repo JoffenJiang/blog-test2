@@ -1,33 +1,434 @@
 ---
 /**
- * 生活记录 —— 四个分类
+ * /notes 生活记录 —— 双栏滚动列表（白底）
+ *
+ * 左栏：视口固定高度处一根细横线（不随滚动移动）；
+ *   每个系列 = 头部文字（主题 20px + 描述 15px，右对齐到线尾）+ 错位排布的缩略图，
+ *   随页面滚动在流内自然「穿过」横线；线所在位置即当前系列
+ * 右栏：吸附在视口内——上方 20px 详情文字 + 大图；
+ *   当前系列多图时自动轮换放映（单图不切换）；悬停放大，移开缩回
+ * 点击左侧小图或右侧大图 → /notes/gallery 图集页
+ *
+ * 数据：src/data/lifeNotes.ts；图片放 public/media/notes/ 后自动替换占位
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SectionTitle from "../components/SectionTitle.astro";
-import Media from "../components/Media.astro";
+import { lifeThemes } from "../data/lifeNotes";
 
-const cats = [
-  { label: "汉服与审美", desc: "衣冠之美，也是一种表达", ph: "rose", cover: "/media/note-hanfu.jpg" },
-  { label: "旅行与城市", desc: "在路上观察不同的生活方式", ph: "sage", cover: "/media/note-travel.jpg" },
-  { label: "生活灵感", desc: "日常里捡到的小小闪光", ph: "warm", cover: "/media/note-inspiration.jpg" },
-  { label: "内容复盘", desc: "记录与写作本身的回顾", ph: "blue", cover: "/media/note-review.jpg" },
-] as const;
+const gradients: Record<string, string> = {
+  warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
+  sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
+  blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
+  rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
+};
+
+const bg = (src: string, ph: string) =>
+  `background-image:url('${src}'),${gradients[ph]}`;
+
+/** 缩略图错位：宽度统一 20%（上传图片按原比例等比缩放），仅左右偏移循环；
+ * 最大右缘 ≤ 58%，与右侧的主题文字区（线尾右对齐）保持分离，不碰文字 */
+const offsets = [
+  "margin-left:30%; width:20%;",
+  "margin-left:6%; width:20%;",
+  "margin-left:22%; width:20%;",
+  "margin-left:38%; width:20%;",
+  "margin-left:12%; width:20%;",
+  "margin-left:34%; width:20%;",
+];
 ---
 
-<BaseLayout title="生活记录">
-  <section class="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
-    <SectionTitle title="生活记录" subtitle="不止职场，也记录生活。" />
+<BaseLayout
+  title="生活记录"
+  description="不止职场，也记录生活：日常、穿搭、汉服、旅行和梦。"
+  headerTone="white"
+>
+  <section class="ln-stage" data-ln>
+    <!-- 固定层：进度横线 + 主题文字（线上标题 / 线下描述），不随滚动移动 -->
+    <div class="ln-fixed" data-ln-fixed aria-hidden="false">
+      <div class="ln-line">
+        <span class="ln-line__fill" data-ln-fill></span>
+      </div>
+      <div class="ln-head">
+        <p class="ln-head__title" data-ln-title>{lifeThemes[0].title}</p>
+        <p class="ln-head__desc" data-ln-desc>{lifeThemes[0].desc}</p>
+      </div>
+    </div>
 
-    <div data-reveal class="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
-      {
-        cats.map((c) => (
-          <div class="group">
-            <Media src={c.cover} ph={c.ph} class="aspect-[4/5] w-full rounded-2xl" />
-            <p class="mt-3 text-[17px] font-semibold">{c.label}</p>
-            <p class="mt-1 text-[14px] text-muted">{c.desc}</p>
-          </div>
-        ))
-      }
+    <div class="ln-cols">
+      <!-- ===== 左栏：错位缩略图流（过线后蒙白变浅） ===== -->
+      <div class="ln-left">
+        {
+          lifeThemes.map((theme, gi) => (
+            <div class="ln-group" data-ln-group={gi}>
+              <div class="ln-thumbs">
+                {theme.items.map((it, i) => (
+                  <a
+                    href="/notes/gallery"
+                    class="ln-thumb"
+                    style={`${offsets[i % offsets.length]}aspect-ratio:${it.ar};`}
+                    aria-label={`${theme.title} 图集`}
+                  >
+                    <span class="ln-thumb__img" style={bg(it.src, it.ph)} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- ===== 右栏：吸附大图（当前系列轮换放映） ===== -->
+      <div class="ln-right">
+        <div class="ln-right__inner">
+          <p class="ln-caption" data-ln-caption>{lifeThemes[0].caption}</p>
+          <a href="/notes/gallery" class="ln-big" data-ln-big aria-label="打开生活图集">
+            {
+              lifeThemes.map((theme, gi) =>
+                theme.items.map((it, i) => (
+                  <span
+                    class:list={["ln-big__img", gi === 0 && i === 0 && "is-show"]}
+                    data-g={gi}
+                    data-i={i}
+                    style={bg(it.src, it.ph)}
+                  />
+                ))
+              )
+            }
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* ===== 整页白底 ===== */
+  .ln-stage {
+    position: relative;
+    background: #fff;
+  }
+
+  /* 固定层：横线 + 主题文字，钉在视口 34vh 处，不随滚动移动 */
+  .ln-fixed {
+    position: fixed;
+    left: 0;
+    top: 34vh;
+    width: min(46vw, 640px);
+    height: 1px;
+    z-index: 5;
+    pointer-events: none;
+    translate: 0 var(--ln-exit-y, 0px);
+    transition: opacity 0.3s ease;
+    will-change: translate;
+  }
+
+  .ln-fixed.is-hidden {
+    opacity: 0;
+  }
+
+  /* 横线 = 进度条：底层浅灰，随整页滚动进度从左往右填充变黑 */
+  .ln-line {
+    position: relative;
+    height: 1px;
+    margin-right: clamp(16px, 2vw, 32px);
+    background: rgba(31, 31, 31, 0.16);
+  }
+
+  .ln-line__fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: #1f1f1f;
+  }
+
+  /* 线上标题（20px）/ 线下描述（15px）：右对齐到线尾，均为黑色 */
+  .ln-head__title,
+  .ln-head__desc {
+    position: absolute;
+    right: clamp(16px, 2vw, 32px);
+    margin: 0;
+    text-align: right;
+    color: #1f1f1f;
+    transition: opacity 0.25s ease;
+  }
+
+  .ln-head__title {
+    bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .ln-head__desc {
+    top: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .ln-head.is-switching .ln-head__title,
+  .ln-head.is-switching .ln-head__desc {
+    opacity: 0;
+  }
+
+  .ln-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ===== 左栏 ===== */
+  .ln-left {
+    /* 首张缩略图初始刚好与横线相碰（线在 34vh；扣除吸顶导航实际高度）
+     * 底部留白加大：让右栏吸附面板一直钉住，直到最后一张缩略图完全越过横线才释放
+     * （否则右侧图文会在最后一张小图尚未过线时就提前上移） */
+    padding: calc(34vh - var(--header-h, 64px)) 0 50vh;
+  }
+
+  .ln-group {
+    margin-bottom: 22vh;
+  }
+
+  /* 最后一组的尾部空间与 34vh 基准线互补：末图过线时右栏刚好解除吸附。 */
+  .ln-group:last-child {
+    margin-bottom: 16vh;
+  }
+
+  /* 错位缩略图流 */
+  .ln-thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: 8vh;
+  }
+
+  .ln-thumb {
+    display: block;
+    transition: opacity 0.45s ease;
+  }
+
+  /* 向上过线后变浅（蒙上白色蒙版的效果） */
+  .ln-thumb.is-past {
+    opacity: 0.3;
+  }
+
+  .ln-thumb__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.4s ease;
+  }
+
+  .ln-thumb:hover .ln-thumb__img {
+    transform: scale(1.04);
+  }
+
+  /* ===== 右栏：吸附展示 ===== */
+  .ln-right {
+    position: relative;
+  }
+
+  /* 右栏内容锚定固定位置：右侧文字与横线上方的左侧主题标题对齐，
+   * 不随文字长短/滚动移动；sticky top = 吸顶导航实际高度；
+   * 左内边距加大一倍，与左栏拉开间距 */
+  .ln-right__inner {
+    position: sticky;
+    top: var(--header-h, 64px);
+    height: calc(100vh - var(--header-h, 64px));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: calc(34vh - var(--header-h, 64px) - 43px) clamp(16px, 3vw, 48px) 0 clamp(32px, 4vw, 64px);
+  }
+
+  .ln-caption {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #1f1f1f;
+    /* 固定占位高度：文字换行也不挤动图片位置 */
+    height: 29px;
+    overflow: visible;
+    white-space: nowrap;
+  }
+
+  /* 大图框：多图叠放淡入淡出；悬停整体放大 */
+  .ln-big {
+    position: relative;
+    display: block;
+    margin-top: 22px;
+    width: 100%;
+    aspect-ratio: 5 / 3.4;
+    overflow: hidden;
+    transition: transform 0.45s cubic-bezier(0.3, 0.6, 0.2, 1);
+  }
+
+  .ln-big:hover {
+    transform: scale(1.03);
+  }
+
+  .ln-big__img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .ln-big__img.is-show {
+    opacity: 1;
+  }
+
+  /* ===== 移动端：单列，隐藏固定层与右栏 ===== */
+  @media (max-width: 899px) {
+    .ln-fixed,
+    .ln-right {
+      display: none;
+    }
+
+    .ln-cols {
+      grid-template-columns: 1fr;
+    }
+
+    .ln-left {
+      padding: 64px 20px 80px;
+    }
+
+    .ln-group {
+      margin-bottom: 96px;
+    }
+
+    .ln-thumbs {
+      gap: 28px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ln-big,
+    .ln-big__img,
+    .ln-thumb__img {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * 滚动驱动：
+   * 1. 当前系列 = 首张缩略图已触线（34vh）的最后一组；
+   *    固定层的主题/描述文字与右侧详情文字淡出淡入切换（文字本身不随滚动移动）
+   * 2. 横线作为进度条：随整页滚动进度从左往右填充变黑
+   * 3. 缩略图向上过线后加 is-past（蒙白变浅），回滚复原
+   * 4. 右侧大图轮换放映当前系列（单图不切换）
+   * 5. 滚过本区底部（页脚）时隐藏固定层
+   */
+  import { lifeThemes } from "../data/lifeNotes";
+
+  const stage = document.querySelector<HTMLElement>("[data-ln]");
+  const fixed = document.querySelector<HTMLElement>("[data-ln-fixed]");
+  const fill = document.querySelector<HTMLElement>("[data-ln-fill]");
+  const head = fixed?.querySelector<HTMLElement>(".ln-head");
+  const title = document.querySelector<HTMLElement>("[data-ln-title]");
+  const desc = document.querySelector<HTMLElement>("[data-ln-desc]");
+  const caption = document.querySelector<HTMLElement>("[data-ln-caption]");
+  const bigImgs = [...document.querySelectorAll<HTMLElement>(".ln-big__img")];
+  const groups = [...document.querySelectorAll<HTMLElement>("[data-ln-group]")];
+  const thumbs = [...document.querySelectorAll<HTMLElement>(".ln-thumb")];
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (stage && fixed && fill && head && title && desc && caption && groups.length) {
+    let active = -1;
+    let frame = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    /* 切换大图：右侧详情文字跟随当前图片（每张图有自己的文字） */
+    const show = (g: number, i: number) => {
+      for (const img of bigImgs) {
+        img.classList.toggle(
+          "is-show",
+          Number(img.dataset.g) === g && Number(img.dataset.i) === i
+        );
+      }
+      caption.textContent = lifeThemes[g].items[i].note;
+    };
+
+    const setActive = (g: number, instant = false) => {
+      if (g === active) return;
+      active = g;
+      frame = 0;
+      const apply = () => {
+        title.textContent = lifeThemes[g].title;
+        desc.textContent = lifeThemes[g].desc;
+        head.classList.remove("is-switching");
+      };
+      if (instant || reduce) {
+        apply();
+      } else {
+        /* 文字淡出 → 换内容 → 淡入（位置固定不动） */
+        head.classList.add("is-switching");
+        setTimeout(apply, 250);
+      }
+      show(g, 0);
+      clearInterval(timer);
+      /* 多图才轮换放映 */
+      if (!reduce && lifeThemes[g].items.length > 1) {
+        timer = setInterval(() => {
+          frame = (frame + 1) % lifeThemes[g].items.length;
+          show(g, frame);
+        }, 2000);
+      }
+    };
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const lineY = innerHeight * 0.34;
+      const stageRect = stage.getBoundingClientRect();
+
+      /* 当前系列：首图已触线的最后一组 */
+      let current = 0;
+      for (let i = 0; i < groups.length; i++) {
+        if (groups[i].getBoundingClientRect().top <= lineY + 1) current = i;
+      }
+      setActive(current);
+
+      /* 进度条：最后一张图的底边过线时刚好填满变黑。 */
+      const lastThumb = thumbs[thumbs.length - 1];
+      const lastRect = lastThumb.getBoundingClientRect();
+      const lastBottomDoc = scrollY + lastRect.bottom;
+      const endScroll = Math.max(lastBottomDoc - lineY, 1); /* 常量：过线所需滚动量 */
+      const p = Math.min(Math.max(scrollY / endScroll, 0), 1);
+      fill.style.width = `${(p * 100).toFixed(2)}%`;
+
+      /* 末图越过基准线后，固定线和主题文字随末图等速上移；
+       * 右栏也在同一时刻自然解除 sticky，形成参考站的整体离场。 */
+      const exitY = Math.min(lastRect.bottom - lineY, 0);
+      stage.style.setProperty("--ln-exit-y", `${exitY.toFixed(1)}px`);
+
+      /* 缩略图过线后蒙白变浅 */
+      for (const t of thumbs) {
+        t.classList.toggle("is-past", t.getBoundingClientRect().bottom < lineY);
+      }
+
+      /* 滚过本区底部（进入页脚）时隐藏固定层 */
+      fixed.classList.toggle("is-hidden", stageRect.bottom < lineY + 40);
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    setActive(0, true);
+    update();
+  }
+</script>

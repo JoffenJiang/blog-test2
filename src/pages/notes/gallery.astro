@@ -1,0 +1,167 @@
+---
+/**
+ * /notes/gallery 生活图集 —— 全部系列共用的大图集页（白底）
+ * 图片/视频按不同宽度松散排布（整行 / 两列 / 三列交替），
+ * 有描述的在图片下方放一行文字，没有的留空；滚动进入时淡入
+ * 数据：src/data/lifeNotes.ts（五个系列的条目依次平铺）
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { lifeThemes } from "../../data/lifeNotes";
+
+const gradients: Record<string, string> = {
+  warm: "linear-gradient(135deg, #e8dccb 0%, #d9c9b2 55%, #c9b498 100%)",
+  sage: "linear-gradient(140deg, #dfe3d5 0%, #c3ccb6 60%, #a9b598 100%)",
+  blue: "linear-gradient(135deg, #dce4f8 0%, #b9c8f2 55%, #8fa7e8 100%)",
+  rose: "linear-gradient(140deg, #f0dfd6 0%, #e3c4b4 60%, #d4a894 100%)",
+};
+
+/** 平铺全部条目（带所属系列名） */
+const all = lifeThemes.flatMap((t) =>
+  t.items.map((it) => ({ ...it, theme: t.title }))
+);
+
+/* 松散排布：6 栅格下的跨度序列循环（整行 → 3+3 → 2+2+2 → 4+2 → 2+4） */
+const spanPattern = [6, 3, 3, 2, 2, 2, 4, 2, 2, 4];
+const span = (i: number) => spanPattern[i % spanPattern.length];
+---
+
+<BaseLayout title="生活图集" description="日常、穿搭、汉服、旅行和梦，攒起来就是日子。" headerTone="white">
+  <section class="lg-stage">
+    <header data-reveal class="lg-head">
+      <h1 class="lg-title">生活图集</h1>
+      <p class="lg-sub">日常、穿搭、汉服、旅行和梦，攒起来就是日子。</p>
+    </header>
+
+    <div class="lg-grid">
+      {
+        all.map((it, i) => (
+          <figure
+            data-reveal
+            class="lg-item"
+            style={`grid-column: span ${span(i)};`}
+          >
+            <span
+              class="lg-item__img"
+              style={`background-image:url('${it.src}'),${gradients[it.ph]};aspect-ratio:${it.ar};`}
+            />
+            {it.cap && (
+              <figcaption class="lg-item__cap">
+                <span class="lg-item__cap-text">{it.cap}</span>
+                <span class="lg-item__cap-theme">{it.theme}</span>
+              </figcaption>
+            )}
+          </figure>
+        ))
+      }
+    </div>
+
+    <p data-reveal class="lg-back">
+      <a href="/notes">← 返回生活记录</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .lg-stage {
+    background: #fff;
+    padding: clamp(48px, 8vh, 96px) clamp(16px, 3vw, 40px) clamp(80px, 12vh, 140px);
+  }
+
+  .lg-head {
+    max-width: 1600px;
+    margin: 0 auto clamp(40px, 7vh, 72px);
+  }
+
+  .lg-title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .lg-sub {
+    margin-top: 8px;
+    font-size: 15px;
+    color: rgba(31, 31, 31, 0.55);
+  }
+
+  /* 六栅格松散排布：跨度不一，行间留白充足 */
+  .lg-grid {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(14px, 1.6vw, 24px);
+    align-items: start;
+  }
+
+  .lg-item {
+    margin: 0;
+  }
+
+  .lg-item__img {
+    display: block;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.4s ease;
+  }
+
+  .lg-item:hover .lg-item__img {
+    transform: scale(1.02);
+  }
+
+  /* 图下描述：有则显示，无则留空 */
+  .lg-item__cap {
+    margin-top: 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .lg-item__cap-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
+
+  .lg-item__cap-theme {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: rgba(31, 31, 31, 0.45);
+  }
+
+  .lg-back {
+    max-width: 1600px;
+    margin: clamp(48px, 8vh, 80px) auto 0;
+  }
+
+  .lg-back a {
+    font-size: 15px;
+    color: var(--color-blue);
+  }
+
+  .lg-back a:hover {
+    opacity: 0.75;
+  }
+
+  @media (max-width: 767px) {
+    .lg-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* 移动端：整行与大跨度占两列，其余占一列 */
+    .lg-item {
+      grid-column: span 1 !important;
+    }
+
+    .lg-item:nth-child(5n + 1) {
+      grid-column: span 2 !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lg-item__img {
+      transition: none;
+    }
+  }
+</style>

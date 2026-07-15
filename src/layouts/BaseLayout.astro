@@ -13,12 +13,18 @@ interface Props {
   title?: string;
   description?: string;
   headerVariant?: "solid" | "overlay";
+  headerTone?: "bg" | "white";
+  /** 页脚底色：需与「页面最底部区块」的背景一致。默认跟随 headerTone，
+   *  但若某页头部在白底、底部却是米白（如 /skills），需单独指定 footerTone="bg"。 */
+  footerTone?: "bg" | "white";
 }
 
 const {
   title,
   description = SITE_DESCRIPTION,
   headerVariant = "solid",
+  headerTone = "bg",
+  footerTone = headerTone,
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 ---
@@ -36,7 +42,7 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Caveat:wght@500&family=Ma+Shan+Zheng&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Caveat:wght@500&family=Ma+Shan+Zheng&display=swap"
     />
     <script is:inline>
       // 尽早标记 JS 可用：进场动画和线条绘制只在有 JS 时才先隐藏
@@ -44,11 +50,11 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
     </script>
   </head>
   <body class="flex min-h-screen flex-col overflow-x-hidden bg-bg font-sans text-ink">
-    <Header variant={headerVariant} />
+    <Header variant={headerVariant} tone={headerTone} />
     <main class="flex-1">
       <slot />
     </main>
-    <Footer />
+    <Footer tone={footerTone} />
 
     <script>
       // Section 进场：进入视口加 .is-visible，只播一次

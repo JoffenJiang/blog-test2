@@ -2,17 +2,28 @@
 /**
  * Header —— 轻盈导航（参考 WildBran）
  * 无底部分割线、无阴影
- * variant="overlay"：透明浮在首页视频首屏之上，文字为白色
- * variant="solid"：常规页面的吸顶米白导航
- * 桌面端 hover / focus 时才出现随机手绘短线；当前页只用字重 + 颜色表示
+ * variant="overlay"：透明固定在首页视频首屏之上，文字为白色
+ * variant="solid"：常规页面使用与页面一致的米白/白色背景
+ * 初始显示；向下滚动隐藏，向上滚动重新出现
+ * overlay 离开 data-header-overlay-zone 后自动切换为背景色 + 深色文字
+ *
+ * 所有页面导航与视口顶部的距离保持一致：
+ *   overlay 头部是 fixed top-0，直接钉在视口顶端，外层 hero 的 pt-3 不会下推它，
+ *   因此其实际上边距 = 本组件 pt-10/pt-16（40/64px）。
+ *   solid 头部同样使用 pt-10/pt-16，两种形态首屏 logo/导航位置完全对齐（与首页一致）。
+ *
+ * 全部导航项统一字重（加粗）；当前页永久显示随机手绘线（不需要 hover），
+ * 其余项 hover / focus 时才显示；深色 overlay 线为白色，浅色 solid 线为蓝色。
  */
 import { navItems } from "../data/navigation";
 
 interface Props {
   variant?: "solid" | "overlay";
+  /** 吸顶底色：bg 米白（默认）/ white 纯白（技能干货页） */
+  tone?: "bg" | "white";
 }
 
-const { variant = "solid" } = Astro.props;
+const { variant = "solid", tone = "bg" } = Astro.props;
 const overlay = variant === "overlay";
 
 const normalize = (p: string) =>
@@ -21,27 +32,45 @@ const current = normalize(Astro.url.pathname);
 
 const isActive = (href: string) =>
   href === "/" ? current === "/" : current === href || current.startsWith(`${href}/`);
+
+/** 手绘线随机形态（波浪 / 打圈 / Z 字等），每个当前页链接固定取一种，避免同款重复呆板 */
+const scribblePaths = [
+  "M2 6 C 12 3, 24 8, 36 5 S 56 6, 62 4.5",
+  "M3 5 C 16 8.5, 28 2, 42 6.5 S 58 3.5, 61 5.5",
+  "M2 4.5 C 10 7.5, 26 2.5, 40 7 S 57 4, 62 6.5",
+  "M2 8 C 8 2, 14 2, 18 6 C 22 10, 28 2, 34 6 C 40 10, 46 2, 50 6 S 60 8, 62 5",
+  "M2 5 L14 5 L14 2 L26 8 L26 2 L38 8 L38 2 L50 8 L50 5 L62 5",
+];
+const pickPath = (seed: number) => scribblePaths[seed % scribblePaths.length];
 ---
 
 <header
+  data-site-header
   class:list={[
+    "site-header inset-x-0 top-0 z-50",
+    /* header--overlay / header--solid：控制 hover 手绘线颜色（深色页白线 / 浅色页蓝线） */
     overlay
-      ? "absolute inset-x-0 top-0 z-50 text-white"
-      : "sticky top-0 z-50 bg-bg/85 text-ink backdrop-blur-md",
+      ? "header--overlay fixed bg-transparent text-white"
+      : [
+          "header--solid sticky text-ink",
+          tone === "white" ? "bg-white" : "bg-bg",
+        ],
   ]}
 >
   <div
     class:list={[
-      "mx-auto flex max-w-[1400px] items-center justify-between px-5 md:px-10",
-      overlay ? "h-20" : "h-16",
+      "mx-auto flex max-w-[1400px] items-center justify-between px-5 pb-5 md:px-10 md:pb-6",
+      /* 与视口顶部的距离在所有页面保持一致（overlay/solid 同值，见组件说明） */
+      "pt-10 md:pt-16",
     ]}
   >
-    <a href="/" class="font-serif text-[19px] font-semibold tracking-wide">蒋永芳</a>
+    <!-- Logo：马克笔手写体（Caveat，与站内手写批注同款）；overlay 首屏上为白色 -->
+    <a href="/" class="font-hand text-[27px] font-medium leading-none tracking-wide">Joffen-Blog</a>
 
     <nav class="hidden md:block" aria-label="主导航">
       <ul class="flex items-center gap-7">
         {
-          navItems.map((item) => {
+          navItems.map((item, i) => {
             const active = isActive(item.href);
             return (
               <li>
@@ -49,34 +78,27 @@ const isActive = (href: string) =>
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   class:list={[
-                    "nav-link relative py-2 text-[15px] transition-colors",
-                    active && "font-semibold",
-                    overlay
-                      ? active
-                        ? "text-white"
-                        : "text-white/70 hover:text-white"
-                      : active
-                        ? "text-ink"
-                        : "text-ink/60 hover:text-ink",
+                    /* 深色页全白 / 浅色页全黑，字重颜色一致；当前页仅靠下方常驻线区分 */
+                    "nav-link relative py-2 text-[15px] font-semibold transition-colors",
+                    active && "is-current",
+                    overlay ? "text-white" : "text-ink",
                   ]}
                 >
                   {item.label}
-                  {!active && (
-                    <svg
-                      class="nav-scribble"
-                      viewBox="0 0 64 10"
-                      preserveAspectRatio="none"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M2 6 C 12 3, 24 8, 36 5 S 56 6, 62 4.5"
-                        pathLength="1"
-                        stroke-width="2"
-                        vector-effect="non-scaling-stroke"
-                      />
-                    </svg>
-                  )}
+                  <svg
+                    class="nav-scribble"
+                    viewBox="0 0 64 10"
+                    preserveAspectRatio="none"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d={pickPath(i)}
+                      pathLength="1"
+                      stroke-width="2"
+                      vector-effect="non-scaling-stroke"
+                    />
+                  </svg>
                 </a>
               </li>
             );
@@ -116,14 +138,8 @@ const isActive = (href: string) =>
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
               class:list={[
-                "block rounded-md px-3 py-3 text-[16px] transition-colors",
-                overlay
-                  ? isActive(item.href)
-                    ? "font-semibold text-white"
-                    : "text-white/80"
-                  : isActive(item.href)
-                    ? "font-semibold text-ink"
-                    : "text-ink/70 hover:bg-card",
+                "block rounded-md px-3 py-3 text-[16px] font-semibold transition-colors",
+                overlay ? "text-white" : "text-ink hover:bg-card",
               ]}
             >
               {item.label}
@@ -135,7 +151,57 @@ const isActive = (href: string) =>
   </nav>
 </header>
 
+<style>
+  .site-header {
+    transform: translateY(0);
+    transition:
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.24s ease,
+      color 0.24s ease;
+    will-change: transform;
+  }
+
+  .site-header.is-scroll-hidden {
+    transform: translateY(-100%);
+  }
+
+  /* 首页离开视频首屏后：导航改用页面背景色，文字和手绘线切换为深色主题 */
+  .header--overlay.is-on-page-surface {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  .header--overlay.is-on-page-surface .nav-link {
+    color: var(--color-ink);
+  }
+
+  .header--overlay.is-on-page-surface .nav-link .nav-scribble {
+    color: var(--color-blue);
+  }
+
+  /* 当前页：手绘线永久显示，不需要 hover */
+  .nav-link.is-current .nav-scribble {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
+  }
+</style>
+
 <script>
+  // 导航实际高度写入 :root --header-h，供各页（如时光日札）对齐吸顶偏移
+  const headerEl = document.querySelector<HTMLElement>("[data-site-header]");
+  const setHeaderH = () => {
+    if (headerEl) {
+      document.documentElement.style.setProperty("--header-h", `${headerEl.offsetHeight}px`);
+    }
+  };
+  setHeaderH();
+  addEventListener("resize", setHeaderH);
+
   // 移动端菜单开合
   const toggle = document.getElementById("nav-toggle");
   const panel = document.getElementById("mobile-nav");
@@ -144,13 +210,68 @@ const isActive = (href: string) =>
     const open = panel ? !panel.classList.toggle("hidden") : false;
     toggle.setAttribute("aria-expanded", String(open));
     toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+    if (open) headerEl?.classList.remove("is-scroll-hidden");
   });
 
-  // 导航 hover 手绘线：每次 hover / focus 随机换一种曲线形态
+  // WildBran 式导航：初始显示，向下滚动隐藏，向上滚动重新出现
+  if (headerEl) {
+    let lastY = Math.max(window.scrollY, 0);
+    let ticking = false;
+    const delta = 8;
+    const overlayZone = document.querySelector<HTMLElement>("[data-header-overlay-zone]");
+
+    const syncHeaderSurface = () => {
+      if (!headerEl.classList.contains("header--overlay") || !overlayZone) return;
+      const videoStillBehindHeader = overlayZone.getBoundingClientRect().bottom > headerEl.offsetHeight;
+      headerEl.classList.toggle("is-on-page-surface", !videoStillBehindHeader);
+    };
+
+    const updateHeader = () => {
+      ticking = false;
+      const currentY = Math.max(window.scrollY, 0);
+      const mobileMenuOpen = toggle?.getAttribute("aria-expanded") === "true";
+
+      syncHeaderSurface();
+
+      if (currentY <= 4 || mobileMenuOpen) {
+        headerEl.classList.remove("is-scroll-hidden");
+      } else if (currentY > lastY + delta) {
+        headerEl.classList.add("is-scroll-hidden");
+      } else if (currentY < lastY - delta) {
+        headerEl.classList.remove("is-scroll-hidden");
+      }
+
+      if (Math.abs(currentY - lastY) > delta || currentY <= 4) {
+        lastY = currentY;
+      }
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateHeader);
+        }
+      },
+      { passive: true }
+    );
+
+    headerEl.addEventListener("focusin", () => {
+      headerEl.classList.remove("is-scroll-hidden");
+    });
+
+    addEventListener("resize", syncHeaderSurface);
+    syncHeaderSurface();
+  }
+
+  // 导航 hover 手绘线：每次 hover / focus 随机换一种曲线形态（当前页也可再随机）
   const scribblePaths = [
     "M2 6 C 12 3, 24 8, 36 5 S 56 6, 62 4.5",
     "M3 5 C 16 8.5, 28 2, 42 6.5 S 58 3.5, 61 5.5",
     "M2 4.5 C 10 7.5, 26 2.5, 40 7 S 57 4, 62 6.5",
+    "M2 8 C 8 2, 14 2, 18 6 C 22 10, 28 2, 34 6 C 40 10, 46 2, 50 6 S 60 8, 62 5",
+    "M2 5 L14 5 L14 2 L26 8 L26 2 L38 8 L38 2 L50 8 L50 5 L62 5",
   ];
 
   document.querySelectorAll<SVGPathElement>(".nav-scribble path").forEach((path) => {
