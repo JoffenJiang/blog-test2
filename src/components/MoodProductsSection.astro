@@ -93,7 +93,285 @@ const layers: Layer[] = [
         >
           <div class="mood-product-composite">
             <div class="mood-product-img">
-              <div class:list={["mood-shape", l.shape]} />
+              {l.key === "bites" ? (
+                <!-- 日常杂记：复刻 F.W.DeVoe 复古调色盘广告构图 ——
+                     直立蛋形调色盘（右侧指孔）+ 一束笔尖朝上、穿过指孔的画笔
+                     + 左下颜料瓶 + 右下平躺大颜料管/小管/洒出的颜料/瓶盖。
+                     整个盘面 = 图片占位，把图片放到 public/media/products/palette.jpg 即自动显示 -->
+                <svg class="mood-palette" viewBox="0 0 340 544" fill="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="mood-palette-ph" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#f2ead9" />
+                      <stop offset="55%" stop-color="#e8dccb" />
+                      <stop offset="100%" stop-color="#d9c9b2" />
+                    </linearGradient>
+                    <!-- 裁切 = 盘身减去指孔：图片填满整个盘面，指孔处透空 -->
+                    <clipPath id="mood-palette-clip" clip-rule="evenodd">
+                      <path
+                        fill-rule="evenodd"
+                        d="M158 70 C 182 68, 196 100, 208 102 C 226 105, 230 84, 248 84 C 270 84, 300 150, 304 236 C 308 322, 288 372, 250 402 C 224 424, 190 440, 150 440 C 110 440, 78 414, 62 386 C 44 358, 34 298, 34 246 C 34 194, 44 144, 62 116 C 84 84, 128 72, 158 70 Z M244.3 176.8 C 255.6 179.6, 261.9 193.1, 258.4 207.1 C 254.9 221.1, 243 230, 231.7 227.2 C 220.4 224.4, 214.1 210.9, 217.6 196.9 C 221.1 182.9, 233 174, 244.3 176.8 Z"
+                      />
+                    </clipPath>
+                  </defs>
+
+                  <!-- 画笔束（复刻参考特写）：8 支密排、笔杆粗、穿过指孔并把孔完全填满；
+                       红木杆 + 蓝灰杆交错、长银箍、金棕平头笔毛，最右一支尖头笔 -->
+                  <g transform="translate(236 200) rotate(-1)">
+                    <rect x="-3" y="-130" width="6" height="200" rx="3" fill="#5d4a33" />
+                    <rect x="-3.5" y="-154" width="7" height="26" rx="1.5" fill="#c8ccd0" />
+                    <path d="M-3.5 -154 L3.5 -154 L2 -172 Q0 -176 -2 -172 Z" fill="#8a6b3e" />
+                  </g>
+                  <g transform="translate(223.5 200) rotate(-9)">
+                    <rect x="-3.5" y="-92" width="7" height="162" rx="3.5" fill="#8f4a3a" />
+                    <rect x="-4" y="-116" width="8" height="26" rx="1.5" fill="#b3afa6" />
+                    <path d="M-4 -116 L4 -116 L2.2 -136 Q0 -140 -2.2 -136 Z" fill="#b98a3e" />
+                  </g>
+                  <g transform="translate(229 200) rotate(-5)">
+                    <rect x="-3.5" y="-108" width="7" height="178" rx="3.5" fill="#9aa7b0" />
+                    <rect x="-4" y="-134" width="8" height="28" rx="1.5" fill="#c8ccd0" />
+                    <path d="M-4 -134 L4 -134 L2.2 -156 Q0 -160 -2.2 -156 Z" fill="#c99a4e" />
+                  </g>
+                  <g transform="translate(234 200) rotate(-3)">
+                    <rect x="-3.5" y="-120" width="7" height="190" rx="3.5" fill="#a04435" />
+                    <rect x="-4" y="-148" width="8" height="30" rx="1.5" fill="#b3afa6" />
+                    <path d="M-4 -148 L4 -148 L2.2 -172 Q0 -176 -2.2 -172 Z" fill="#6f4a2a" />
+                  </g>
+                  <g transform="translate(239.5 200) rotate(2)">
+                    <rect x="-4" y="-128" width="8" height="198" rx="4" fill="#b3bcc4" />
+                    <rect x="-4.5" y="-158" width="9" height="32" rx="1.5" fill="#c8ccd0" />
+                    <path d="M-4.5 -158 L4.5 -158 L2.5 -184 Q0 -188 -2.5 -184 Z" fill="#c99a4e" />
+                  </g>
+                  <g transform="translate(245 200) rotate(4)">
+                    <rect x="-3.5" y="-112" width="7" height="182" rx="3.5" fill="#8f4a3a" />
+                    <rect x="-4" y="-140" width="8" height="30" rx="1.5" fill="#b3afa6" />
+                    <path d="M-4 -140 L4 -140 L2.2 -162 Q0 -166 -2.2 -162 Z" fill="#b98a3e" />
+                  </g>
+                  <g transform="translate(251 200) rotate(8)">
+                    <rect x="-3.5" y="-96" width="7" height="166" rx="3.5" fill="#9aa7b0" />
+                    <rect x="-4" y="-122" width="8" height="28" rx="1.5" fill="#c8ccd0" />
+                    <path d="M-4 -122 L4 -122 L2.2 -144 Q0 -148 -2.2 -144 Z" fill="#6f4a2a" />
+                  </g>
+                  <g transform="translate(257 200) rotate(12)">
+                    <rect x="-4" y="-82" width="8" height="152" rx="4" fill="#a04435" />
+                    <rect x="-4.5" y="-108" width="9" height="28" rx="1.5" fill="#b3afa6" />
+                    <path d="M-4.5 -108 L4.5 -108 L1.2 -128 L0 -138 L-1.2 -128 Z" fill="#c9a06b" />
+                  </g>
+
+                  <!-- 盘身（evenodd 挖出指孔）：奶白盘面，整面即占位底色 -->
+                  <path
+                    fill="#f6efe0"
+                    fill-rule="evenodd"
+                    d="M158 70 C 182 68, 196 100, 208 102 C 226 105, 230 84, 248 84 C 270 84, 300 150, 304 236 C 308 322, 288 372, 250 402 C 224 424, 190 440, 150 440 C 110 440, 78 414, 62 386 C 44 358, 34 298, 34 246 C 34 194, 44 144, 62 116 C 84 84, 128 72, 158 70 Z M244.3 176.8 C 255.6 179.6, 261.9 193.1, 258.4 207.1 C 254.9 221.1, 243 230, 231.7 227.2 C 220.4 224.4, 214.1 210.9, 217.6 196.9 C 221.1 182.9, 233 174, 244.3 176.8 Z"
+                  />
+
+                  <!-- 盘面 = 图片占位（未上传时显示暖色渐变；指孔处透空） -->
+                  <g clip-path="url(#mood-palette-clip)">
+                    <rect x="28" y="54" width="290" height="398" fill="url(#mood-palette-ph)" />
+                    <image
+                      href="/media/products/palette.jpg"
+                      x="28"
+                      y="54"
+                      width="290"
+                      height="398"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </g>
+
+                  <!-- 左下：颜料瓶（琥珀瓶身 + 木塞 + 白标签），在盘前 -->
+                  <g>
+                    <rect x="86" y="300" width="24" height="22" rx="4" fill="#c9a06b" />
+                    <rect x="84" y="318" width="28" height="9" rx="3" fill="#b8862b" />
+                    <path d="M88 327 L108 327 L130 358 L66 358 Z" fill="#d9a441" />
+                    <rect x="58" y="352" width="80" height="110" rx="10" fill="#d9a441" />
+                    <rect x="64" y="384" width="68" height="52" rx="4" fill="#f6efe0" />
+                    <rect x="74" y="396" width="48" height="4" rx="2" fill="#8f959e" />
+                    <rect x="80" y="406" width="36" height="3" rx="1.5" fill="#b3afa6" />
+                    <rect x="72" y="416" width="52" height="4" rx="2" fill="#8f959e" />
+                  </g>
+
+                  <!-- 右下：洒出的颜料 + 平躺大颜料管 + 两支小管 -->
+                  <path
+                    d="M150 500 C 170 492, 200 494, 214 502 C 226 510, 204 516, 182 514 C 160 512, 140 508, 150 500 Z"
+                    fill="#8a5a2e"
+                  />
+                  <g transform="translate(196 468) rotate(-14)">
+                    <path d="M2 2 L100 -6 L100 18 L2 22 Z" fill="#d8d3c8" />
+                    <path d="M6 3 L6 21 M11 3 L11 20 M16 2 L16 20" stroke="#b3afa6" stroke-width="1.2" />
+                    <rect x="40" y="-1" width="26" height="16" rx="2" fill="#4a5a78" />
+                    <rect x="100" y="-4" width="12" height="14" rx="2" fill="#8f959e" />
+                  </g>
+                  <g transform="translate(284 492) rotate(8)">
+                    <rect x="0" y="0" width="28" height="10" rx="2" fill="#d8d3c8" />
+                    <rect x="28" y="1" width="6" height="8" rx="1.5" fill="#8f959e" />
+                  </g>
+                  <g transform="translate(300 428) rotate(24)">
+                    <rect x="0" y="6" width="9" height="30" rx="2" fill="#d8d3c8" />
+                    <rect x="1" y="0" width="7" height="6" rx="1.5" fill="#8f959e" />
+                  </g>
+
+                  <!-- 左前：掉落的小瓶盖 -->
+                  <circle cx="60" cy="500" r="8" fill="#b3afa6" />
+                  <circle cx="60" cy="500" r="4" fill="#8f959e" />
+                </svg>
+              ) : l.key === "crackers" ? (
+                <!-- 职业ootd：正面绿色笔记本插画（参考编辑风 mockup）——
+                     屏幕区 = 图片占位；四周便利贴 + 左侧咖啡杯 + 手绘星号点缀。
+                     把图片放到 public/media/products/laptop.jpg 即自动显示 -->
+                <svg class="mood-laptop" viewBox="0 0 480 430" fill="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="mood-laptop-ph" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#f7f2e7" />
+                      <stop offset="60%" stop-color="#efe8d8" />
+                      <stop offset="100%" stop-color="#e6ddc8" />
+                    </linearGradient>
+                    <clipPath id="mood-laptop-clip">
+                      <rect x="158" y="48" width="296" height="208" rx="4" />
+                    </clipPath>
+                  </defs>
+
+                  <!-- 手绘星号（橙 / 蓝） -->
+                  <g stroke-linecap="round">
+                    <g stroke="#e5823a" stroke-width="6">
+                      <path d="M118 66 V102 M100 84 H136 M105 71 L131 97 M131 71 L105 97" />
+                    </g>
+                    <g stroke="#3f7fd0" stroke-width="6">
+                      <path d="M462 150 V182 M446 166 H478 M450 154 L474 178 M474 154 L450 178" />
+                    </g>
+                    <g stroke="#e5823a" stroke-width="5">
+                      <path d="M40 196 V222 M27 209 H53 M31 200 L49 218 M49 200 L31 218" />
+                    </g>
+                  </g>
+
+                  <!-- 左侧咖啡杯 + 蓝色蒸汽 -->
+                  <path d="M96 214 C 104 190, 96 176, 108 158 C 118 144, 106 132, 116 120"
+                        stroke="#8bb6dd" stroke-width="7" stroke-linecap="round" fill="none" />
+                  <rect x="44" y="232" width="86" height="92" rx="12" fill="#efb43f" />
+                  <path d="M130 250 C 152 250, 152 296, 130 296" stroke="#efb43f" stroke-width="12" fill="none" />
+                  <rect x="52" y="240" width="70" height="20" rx="8" fill="#5a3b28" />
+
+                  <!-- 屏幕（盖）：深绿边框 + 摄像头（边框收窄，图片区放大） -->
+                  <rect x="152" y="42" width="308" height="220" rx="16" fill="#35503c" />
+                  <circle cx="306" cy="53" r="2.6" fill="#7d9781" />
+                  <!-- 屏幕内容 = 图片占位（未上传显示米白渐变） -->
+                  <g clip-path="url(#mood-laptop-clip)">
+                    <rect x="158" y="48" width="296" height="208" fill="url(#mood-laptop-ph)" />
+                    <image
+                      href="/media/products/laptop.jpg"
+                      x="158"
+                      y="48"
+                      width="296"
+                      height="208"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </g>
+
+                  <!-- 底座（键盘面，透视梯形）+ 前缘厚度 + 键盘线 + 触控板 -->
+                  <path d="M154 262 L458 262 L482 356 L130 356 Z" fill="#2f4736" />
+                  <path d="M130 356 L482 356 L474 374 L138 374 Z" fill="#24382a" />
+                  <g stroke="#45614c" stroke-width="2.4" stroke-linecap="round">
+                    <path d="M186 278 H426 M182 292 H430 M178 306 H434" />
+                    <path d="M230 270 V314 M286 270 V314 M342 270 V314 M398 270 V316" />
+                  </g>
+                  <rect x="256" y="322" width="100" height="26" rx="4" fill="#264031" stroke="#45614c" stroke-width="2" />
+
+                  <!-- 便利贴（橙黄）+ 潦草笔记线，贴在屏幕上/边 -->
+                  <g>
+                    <g transform="translate(214 22) rotate(-6)">
+                      <rect x="0" y="0" width="52" height="52" rx="2" fill="#f4b13e" />
+                      <path d="M10 18 H40 M10 28 L34 26 M10 38 H36" stroke="#b5762a" stroke-width="2" stroke-linecap="round" fill="none" />
+                    </g>
+                    <g transform="translate(410 96) rotate(7)">
+                      <rect x="0" y="0" width="50" height="50" rx="2" fill="#f4b13e" />
+                      <path d="M9 16 H40 M9 26 H38 M9 36 L30 34" stroke="#b5762a" stroke-width="2" stroke-linecap="round" fill="none" />
+                    </g>
+                    <g transform="translate(414 160) rotate(-4)">
+                      <rect x="0" y="0" width="48" height="46" rx="2" fill="#f4b13e" />
+                      <path d="M9 15 H38 M9 25 H36 M9 34 H32" stroke="#b5762a" stroke-width="2" stroke-linecap="round" fill="none" />
+                    </g>
+                  </g>
+
+                  <!-- 右上眼睛/评论小图标 -->
+                  <g transform="translate(392 74)">
+                    <rect x="0" y="0" width="34" height="28" rx="6" fill="#7a9a6a" />
+                    <path d="M8 14 C 12 9, 22 9, 26 14 C 22 19, 12 19, 8 14 Z" fill="#2f4736" />
+                    <circle cx="17" cy="14" r="3" fill="#7a9a6a" />
+                  </g>
+                </svg>
+              ) : l.key === "cookies" ? (
+                <!-- 汉服ootd：拍立得相机吐照片 —— 照片影像区 = 图片占位，
+                     把图片放到 public/media/products/photo.jpg 即自动显示 -->
+                <svg class="mood-camera" viewBox="0 0 340 480" fill="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="mood-photo-ph" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#e9e2d4" />
+                      <stop offset="60%" stop-color="#ddd3c0" />
+                      <stop offset="100%" stop-color="#cdbfa6" />
+                    </linearGradient>
+                    <clipPath id="mood-photo-clip">
+                      <rect x="14" y="14" width="152" height="122" rx="2" />
+                    </clipPath>
+                  </defs>
+
+                  <!-- 吐出的照片（斜向左下，上缘藏进出片口）—— 影像区 = 图片占位 -->
+                  <g transform="translate(34 244) rotate(-8)">
+                    <rect x="0" y="0" width="180" height="184" rx="3" fill="#fbfaf5" stroke="#d8d2c4" stroke-width="1.5" />
+                    <g clip-path="url(#mood-photo-clip)">
+                      <rect x="14" y="14" width="152" height="122" fill="url(#mood-photo-ph)" />
+                      <image
+                        href="/media/products/photo.jpg"
+                        x="14"
+                        y="14"
+                        width="152"
+                        height="122"
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                    </g>
+                  </g>
+
+                  <!-- 右后深蓝侧体（3/4 透视）+ 顶部取景臂 -->
+                  <path d="M228 66 L296 48 L310 62 L310 214 L268 244 L230 222 Z" fill="#2a2f3d" />
+                  <path d="M286 48 L320 38 L332 50 L320 62 L288 62 Z" fill="#343a4a" />
+
+                  <!-- 米白上机面（镜头面）+ 向前伸出的托板 -->
+                  <rect x="50" y="70" width="186" height="116" rx="14" fill="#ece2cd" />
+                  <path d="M40 184 L246 184 L262 224 L26 224 Z" fill="#e3dbc8" />
+
+                  <!-- 斜向彩虹条（自镜头下方斜穿托板到左下，OneStep 标志） -->
+                  <g transform="translate(158 168) rotate(40)">
+                    <rect x="-13" y="0" width="5" height="62" fill="#d5472f" />
+                    <rect x="-8" y="0" width="5" height="62" fill="#e8823a" />
+                    <rect x="-3" y="0" width="5" height="62" fill="#ecc23f" />
+                    <rect x="2" y="0" width="5" height="62" fill="#6ba368" />
+                    <rect x="7" y="0" width="5" height="62" fill="#3f7fd0" />
+                  </g>
+
+                  <!-- 黑色前条（POLAROID LAND CAMERA 铭牌）+ 出片口 -->
+                  <path d="M26 224 L262 224 L254 260 Q252 268 242 268 L38 268 Q28 268 26 260 Z" fill="#1e1e22" />
+                  <rect x="66" y="234" width="152" height="10" rx="2" fill="#3a3a42" />
+                  <rect x="40" y="254" width="206" height="5" rx="2.5" fill="#000" />
+
+                  <!-- 镜头（同心圆 + 高光） -->
+                  <circle cx="150" cy="126" r="44" fill="#1a1714" />
+                  <circle cx="150" cy="126" r="35" fill="#2f2b26" />
+                  <circle cx="150" cy="126" r="26" fill="#151210" />
+                  <circle cx="150" cy="126" r="15" fill="#2b2621" />
+                  <circle cx="142" cy="118" r="6" fill="#7fa8ad" opacity="0.85" />
+
+                  <!-- 右上取景器（黑方窗） -->
+                  <rect x="192" y="82" width="42" height="40" rx="5" fill="#23252b" />
+                  <rect x="198" y="88" width="30" height="28" rx="3" fill="#3d414a" />
+
+                  <!-- 左上 OneStep 铭牌 + 红色快门键 -->
+                  <rect x="62" y="88" width="54" height="18" rx="4" fill="#1e1e22" />
+                  <circle cx="80" cy="134" r="10" fill="#d5461f" />
+
+                  <!-- 镜头右下旋钮 -->
+                  <circle cx="204" cy="146" r="12" fill="#23252b" />
+                  <circle cx="204" cy="146" r="5" fill="#3d414a" />
+                </svg>
+              ) : (
+                <div class:list={["mood-shape", l.shape]} />
+              )}
             </div>
             {l.label && l.labelArrow && (
               <figcaption
@@ -263,10 +541,10 @@ const layers: Layer[] = [
   /* ===== 各组位置与尺寸 =====
    * 顶部 / 两侧：围绕标题的椭圆环
    * 底部三组：用 --mood-bottom-safe 抬离 section 底边，完整露出 */
-  .mood-product--bites        { left: 5%;   top: 4%;   width: 210px; }
+  .mood-product--bites        { left: 5%;   top: -2%;  width: 248px; }
   .mood-product--top-blur     { left: 24%;  top: -1%;  width: 68px; }
   .mood-product--energy-ball  { left: 46%;  top: 2.5%; width: 96px; }
-  .mood-product--crackers     { right: 7%;  top: 3.5%; width: 210px; }
+  .mood-product--crackers     { right: 5%;  top: 3.5%; width: 300px; }
   .mood-product--left-bar     { left: -4%;  top: 38%;  width: 170px; }
   .mood-product--right-cracker{ right: -1%; top: 36%;  width: 84px; }
   .mood-product--cookies      { left: 13%;  bottom: var(--mood-bottom-safe); width: clamp(210px, 18vw, 290px); }
@@ -311,6 +589,15 @@ const layers: Layer[] = [
   }
 
   .mood-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* 日常杂记：调色盘 / 职业ootd：笔记本 / 汉服ootd：相机 SVG（宽度随组，高度按 viewBox 等比） */
+  .mood-palette,
+  .mood-laptop,
+  .mood-camera {
     display: block;
     width: 100%;
     height: auto;
@@ -465,7 +752,7 @@ const layers: Layer[] = [
   /* 各组 callout 位置：贴近产品图但不接触；
    * 底部三组的 callout 落在 composite 的 padding-bottom 区内，不会被裁切 */
   .is--bites .mood-product-callout    { right: -42%; top: 62%; }
-  .is--crackers .mood-product-callout { left: 14%; bottom: -42px; }
+  .is--crackers .mood-product-callout { left: 44%; bottom: -42px; }
   .is--cookies .mood-product-callout  { left: -12%; bottom: 2px; }
   .is--burst .mood-product-callout    { left: -8%; top: -50px; }
   .is--bars .mood-product-callout     { right: -4%; bottom: 14px; }
@@ -497,6 +784,14 @@ const layers: Layer[] = [
 <script>
   const section = document.querySelector<HTMLElement>("[data-mood-section]");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 占位图片（调色盘盘面 / 笔电屏幕）：尚未上传（404）时移除 <image>，露出下方渐变占位。
+  // 脚本晚于 SVG 解析执行，error 事件可能已错过，故用 Image() 重新探测同一 URL。
+  document.querySelectorAll<SVGImageElement>(".mood-palette image, .mood-laptop image, .mood-camera image").forEach((img) => {
+    const probe = new Image();
+    probe.onerror = () => img.remove();
+    probe.src = img.href.baseVal;
+  });
 
   if (section) {
     if (reduce) {

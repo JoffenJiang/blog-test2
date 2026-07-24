@@ -20,7 +20,7 @@ export const posts: Post[] = [
     featured: true,
   },
   {
-    title: "商业计划书不是排版，而是把一门生意讲清楚",
+    title: "商业计划书就是把生意讲清楚",
     category: "技能干货",
     readTime: "8 分钟",
     ph: "warm",
@@ -28,7 +28,7 @@ export const posts: Post[] = [
     featured: true,
   },
   {
-    title: "市场活动不是热闹，而是服务业务目标",
+    title: "市场活动应以价值为锚，真正服务业务目标",
     category: "职业发展",
     readTime: "7 分钟",
     ph: "rose",
@@ -44,16 +44,16 @@ export const posts: Post[] = [
     featured: true,
   },
   {
-    title: "提示词就是把需求讲清楚",
+    title: "写好提示词的核心：把需求讲清楚，新手从零上手指南",
     category: "技能干货",
-    readTime: "5 分钟",
+    readTime: "10 分钟",
     ph: "blue",
     cover: "/media/post-prompt.jpg",
   },
   {
-    title: "公司为什么也要懂一点财税合规",
+    title: "公司为什么也要懂一点财税合规？",
     category: "技能干货",
-    readTime: "6 分钟",
+    readTime: "8 分钟",
     ph: "warm",
     cover: "/media/post-tax.jpg",
   },

@@ -151,6 +151,22 @@ const related = (await getCollection("skills"))
     margin: 0 0 1.4em;
   }
 
+  .sk-post__body :global(ul) {
+    margin: 0 0 1.4em;
+    padding-left: 1.5em;
+    list-style: disc;
+  }
+
+  .sk-post__body :global(ol) {
+    margin: 0 0 1.4em;
+    padding-left: 1.5em;
+    list-style: decimal;
+  }
+
+  .sk-post__body :global(li + li) {
+    margin-top: 0.55em;
+  }
+
   /* 黑色衬线内容小标题 */
   .sk-post__body :global(h2) {
     font-family: var(--font-serif);
@@ -173,6 +189,13 @@ const related = (await getCollection("skills"))
   .sk-post__body :global(strong) {
     color: #245bdb;
     font-weight: 600;
+  }
+
+  .sk-post__body :global(a) {
+    color: #245bdb;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
 
   /* 图片占位符：16:9 圆角，图片缺失时显示渐变（inline style 双层背景兜底） */
