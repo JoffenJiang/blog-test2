@@ -55,16 +55,42 @@ const arrows = {
 
 const layers: Layer[] = [
   { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "日常杂记", labelArrow: "loop", labelLayout: "arrow-text" },
-  { key: "top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.45", parallax: 0.06 },
+  { key: "top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.68", parallax: 0.06 },
   { key: "energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05 },
   { key: "crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "职业ootd", labelArrow: "zigzag", labelLayout: "arrow-text" },
   { key: "left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
-  { key: "right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg", parallax: 0.065 },
+  { key: "right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg" },
   { key: "cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "汉服ootd", labelArrow: "curl", labelLayout: "arrow-over-text" },
   { key: "burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "环游记", labelArrow: "rise", labelLayout: "arrow-text" },
   { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "梦到什么发什么系列", labelArrow: "hook", labelLayout: "text-arrow" },
-  { key: "bottom-blur", shape: "mood-shape-blur", batch: 3, stagger: ".3s", vars: "--sy:60px;--op:.45", parallax: 0.06 },
 ];
+
+/** 用户上传的手绘装饰，替换原来的四个纯色几何占位符。 */
+const uploadedDecorations: Record<
+  string,
+  { src: string; width: number; height: number }
+> = {
+  "top-blur": {
+    src: "/media/products/decor-teacup.jpg",
+    width: 750,
+    height: 750,
+  },
+  "energy-ball": {
+    src: "/media/products/decor-fishbowl.png",
+    width: 500,
+    height: 500,
+  },
+  "right-cracker": {
+    src: "/media/products/decor-cake.jpg",
+    width: 600,
+    height: 600,
+  },
+  "left-bar": {
+    src: "/media/products/decor-film.jpg",
+    width: 736,
+    height: 952,
+  },
+};
 ---
 
 <section
@@ -298,77 +324,112 @@ const layers: Layer[] = [
                   </g>
                 </svg>
               ) : l.key === "cookies" ? (
-                <!-- 汉服ootd：拍立得相机吐照片 —— 照片影像区 = 图片占位，
-                     把图片放到 public/media/products/photo.jpg 即自动显示 -->
-                <svg class="mood-camera" viewBox="0 0 340 480" fill="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="mood-photo-ph" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#e9e2d4" />
-                      <stop offset="60%" stop-color="#ddd3c0" />
-                      <stop offset="100%" stop-color="#cdbfa6" />
-                    </linearGradient>
-                    <clipPath id="mood-photo-clip">
-                      <rect x="14" y="14" width="152" height="122" rx="2" />
-                    </clipPath>
-                  </defs>
-
-                  <!-- 吐出的照片（斜向左下，上缘藏进出片口）—— 影像区 = 图片占位 -->
-                  <g transform="translate(34 244) rotate(-8)">
-                    <rect x="0" y="0" width="180" height="184" rx="3" fill="#fbfaf5" stroke="#d8d2c4" stroke-width="1.5" />
-                    <g clip-path="url(#mood-photo-clip)">
-                      <rect x="14" y="14" width="152" height="122" fill="url(#mood-photo-ph)" />
-                      <image
-                        href="/media/products/photo.jpg"
-                        x="14"
-                        y="14"
-                        width="152"
-                        height="122"
-                        preserveAspectRatio="xMidYMid slice"
-                      />
-                    </g>
-                  </g>
-
-                  <!-- 右后深蓝侧体（3/4 透视）+ 顶部取景臂 -->
-                  <path d="M228 66 L296 48 L310 62 L310 214 L268 244 L230 222 Z" fill="#2a2f3d" />
-                  <path d="M286 48 L320 38 L332 50 L320 62 L288 62 Z" fill="#343a4a" />
-
-                  <!-- 米白上机面（镜头面）+ 向前伸出的托板 -->
-                  <rect x="50" y="70" width="186" height="116" rx="14" fill="#ece2cd" />
-                  <path d="M40 184 L246 184 L262 224 L26 224 Z" fill="#e3dbc8" />
-
-                  <!-- 斜向彩虹条（自镜头下方斜穿托板到左下，OneStep 标志） -->
-                  <g transform="translate(158 168) rotate(40)">
-                    <rect x="-13" y="0" width="5" height="62" fill="#d5472f" />
-                    <rect x="-8" y="0" width="5" height="62" fill="#e8823a" />
-                    <rect x="-3" y="0" width="5" height="62" fill="#ecc23f" />
-                    <rect x="2" y="0" width="5" height="62" fill="#6ba368" />
-                    <rect x="7" y="0" width="5" height="62" fill="#3f7fd0" />
-                  </g>
-
-                  <!-- 黑色前条（POLAROID LAND CAMERA 铭牌）+ 出片口 -->
-                  <path d="M26 224 L262 224 L254 260 Q252 268 242 268 L38 268 Q28 268 26 260 Z" fill="#1e1e22" />
-                  <rect x="66" y="234" width="152" height="10" rx="2" fill="#3a3a42" />
-                  <rect x="40" y="254" width="206" height="5" rx="2.5" fill="#000" />
-
-                  <!-- 镜头（同心圆 + 高光） -->
-                  <circle cx="150" cy="126" r="44" fill="#1a1714" />
-                  <circle cx="150" cy="126" r="35" fill="#2f2b26" />
-                  <circle cx="150" cy="126" r="26" fill="#151210" />
-                  <circle cx="150" cy="126" r="15" fill="#2b2621" />
-                  <circle cx="142" cy="118" r="6" fill="#7fa8ad" opacity="0.85" />
-
-                  <!-- 右上取景器（黑方窗） -->
-                  <rect x="192" y="82" width="42" height="40" rx="5" fill="#23252b" />
-                  <rect x="198" y="88" width="30" height="28" rx="3" fill="#3d414a" />
-
-                  <!-- 左上 OneStep 铭牌 + 红色快门键 -->
-                  <rect x="62" y="88" width="54" height="18" rx="4" fill="#1e1e22" />
-                  <circle cx="80" cy="134" r="10" fill="#d5461f" />
-
-                  <!-- 镜头右下旋钮 -->
-                  <circle cx="204" cy="146" r="12" fill="#23252b" />
-                  <circle cx="204" cy="146" r="5" fill="#3d414a" />
-                </svg>
+                <!-- 汉服ootd：按用户参考图复刻的透明底手绘拍立得；
+                     唯一的弯曲相纸内使用通用照片占位图。 -->
+                <div class="mood-camera-reference-wrap" aria-hidden="true">
+                  <img
+                    class="mood-camera-reference"
+                    src="/media/products/polaroid-camera-placeholder-v4.png"
+                    alt=""
+                    width="901"
+                    height="865"
+                  />
+                  <canvas
+                    class="mood-photo-replacement"
+                    data-photo-replacement
+                    width="500"
+                    height="450"
+                  ></canvas>
+                  <span class="mood-camera-doodle mood-camera-doodle--petals">
+                    <i></i><i></i>
+                  </span>
+                  <span class="mood-camera-doodle mood-camera-doodle--fan">
+                    <i></i><i></i><i></i>
+                  </span>
+                </div>
+              ) : l.key === "burst" ? (
+                <!-- 环游记：三张拍立得夹在晾绳上的手绘构图。
+                     将三张照片依次放到 public/media/products/trip-01.jpg ~ trip-03.jpg，
+                     页面会自动用照片替换下方的占位区域。 -->
+                <div class="mood-trip-polaroids" aria-hidden="true">
+                  <svg
+                    class="mood-trip-rope"
+                    viewBox="0 0 1000 520"
+                    preserveAspectRatio="none"
+                    fill="none"
+                  >
+                    <path
+                      class="mood-trip-rope__under"
+                      d="M-70 72 Q475 177 1070 63"
+                    />
+                    <path
+                      class="mood-trip-rope__over"
+                      d="M-70 66 Q475 171 1070 57"
+                    />
+                  </svg>
+                  {
+                    [1, 2, 3].map((photoNumber) => (
+                      <span
+                        class:list={[
+                          "mood-trip-card",
+                          `mood-trip-card--${photoNumber}`,
+                        ]}
+                      >
+                        <span class="mood-trip-clip">
+                          <i></i>
+                        </span>
+                        <span
+                          class="mood-trip-photo-slot"
+                          data-trip-photo={`/media/products/trip-0${photoNumber}.jpg`}
+                        >
+                          <span class="mood-trip-placeholder-mark">
+                            <i></i>
+                            <b></b>
+                          </span>
+                          <span class="mood-trip-placeholder-label">
+                            图片 {photoNumber}
+                          </span>
+                        </span>
+                      </span>
+                    ))
+                  }
+                </div>
+              ) : l.key === "bars" ? (
+                <!-- 梦到什么发什么系列：使用用户选定的紫色星云手绘水晶球。 -->
+                <div class="mood-dream-scene" aria-hidden="true">
+                  <img
+                    class="mood-crystal-reference"
+                    src="/media/products/crystal-ball-reference.png"
+                    alt=""
+                    width="500"
+                    height="500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="mood-crystal-photo-slot" data-crystal-photo>
+                    <span class="mood-crystal-photo-icon">
+                      <i></i><b></b>
+                    </span>
+                    <span class="mood-crystal-photo-label">图片占位</span>
+                  </span>
+                </div>
+              ) : uploadedDecorations[l.key] ? (
+                <div
+                  class:list={[
+                    "mood-uploaded-decor",
+                    `mood-uploaded-decor--${l.key}`,
+                  ]}
+                  aria-hidden="true"
+                >
+                  <img
+                    src={uploadedDecorations[l.key].src}
+                    alt=""
+                    width={uploadedDecorations[l.key].width}
+                    height={uploadedDecorations[l.key].height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               ) : (
                 <div class:list={["mood-shape", l.shape]} />
               )}
@@ -414,24 +475,27 @@ const layers: Layer[] = [
 
 <style>
   /* ===== 骨架：视觉舞台 + 底部米白退场空间 =====
-   * min-height = 100svh（主要视觉舞台）+ clamp(...)（Wildbran 式退场空间）
+   * min-height = 100svh（主要视觉舞台）+ 退场空间 + 环游记下移空间
    * 下一个暗色板块在退场空间之后正常衔接，不覆盖本区 */
   .mood-products-section {
     --mood-exit-buffer: clamp(140px, 16svh, 240px);
-    --mood-bottom-safe: clamp(120px, 15svh, 220px);
+    --mood-burst-drop: clamp(200px, 24svh, 250px);
+    --mood-bottom-safe: calc(clamp(120px, 15svh, 220px) + var(--mood-burst-drop));
     position: relative;
     z-index: 1;
     background: var(--color-bg);
-    min-height: calc(100svh + var(--mood-exit-buffer));
-    /* 与上一板块（视频首屏）保留的距离 = 底部退场留白，与下方职业发展板块的间距一致 */
-    margin-top: var(--mood-exit-buffer);
+    min-height: calc(100svh + var(--mood-exit-buffer) + var(--mood-burst-drop));
+    /* 把过渡留白放进本区内部：视觉间距保持不变，同时让向上溢出的装饰
+     * 始终处在同一米白背景/混合层中，避免跨越 margin 时出现露白断层。 */
+    padding-top: var(--mood-exit-buffer);
+    margin-top: 0;
     overflow-x: clip;
     overflow-y: visible;
   }
 
   .mood-products-canvas {
     position: relative;
-    min-height: calc(100svh + var(--mood-exit-buffer));
+    min-height: calc(100svh + var(--mood-exit-buffer) + var(--mood-burst-drop));
     background: var(--color-bg);
     /* 只裁横向（收住 left-bar / right-cracker 的两侧溢出），
      * 纵向放开：避免顶部装饰（top-blur / energy-ball）在 canvas 上边缘
@@ -541,42 +605,56 @@ const layers: Layer[] = [
   /* ===== 各组位置与尺寸 =====
    * 顶部 / 两侧：围绕标题的椭圆环
    * 底部三组：用 --mood-bottom-safe 抬离 section 底边，完整露出 */
-  .mood-product--bites        { left: 5%;   top: -2%;  width: 248px; }
-  .mood-product--top-blur     { left: 24%;  top: -1%;  width: 68px; }
-  .mood-product--energy-ball  { left: 46%;  top: 2.5%; width: 96px; }
+  .mood-product--bites        { left: 8.5%; top: -2%;  width: 248px; }
+  .mood-product--top-blur     { left: 27.5%; top: -1%;  width: 60px; }
+  .mood-product--energy-ball  { right: -2.5%; top: 36%;  width: 150px; }
   .mood-product--crackers     { right: 5%;  top: 3.5%; width: 300px; }
   .mood-product--left-bar     { left: -4%;  top: 38%;  width: 170px; }
-  .mood-product--right-cracker{ right: -1%; top: 36%;  width: 84px; }
-  .mood-product--cookies      { left: 13%;  bottom: var(--mood-bottom-safe); width: clamp(210px, 18vw, 290px); }
-  /* 环游记（burst）组整体下移一档，贴近底排（对照 Wildbran） */
-  .mood-product--burst        { left: 46%;  bottom: clamp(56px, 7svh, 110px); width: clamp(120px, 11vw, 170px); }
-  .mood-product--bars         { right: 10%; bottom: var(--mood-bottom-safe); width: clamp(220px, 20vw, 320px); }
-  .mood-product--bottom-blur  { right: 25%; bottom: clamp(80px, 10svh, 160px); width: 62px; }
+  .mood-product--right-cracker{ left: 46%;  top: 2.5%; width: 110px; }
+  .mood-product--cookies      {
+    left: 10%;
+    bottom: calc(var(--mood-bottom-safe) - clamp(20px, 2vw, 30px));
+    width: clamp(260px, 21.5vw, 340px);
+  }
+  /* 环游记（burst）：独占更低的一行，避免与两侧内容发生视觉冲突。 */
+  .mood-product--burst        { left: 35.5%; bottom: clamp(38px, 5svh, 82px); width: clamp(310px, 29vw, 420px); }
+  .mood-product--bars         {
+    right: 4%;
+    bottom: calc(var(--mood-bottom-safe) - clamp(32px, 3vw, 46px));
+    width: clamp(320px, 30vw, 430px);
+  }
 
   @media (max-width: 1023px) {
     .mood-product--bites        { width: 150px; }
-    .mood-product--top-blur     { width: 52px; }
-    .mood-product--energy-ball  { width: 72px; }
+    .mood-product--top-blur     { width: 46px; }
+    .mood-product--energy-ball  { width: 104px; }
     .mood-product--crackers     { width: 150px; }
     .mood-product--left-bar     { width: 120px; }
-    .mood-product--right-cracker{ width: 62px; }
-    .mood-product--cookies      { width: clamp(150px, 18vw, 290px); }
-    .mood-product--burst        { width: clamp(96px, 11vw, 170px); }
-    .mood-product--bars         { width: clamp(160px, 20vw, 320px); }
-    .mood-product--bottom-blur  { width: 48px; }
+    .mood-product--right-cracker{ width: 82px; }
+    .mood-product--cookies      { width: clamp(190px, 22vw, 300px); }
+    .mood-product--burst        { left: 34%; width: clamp(250px, 31vw, 330px); }
+    .mood-product--bars         { right: 4%; width: clamp(210px, 27vw, 300px); }
   }
 
   @media (max-width: 639px) {
+    .mood-products-section     { --mood-burst-drop: clamp(70px, 10svh, 100px); }
     .mood-product--bites        { width: 104px; left: 2%; }
-    .mood-product--top-blur     { width: 40px; }
-    .mood-product--energy-ball  { width: 54px; }
+    .mood-product--top-blur     { width: 36px; }
+    .mood-product--right-cracker{ width: 60px; }
     .mood-product--crackers     { width: 104px; right: 2%; }
     .mood-product--left-bar,
-    .mood-product--right-cracker { display: none; }
-    .mood-product--cookies      { width: 116px; left: 6%; }
-    .mood-product--burst        { width: 78px; left: 45%; }
-    .mood-product--bars         { width: 126px; right: 5%; }
-    .mood-product--bottom-blur  { width: 36px; }
+    .mood-product--energy-ball { display: none; }
+    .mood-product--cookies      { width: 150px; left: 4%; }
+    .mood-product--burst        { width: 150px; left: 22%; bottom: 55px; }
+    .mood-product--bars         {
+      right: 5%;
+      bottom: calc(var(--mood-bottom-safe) - 14px);
+      width: 126px;
+    }
+
+    .mood-product--burst .mood-product-composite {
+      padding-bottom: 0;
+    }
   }
 
   /* ===== 产品图层与形状占位符 ===== */
@@ -594,13 +672,872 @@ const layers: Layer[] = [
     height: auto;
   }
 
-  /* 日常杂记：调色盘 / 职业ootd：笔记本 / 汉服ootd：相机 SVG（宽度随组，高度按 viewBox 等比） */
+  /* 五个上传的手绘装饰：通过 multiply 把素材白底自然融入米白页面。 */
+  .mood-uploaded-decor {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: visible;
+  }
+
+  /* 产品组本身会因进场动画形成独立合成层，因此在组层级完成白底融合。 */
+  .mood-product--top-blur,
+  .mood-product--energy-ball,
+  .mood-product--left-bar,
+  .mood-product--right-cracker {
+    mix-blend-mode: multiply;
+  }
+
+  .mood-uploaded-decor img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    transform:
+      translate(-50%, -50%)
+      scale(var(--decor-scale, 1));
+    transform-origin: center;
+    user-select: none;
+  }
+
+  /* 1：猫咪茶杯使用黑白铅笔线条，白底通过 multiply 融入页面。 */
+  .mood-uploaded-decor--top-blur {
+    --decor-scale: 2.18;
+  }
+
+  .mood-uploaded-decor--top-blur img {
+    filter: grayscale(1) blur(1.2px) contrast(1.12) brightness(0.98);
+    -webkit-mask-image: radial-gradient(
+      ellipse 36% 38% at 51% 51%,
+      #000 62%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 36% 38% at 51% 51%,
+      #000 62%,
+      transparent 100%
+    );
+  }
+
+  /* 2：透明底鱼缸清晰呈现，保留完整瓶口、鱼尾与手绘轮廓。 */
+  .mood-uploaded-decor--energy-ball {
+    --decor-scale: 1.25;
+  }
+
+  .mood-uploaded-decor--energy-ball img {
+    filter: brightness(1.02) contrast(1.04) saturate(1.03);
+  }
+
+  /* 3：蛋糕从右侧探入，替换原来的小圆角块。 */
+  .mood-uploaded-decor--right-cracker {
+    --decor-scale: 3.2;
+  }
+
+  .mood-uploaded-decor--right-cracker img {
+    /* 只保留上方的蛋糕插画，裁掉原素材下方手写的 “cake” 字样。 */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0 58%, transparent 61%);
+    mask-image: linear-gradient(to bottom, #000 0 58%, transparent 61%);
+  }
+
+  /* 4：胶卷保留竖向轮廓，并延续左侧半露出的构图。 */
+  .mood-uploaded-decor--left-bar {
+    --decor-scale: 2.62;
+    aspect-ratio: 1.28;
+  }
+
+  .mood-uploaded-decor--left-bar img {
+    -webkit-mask-image: radial-gradient(ellipse 38% 34% at 51% 48%, #000 58%, transparent 100%);
+    mask-image: radial-gradient(ellipse 38% 34% at 51% 48%, #000 58%, transparent 100%);
+  }
+
+  /* 日常杂记：调色盘 / 职业ootd：笔记本 SVG（宽度随组，高度按 viewBox 等比） */
   .mood-palette,
-  .mood-laptop,
-  .mood-camera {
+  .mood-laptop {
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  /* 汉服ootd：新参考图本身已朝右，无需镜像。 */
+  .mood-camera-reference-wrap {
+    position: relative;
+    width: 100%;
+    /* 相机向下贴近自己的标签；组本身也已下移，与左侧胶卷拉开距离。 */
+    transform: translateY(clamp(16px, 1.6vw, 24px));
+  }
+
+  .mood-camera-reference {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 12px 11px rgba(39, 39, 35, 0.1));
+    user-select: none;
+  }
+
+  /* 上传照片会在 canvas 内做网格变形，跟随相纸的弧度与透视，
+   * 而不是用一张生硬的平面矩形直接覆盖原占位图。 */
+  .mood-photo-replacement {
+    position: absolute;
+    z-index: 2;
+    top: 48%;
+    left: 44.8%;
+    display: none;
+    width: 49.4%;
+    height: 45.7%;
+    filter:
+      drop-shadow(0 1px 0 rgba(255, 255, 255, 0.3))
+      drop-shadow(0 2px 2px rgba(39, 39, 35, 0.08));
+    pointer-events: none;
+  }
+
+  .mood-photo-replacement.has-photo {
+    display: block;
+  }
+
+  /* 环游记：晾绳 + 三张有轻微错位的拍立得。 */
+  .mood-trip-polaroids {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 1.08;
+    filter: drop-shadow(0 10px 9px rgba(36, 31, 26, 0.11));
+  }
+
+  .mood-trip-rope {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .mood-trip-rope path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .mood-trip-rope__under {
+    stroke: rgba(181, 145, 104, 0.42);
+    stroke-width: 4.8;
+  }
+
+  .mood-trip-rope__over {
+    stroke: #322a24;
+    stroke-width: 2.5;
+  }
+
+  .mood-trip-card {
+    position: absolute;
+    z-index: 1;
+    top: 22%;
+    display: block;
+    width: 31.5%;
+    aspect-ratio: 0.74;
+    border: 2px solid rgba(57, 45, 35, 0.92);
+    border-radius: 2px;
+    background: #cfe4ad;
+    box-shadow:
+      inset 0 0 0 2px rgba(255, 255, 255, 0.34),
+      4px 6px 0 rgba(48, 43, 36, 0.08);
+    transform-origin: 50% 7%;
+  }
+
+  .mood-trip-card::before {
+    content: "♥  ·  ♥  ·  ♥\A·  ♥  ·  ♥  ·\A♥  ·  ♥  ·  ♥\A·  ♥  ·  ♥  ·\A♥  ·  ♥  ·  ♥\A·  ♥  ·  ♥  ·\A♥  ·  ♥  ·  ♥";
+    position: absolute;
+    z-index: 0;
+    inset: 4px;
+    overflow: hidden;
+    color: #bc6e9b;
+    font-family: Georgia, serif;
+    font-size: clamp(8px, 0.72vw, 11px);
+    line-height: 1.78;
+    letter-spacing: 0.22em;
+    white-space: pre;
+    opacity: 0.78;
+    pointer-events: none;
+  }
+
+  .mood-trip-card::after {
+    content: "♥   ♥   ♥   ♥";
+    position: absolute;
+    z-index: 2;
+    right: 5%;
+    bottom: 4%;
+    left: 5%;
+    overflow: hidden;
+    color: #bc6e9b;
+    font-family: Georgia, serif;
+    font-size: clamp(9px, 0.8vw, 12px);
+    letter-spacing: 0.12em;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .mood-trip-card--1 {
+    z-index: 2;
+    left: 0;
+    transform: rotate(-5deg);
+  }
+
+  .mood-trip-card--2 {
+    z-index: 4;
+    top: 23%;
+    left: 32.5%;
+    width: 34%;
+    background: #e98c83;
+    transform: rotate(-16deg);
+  }
+
+  .mood-trip-card--2::before {
+    content: "✿   ✿  ·  ✿\A  ✿  ·  ✿\A✿  ·  ✿   ✿\A  ✿  ·  ✿\A✿   ✿  ·  ✿\A  ✿  ·  ✿\A✿  ·  ✿   ✿";
+    color: #fff0bf;
+    font-family: Arial, sans-serif;
+    font-size: clamp(10px, 0.9vw, 14px);
+    line-height: 1.55;
+    opacity: 0.92;
+  }
+
+  .mood-trip-card--2::after {
+    content: "✿   ✿   ✿   ✿";
+    color: #fff0bf;
+    font-family: Arial, sans-serif;
+    font-size: clamp(11px, 0.95vw, 15px);
+  }
+
+  .mood-trip-card--3 {
+    z-index: 3;
+    top: 21%;
+    right: 5.5%;
+    width: 31%;
+    background: #bfd9d4;
+    transform: rotate(9deg);
+  }
+
+  .mood-trip-card--3::before {
+    content: "✦  ·  ✦  ·  ✦\A  ·  ✦  ·  ✦\A✦  ·  ✦  ·  ✦\A  ·  ✦  ·  ✦\A✦  ·  ✦  ·  ✦\A  ·  ✦  ·  ✦\A✦  ·  ✦  ·  ✦";
+    color: #f6c96f;
+    font-family: Georgia, serif;
+    font-size: clamp(9px, 0.78vw, 12px);
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+
+  .mood-trip-card--3::after {
+    content: "✦   ✦   ✦   ✦";
+    color: #f6c96f;
+    font-family: Georgia, serif;
+    font-size: clamp(10px, 0.88vw, 14px);
+  }
+
+  .mood-trip-photo-slot {
+    position: absolute;
+    z-index: 1;
+    top: 6%;
+    left: 5.5%;
+    display: flex;
+    width: 89%;
+    height: 69%;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(54, 51, 46, 0.7);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.52), transparent 48%),
+      #ddd8cb;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .mood-trip-photo-slot.has-photo {
+    background-image: var(--trip-photo-url);
+  }
+
+  .mood-trip-photo-slot.has-photo > * {
+    display: none;
+  }
+
+  .mood-trip-placeholder-mark {
+    position: absolute;
+    inset: 0;
+    opacity: 0.48;
+  }
+
+  .mood-trip-placeholder-mark::before {
+    content: "";
+    position: absolute;
+    right: 16%;
+    top: 15%;
+    width: 13%;
+    aspect-ratio: 1;
+    border: 1.5px solid #6f6c66;
+    border-radius: 50%;
+  }
+
+  .mood-trip-placeholder-mark i,
+  .mood-trip-placeholder-mark b {
+    position: absolute;
+    bottom: -4%;
+    display: block;
+    width: 74%;
+    height: 58%;
+    background: #a9aaa5;
+    clip-path: polygon(0 100%, 42% 24%, 59% 48%, 76% 17%, 100% 100%);
+  }
+
+  .mood-trip-placeholder-mark i {
+    left: -4%;
+  }
+
+  .mood-trip-placeholder-mark b {
+    right: -19%;
+    opacity: 0.72;
+    transform: scale(0.74);
+  }
+
+  .mood-trip-placeholder-label {
+    position: relative;
+    z-index: 2;
+    padding: 3px 7px;
+    border: 1px solid rgba(71, 68, 63, 0.35);
+    border-radius: 999px;
+    background: rgba(246, 242, 234, 0.76);
+    color: rgba(58, 56, 52, 0.72);
+    font-family: var(--font-art);
+    font-size: clamp(9px, 0.78vw, 12px);
+    letter-spacing: 0.08em;
+  }
+
+  /* 实木夹：暖棕木色双片结构、中心弹簧与轻微木纹。 */
+  .mood-trip-clip {
+    position: absolute;
+    z-index: 5;
+    top: -15%;
+    left: 44%;
+    display: block;
+    width: 11.5%;
+    height: 29%;
+    border: 1.8px solid #3d2a1d;
+    border-radius: 3px 3px 2px 2px;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 9px,
+        rgba(107, 57, 25, 0.16) 9px 10px
+      ),
+      linear-gradient(90deg, #e2a75f 0%, #c77b38 62%, #ab6029 100%);
+    box-shadow:
+      inset 2px 0 0 rgba(255, 224, 169, 0.42),
+      3px 3px 0 rgba(55, 37, 24, 0.2);
+    transform: rotate(8deg);
+  }
+
+  .mood-trip-clip::before {
+    content: "";
+    position: absolute;
+    right: -28%;
+    top: 11%;
+    width: 28%;
+    height: 82%;
+    border: 1.5px solid #3d2a1d;
+    border-left: 0;
+    border-radius: 0 3px 3px 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 8px,
+        rgba(90, 45, 19, 0.15) 8px 9px
+      ),
+      linear-gradient(#c7813f, #a85c28);
+    box-shadow: 2px 2px 0 rgba(55, 37, 24, 0.14);
+    transform: skewY(7deg);
+  }
+
+  .mood-trip-clip::after {
+    content: "";
+    position: absolute;
+    left: 38%;
+    top: 46%;
+    width: 27%;
+    aspect-ratio: 1;
+    border: 1.5px solid #3d2a1d;
+    border-radius: 50%;
+    background: #e6c48d;
+    box-shadow: 0 0 0 1px rgba(255, 236, 199, 0.35);
+  }
+
+  .mood-trip-clip i {
+    position: absolute;
+    left: 49%;
+    top: 8%;
+    width: 1.5px;
+    height: 82%;
+    background: rgba(78, 42, 21, 0.62);
+    box-shadow: 3px 0 0 rgba(255, 213, 151, 0.2);
+    transform: rotate(0);
+  }
+
+  .mood-trip-card--1 .mood-trip-clip {
+    left: 44%;
+    transform: rotate(13deg);
+  }
+
+  .mood-trip-card--2 .mood-trip-clip {
+    left: 44%;
+    transform: rotate(-9deg);
+  }
+
+  .mood-trip-card--3 .mood-trip-clip {
+    left: 47.5%;
+    transform: rotate(8deg);
+  }
+
+  /* 梦到什么发什么系列：完整展示用户选定的紫色星云手绘水晶球。 */
+  .mood-dream-scene {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.12;
+    overflow: visible;
+    /* 水晶球与下方标题属于同一组：下移图形，收紧两者的视觉距离。 */
+    transform: translateY(clamp(48px, 4vw, 62px));
+  }
+
+  .mood-product--bars {
+    mix-blend-mode: normal;
+  }
+
+  .mood-crystal-reference {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+    mix-blend-mode: normal;
+    filter:
+      saturate(1.04)
+      contrast(1.03)
+      drop-shadow(0 13px 13px rgba(67, 58, 82, 0.1));
+    transform: translate(-50%, -50%) scale(1.18);
+    transform-origin: center;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* 球体内部：固定图片槽。上传 crystal-ball-photo.jpg 后自动替换占位图。 */
+  .mood-crystal-photo-slot {
+    position: absolute;
+    z-index: 2;
+    top: 47%;
+    left: 50%;
+    display: flex;
+    /* 贴合新素材的玻璃内圈；预留描边厚度，避免照片越过球体边缘或压到底座。 */
+    width: 42%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed rgba(94, 74, 133, 0.68);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 73% 25%, rgba(255, 246, 213, 0.82) 0 5%, transparent 5.8%),
+      linear-gradient(145deg, rgba(238, 231, 244, 0.94), rgba(189, 179, 206, 0.92));
+    background-position: center;
+    background-size: cover;
+    box-shadow:
+      inset 0 0 0 4px rgba(255, 250, 234, 0.2),
+      0 0 16px rgba(81, 62, 115, 0.12);
+    transform: translate(-50%, -50%);
+  }
+
+  .mood-crystal-photo-slot.has-photo {
+    background-image: var(--crystal-photo-url);
+  }
+
+  .mood-crystal-photo-slot.has-photo > * {
+    display: none;
+  }
+
+  .mood-crystal-photo-icon {
+    position: absolute;
+    inset: 0;
+    opacity: 0.45;
+  }
+
+  .mood-crystal-photo-icon::before {
+    content: "";
+    position: absolute;
+    top: 18%;
+    right: 20%;
+    width: 12%;
+    aspect-ratio: 1;
+    border: 1.5px solid #65577c;
+    border-radius: 50%;
+  }
+
+  .mood-crystal-photo-icon i,
+  .mood-crystal-photo-icon b {
+    position: absolute;
+    bottom: -2%;
+    display: block;
+    width: 74%;
+    height: 58%;
+    background: #8e8798;
+    clip-path: polygon(0 100%, 39% 23%, 58% 49%, 76% 15%, 100% 100%);
+  }
+
+  .mood-crystal-photo-icon i {
+    left: -4%;
+  }
+
+  .mood-crystal-photo-icon b {
+    right: -18%;
+    opacity: 0.72;
+    transform: scale(0.76);
+  }
+
+  .mood-crystal-photo-label {
+    position: relative;
+    z-index: 2;
+    padding: 3px 8px;
+    border: 1px solid rgba(85, 67, 117, 0.34);
+    border-radius: 999px;
+    background: rgba(246, 240, 246, 0.78);
+    color: rgba(68, 54, 93, 0.78);
+    font-family: var(--font-art);
+    font-size: clamp(8px, 0.72vw, 11px);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .mood-crystal-ball {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .mood-crystal-globe {
+    position: absolute;
+    z-index: 3;
+    top: 1.5%;
+    left: 50%;
+    display: block;
+    width: 68%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: clamp(2px, 0.32vw, 4px) solid #7667a6;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 24% 29%, rgba(255, 244, 176, 0.95) 0 1.2%, transparent 1.5%),
+      radial-gradient(circle at 72% 21%, rgba(255, 205, 116, 0.9) 0 1.1%, transparent 1.45%),
+      radial-gradient(circle at 77% 66%, rgba(245, 173, 190, 0.9) 0 1.4%, transparent 1.75%),
+      radial-gradient(circle at 35% 73%, rgba(169, 230, 214, 0.95) 0 1%, transparent 1.35%),
+      radial-gradient(circle at 50% 50%, #c7b5e9 0%, #9d91d0 46%, #778bc3 76%, #6575ad 100%);
+    box-shadow:
+      inset 0 0 0 5px rgba(255, 249, 234, 0.34),
+      inset -14px -18px 25px rgba(74, 64, 122, 0.2),
+      0 9px 18px rgba(68, 57, 104, 0.17);
+    transform: translateX(-50%);
+  }
+
+  .mood-dream-image {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .mood-crystal-placeholder {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    background:
+      radial-gradient(ellipse at center, transparent 0 29%, rgba(255, 232, 166, 0.64) 29.5% 31%, transparent 31.5%),
+      radial-gradient(ellipse at center, transparent 0 43%, rgba(181, 236, 222, 0.5) 43.5% 45%, transparent 45.5%);
+    transform: rotate(-12deg);
+  }
+
+  .mood-crystal-placeholder i,
+  .mood-crystal-placeholder b,
+  .mood-crystal-placeholder em {
+    position: absolute;
+    display: block;
+    font-style: normal;
+  }
+
+  .mood-crystal-placeholder i {
+    top: 25%;
+    left: 31%;
+    color: #fff3b0;
+    font-family: Georgia, serif;
+    font-size: clamp(34px, 4.2vw, 58px);
+    line-height: 1;
+    text-shadow: 0 0 12px rgba(255, 237, 158, 0.56);
+    transform: rotate(12deg);
+  }
+
+  .mood-crystal-placeholder b {
+    top: 31%;
+    right: 29%;
+    color: #ffe087;
+    font-size: clamp(17px, 2vw, 28px);
+    line-height: 1;
+    text-shadow: 0 0 8px rgba(255, 225, 132, 0.55);
+    transform: rotate(12deg);
+  }
+
+  .mood-crystal-placeholder em {
+    left: 50%;
+    bottom: 20%;
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 249, 229, 0.58);
+    border-radius: 999px;
+    background: rgba(85, 75, 137, 0.34);
+    color: rgba(255, 250, 235, 0.88);
+    font-family: var(--font-art);
+    font-size: clamp(9px, 0.78vw, 12px);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    transform: translateX(-50%) rotate(12deg);
+  }
+
+  .mood-crystal-shine {
+    position: absolute;
+    z-index: 2;
+    top: 11%;
+    left: 14%;
+    width: 22%;
+    height: 38%;
+    border: clamp(3px, 0.5vw, 7px) solid rgba(255, 255, 255, 0.58);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 60% 45% 55% 45%;
+    filter: blur(0.2px);
+    transform: rotate(25deg);
+    pointer-events: none;
+  }
+
+  .mood-crystal-orbit {
+    position: absolute;
+    z-index: 4;
+    top: 34%;
+    left: 50%;
+    display: block;
+    width: 77%;
+    height: 20%;
+    border: clamp(2px, 0.24vw, 3px) solid rgba(229, 172, 92, 0.84);
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 2px rgba(255, 236, 184, 0.18),
+      0 2px 0 rgba(114, 88, 138, 0.2);
+    transform: translateX(-50%) rotate(-10deg);
+    pointer-events: none;
+  }
+
+  .mood-crystal-collar {
+    position: absolute;
+    z-index: 5;
+    top: 67%;
+    left: 50%;
+    display: block;
+    width: 52%;
+    height: 10%;
+    border: clamp(2px, 0.28vw, 4px) solid #765885;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffe1a5 0%, #f3af87 54%, #cc7990 100%);
+    box-shadow:
+      inset 0 4px 0 rgba(255, 249, 210, 0.48),
+      0 5px 8px rgba(71, 52, 91, 0.16);
+    transform: translateX(-50%);
+  }
+
+  .mood-crystal-base {
+    position: absolute;
+    z-index: 2;
+    top: 72%;
+    left: 50%;
+    display: block;
+    width: 58%;
+    height: 23%;
+    overflow: hidden;
+    background: #765885;
+    clip-path: polygon(15% 0, 85% 0, 100% 88%, 91% 100%, 9% 100%, 0 88%);
+    transform: translateX(-50%);
+  }
+
+  .mood-crystal-base::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: clamp(2px, 0.28vw, 4px);
+    background:
+      linear-gradient(150deg, rgba(255, 250, 214, 0.4), transparent 38%),
+      linear-gradient(180deg, #f7bd91 0%, #da8fa4 52%, #a47db3 100%);
+    clip-path: polygon(15% 0, 85% 0, 100% 88%, 91% 100%, 9% 100%, 0 88%);
+  }
+
+  .mood-crystal-base::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 9%;
+    bottom: 11%;
+    left: 9%;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(255, 231, 178, 0.48);
+  }
+
+  .mood-crystal-base i,
+  .mood-crystal-base b,
+  .mood-crystal-base em {
+    position: absolute;
+    z-index: 2;
+    top: 38%;
+    display: block;
+    color: #fff0a8;
+    font-style: normal;
+    font-size: clamp(12px, 1.25vw, 18px);
+    line-height: 1;
+    text-shadow: 0 1px 0 rgba(108, 72, 117, 0.28);
+  }
+
+  .mood-crystal-base i {
+    left: 24%;
+  }
+
+  .mood-crystal-base b {
+    left: 50%;
+    color: #b9e6d8;
+    transform: translateX(-50%);
+  }
+
+  .mood-crystal-base em {
+    right: 24%;
+  }
+
+  .mood-crystal-sparks {
+    position: absolute;
+    z-index: 6;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  .mood-crystal-sparks i {
+    position: absolute;
+    display: block;
+    color: #f2b548;
+    font-style: normal;
+    font-size: clamp(13px, 1.5vw, 22px);
+    line-height: 1;
+  }
+
+  .mood-crystal-sparks i:nth-child(1) { top: 15%; left: 8%; color: #d9869e; }
+  .mood-crystal-sparks i:nth-child(2) { top: 24%; right: 7%; color: #e6a53f; }
+  .mood-crystal-sparks i:nth-child(3) { top: 45%; left: 3%; color: #69b5ad; }
+  .mood-crystal-sparks i:nth-child(4) { top: 12%; right: 14%; color: #866bb1; }
+  .mood-crystal-sparks i:nth-child(5) { top: 55%; right: 3%; color: #e98aa2; }
+  .mood-crystal-sparks i:nth-child(6) { top: 51%; left: 10%; color: #eab54e; }
+
+  /* 参考海报里围绕相机的手绘小符号：旋涡、叶片、扇形笔触与果实。
+   * 用页面的浅暖金色呈现，避免在米白背景上消失。 */
+  .mood-camera-doodle {
+    position: absolute;
+    z-index: 3;
+    display: block;
+    color: #d9a66f;
+    opacity: 0.72;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.65));
+  }
+
+  .mood-camera-doodle i,
+  .mood-camera-doodle b {
+    position: absolute;
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .mood-camera-doodle--petals {
+    top: -8%;
+    right: 17%;
+    width: 34px;
+    height: 30px;
+  }
+
+  .mood-camera-doodle--petals i {
+    top: 3px;
+    width: 10px;
+    height: 22px;
+    border-radius: 75% 25% 70% 30%;
+    background: currentColor;
+  }
+
+  .mood-camera-doodle--petals i:first-child {
+    left: 7px;
+    transform: rotate(-24deg);
+  }
+
+  .mood-camera-doodle--petals i:last-child {
+    right: 5px;
+    transform: rotate(31deg) scale(0.82);
+  }
+
+  .mood-camera-doodle--fan {
+    left: -9%;
+    bottom: 14%;
+    width: 40px;
+    height: 34px;
+  }
+
+  .mood-camera-doodle--fan i {
+    bottom: 2px;
+    left: 15px;
+    width: 9px;
+    height: 27px;
+    border-radius: 90% 18% 88% 22%;
+    background: currentColor;
+    transform-origin: 50% 100%;
+  }
+
+  .mood-camera-doodle--fan i:nth-child(1) {
+    transform: rotate(-47deg) scaleY(0.82);
+  }
+
+  .mood-camera-doodle--fan i:nth-child(2) {
+    transform: rotate(-14deg);
+  }
+
+  .mood-camera-doodle--fan i:nth-child(3) {
+    transform: rotate(22deg) scaleY(0.86);
+  }
+
+  @media (max-width: 639px) {
+    .mood-camera-doodle {
+      opacity: 0.62;
+      scale: 0.72;
+    }
   }
 
   /* 包装袋：圆角矩形 + 顶部封口 */
@@ -754,13 +1691,14 @@ const layers: Layer[] = [
   .is--bites .mood-product-callout    { right: -42%; top: 62%; }
   .is--crackers .mood-product-callout { left: 44%; bottom: -42px; }
   .is--cookies .mood-product-callout  { left: -12%; bottom: 2px; }
-  .is--burst .mood-product-callout    { left: -8%; top: -50px; }
-  .is--bars .mood-product-callout     { right: -4%; bottom: 14px; }
+  .is--burst .mood-product-callout    { left: 37%; top: -42px; }
+  .is--bars .mood-product-callout     { right: 10%; bottom: 14px; }
 
   @media (max-width: 639px) {
     .is--crackers .mood-product-callout { left: 0; bottom: -36px; }
     .is--cookies .mood-product-callout  { left: -14%; bottom: 0; }
-    .is--bars .mood-product-callout     { right: 4%; bottom: 8px; }
+    .is--burst .mood-product-callout    { left: -28%; top: -36px; }
+    .is--bars .mood-product-callout     { right: 10%; bottom: 8px; }
   }
 
   /* ===== 关闭动效：全部直接显示、无位移 ===== */
@@ -787,10 +1725,192 @@ const layers: Layer[] = [
 
   // 占位图片（调色盘盘面 / 笔电屏幕）：尚未上传（404）时移除 <image>，露出下方渐变占位。
   // 脚本晚于 SVG 解析执行，error 事件可能已错过，故用 Image() 重新探测同一 URL。
-  document.querySelectorAll<SVGImageElement>(".mood-palette image, .mood-laptop image, .mood-camera image").forEach((img) => {
+  document.querySelectorAll<SVGImageElement>(".mood-palette image, .mood-laptop image").forEach((img) => {
     const probe = new Image();
     probe.onerror = () => img.remove();
     probe.src = img.href.baseVal;
+  });
+
+  // 水晶球内部图片槽：上传固定文件名后自动覆盖占位符。
+  document.querySelectorAll<HTMLElement>("[data-crystal-photo]").forEach((slot) => {
+    const probe = new Image();
+    probe.onload = () => {
+      slot.style.setProperty("--crystal-photo-url", `url("${probe.src}")`);
+      slot.classList.add("has-photo");
+    };
+    probe.src = "/media/products/crystal-ball-photo.jpg";
+  });
+
+  type PhotoPoint = { x: number; y: number };
+  type PhotoTriangle = [PhotoPoint, PhotoPoint, PhotoPoint];
+
+  const drawPhotoTriangle = (
+    ctx: CanvasRenderingContext2D,
+    image: HTMLImageElement,
+    source: PhotoTriangle,
+    target: PhotoTriangle,
+  ) => {
+    const [s0, s1, s2] = source;
+    const [t0, t1, t2] = target;
+    const denominator =
+      s0.x * (s1.y - s2.y) +
+      s1.x * (s2.y - s0.y) +
+      s2.x * (s0.y - s1.y);
+
+    if (!denominator) return;
+
+    const a =
+      (t0.x * (s1.y - s2.y) +
+        t1.x * (s2.y - s0.y) +
+        t2.x * (s0.y - s1.y)) /
+      denominator;
+    const b =
+      (t0.y * (s1.y - s2.y) +
+        t1.y * (s2.y - s0.y) +
+        t2.y * (s0.y - s1.y)) /
+      denominator;
+    const c =
+      (t0.x * (s2.x - s1.x) +
+        t1.x * (s0.x - s2.x) +
+        t2.x * (s1.x - s0.x)) /
+      denominator;
+    const d =
+      (t0.y * (s2.x - s1.x) +
+        t1.y * (s0.x - s2.x) +
+        t2.y * (s1.x - s0.x)) /
+      denominator;
+    const e =
+      (t0.x * (s1.x * s2.y - s2.x * s1.y) +
+        t1.x * (s2.x * s0.y - s0.x * s2.y) +
+        t2.x * (s0.x * s1.y - s1.x * s0.y)) /
+      denominator;
+    const f =
+      (t0.y * (s1.x * s2.y - s2.x * s1.y) +
+        t1.y * (s2.x * s0.y - s0.x * s2.y) +
+        t2.y * (s0.x * s1.y - s1.x * s0.y)) /
+      denominator;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(t0.x, t0.y);
+    ctx.lineTo(t1.x, t1.y);
+    ctx.lineTo(t2.x, t2.y);
+    ctx.closePath();
+    ctx.clip();
+    ctx.setTransform(a, b, c, d, e, f);
+    ctx.drawImage(image, 0, 0);
+    ctx.restore();
+  };
+
+  const drawCurvedPhoto = (
+    canvas: HTMLCanvasElement,
+    image: HTMLImageElement,
+  ) => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const targetRatio = width / height;
+    const imageRatio = image.naturalWidth / image.naturalHeight;
+    let cropX = 0;
+    let cropY = 0;
+    let cropWidth = image.naturalWidth;
+    let cropHeight = image.naturalHeight;
+
+    if (imageRatio > targetRatio) {
+      cropWidth = image.naturalHeight * targetRatio;
+      cropX = (image.naturalWidth - cropWidth) / 2;
+    } else {
+      cropHeight = image.naturalWidth / targetRatio;
+      cropY = (image.naturalHeight - cropHeight) / 2;
+    }
+
+    const columns = 18;
+    const rows = 18;
+    const point = (u: number, v: number): PhotoPoint => {
+      const sine = Math.sin(Math.PI * u);
+      const topX = width * 0.59 * u;
+      const bottomX = width * (0.4 + 0.6 * u);
+      const topY = height * (0.05 * (1 - u)) - height * 0.018 * sine;
+      const bottomY = height * (1 - 0.26 * u) + height * 0.022 * sine;
+
+      return {
+        x:
+          topX * (1 - v) +
+          bottomX * v +
+          width * 0.012 * sine * Math.sin(Math.PI * v),
+        y: topY * (1 - v) + bottomY * v,
+      };
+    };
+    const sourcePoint = (u: number, v: number): PhotoPoint => ({
+      x: cropX + cropWidth * u,
+      y: cropY + cropHeight * v,
+    });
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        const u0 = column / columns;
+        const u1 = (column + 1) / columns;
+        const v0 = row / rows;
+        const v1 = (row + 1) / rows;
+        const s00 = sourcePoint(u0, v0);
+        const s10 = sourcePoint(u1, v0);
+        const s01 = sourcePoint(u0, v1);
+        const s11 = sourcePoint(u1, v1);
+        const t00 = point(u0, v0);
+        const t10 = point(u1, v0);
+        const t01 = point(u0, v1);
+        const t11 = point(u1, v1);
+
+        drawPhotoTriangle(ctx, image, [s00, s10, s11], [t00, t10, t11]);
+        drawPhotoTriangle(ctx, image, [s00, s11, s01], [t00, t11, t01]);
+      }
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = "source-atop";
+    const paperLight = ctx.createLinearGradient(0, 0, width, height);
+    paperLight.addColorStop(0, "rgba(255, 255, 255, 0.18)");
+    paperLight.addColorStop(0.45, "rgba(255, 255, 255, 0)");
+    paperLight.addColorStop(0.78, "rgba(34, 45, 56, 0.04)");
+    paperLight.addColorStop(1, "rgba(34, 45, 56, 0.13)");
+    ctx.fillStyle = paperLight;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  };
+
+  // 把 public/media/products/photo.png 变形映射到弯曲相纸内；
+  // 文件尚未上传时，继续显示素材自带的照片占位图。
+  // 查询参数用于绕过已删除图片的浏览器缓存，确保删图后立即恢复占位状态。
+  document.querySelectorAll<HTMLCanvasElement>("[data-photo-replacement]").forEach((photo) => {
+    const probe = new Image();
+    probe.onload = () => {
+      drawCurvedPhoto(photo, probe);
+      photo.classList.add("has-photo");
+    };
+    probe.onerror = () => {
+      photo.getContext("2d")?.clearRect(0, 0, photo.width, photo.height);
+      photo.classList.remove("has-photo");
+    };
+    probe.src = `/media/products/photo.png?v=${Date.now()}`;
+  });
+
+  // 三张旅行照片沿用固定文件名；未上传时显示清晰的图片占位符。
+  document.querySelectorAll<HTMLElement>("[data-trip-photo]").forEach((slot) => {
+    const src = slot.dataset.tripPhoto;
+    if (!src) return;
+
+    const probe = new Image();
+    probe.onload = () => {
+      slot.style.setProperty("--trip-photo-url", `url("${probe.src}")`);
+      slot.classList.add("has-photo");
+    };
+    probe.src = src;
   });
 
   if (section) {
