@@ -54,15 +54,14 @@ const arrows = {
 };
 
 const layers: Layer[] = [
-  { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-6deg", parallax: 0.035, label: "日常杂记", labelArrow: "loop", labelLayout: "arrow-text" },
+  { key: "bites", shape: "mood-shape-bag", batch: 1, stagger: "0s", vars: "--sy:-80px;--rot:-8deg", parallax: 0.035, label: "日常杂记", labelArrow: "loop", labelLayout: "arrow-text" },
   { key: "top-blur", shape: "mood-shape-blur", batch: 1, stagger: ".1s", vars: "--sy:-60px;--op:.68", parallax: 0.06 },
-  { key: "energy-ball", shape: "mood-shape-ball", batch: 1, stagger: ".2s", vars: "--sy:-70px", parallax: 0.05 },
   { key: "crackers", shape: "mood-shape-box mood-shape-box--red", batch: 1, stagger: ".3s", vars: "--sy:-80px;--rot:5deg", parallax: 0.04, label: "职业ootd", labelArrow: "zigzag", labelLayout: "arrow-text" },
   { key: "left-bar", shape: "mood-shape-bar", batch: 2, stagger: "0s", vars: "--sx:-70px;--rot:-8deg", parallax: 0.055 },
   { key: "right-cracker", shape: "mood-shape-piece", batch: 2, stagger: ".12s", vars: "--sx:70px;--rot:14deg" },
   { key: "cookies", shape: "mood-shape-box mood-shape-box--orange", batch: 3, stagger: "0s", vars: "--sy:80px;--rot:5deg", label: "汉服ootd", labelArrow: "curl", labelLayout: "arrow-over-text" },
   { key: "burst", shape: "mood-shape-bag mood-shape-bag--green", batch: 3, stagger: ".1s", vars: "--sy:80px;--rot:3deg", label: "环游记", labelArrow: "rise", labelLayout: "arrow-text" },
-  { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:4deg", label: "梦到什么发什么系列", labelArrow: "hook", labelLayout: "text-arrow" },
+  { key: "bars", shape: "mood-shape-box mood-shape-box--purple", batch: 3, stagger: ".2s", vars: "--sy:80px;--rot:-10deg", label: "梦到什么发什么系列", labelArrow: "hook", labelLayout: "arrow-over-text" },
 ];
 
 /** 用户上传的手绘装饰，替换原来的四个纯色几何占位符。 */
@@ -75,11 +74,6 @@ const uploadedDecorations: Record<
     width: 750,
     height: 750,
   },
-  "energy-ball": {
-    src: "/media/products/decor-fishbowl.png",
-    width: 500,
-    height: 500,
-  },
   "right-cracker": {
     src: "/media/products/decor-cake.jpg",
     width: 600,
@@ -89,6 +83,43 @@ const uploadedDecorations: Record<
     src: "/media/products/decor-film.jpg",
     width: 736,
     height: 952,
+  },
+};
+
+/** 五个主视觉直接使用用户上传的透明底原图，旧占位构图仅保留为源码备用。 */
+const replacementProductArt: Record<
+  string,
+  { src: string; alt: string; width: number; height: number }
+> = {
+  bites: {
+    src: "/media/products/palette-giveaway-composite.png",
+    alt: "盘面展示 Giveaway 图片的调色板、画笔和颜料管插画",
+    width: 1085,
+    height: 1450,
+  },
+  crackers: {
+    src: "/media/products/2-removebg-preview.png",
+    alt: "贴有便签的手绘笔记本电脑",
+    width: 500,
+    height: 500,
+  },
+  cookies: {
+    src: "/media/products/3-removebg-preview.png",
+    alt: "正在吐出相纸的手绘拍立得相机",
+    width: 500,
+    height: 500,
+  },
+  bars: {
+    src: "/media/products/4-removebg-preview.png",
+    alt: "紫色月亮星空手绘水晶球",
+    width: 500,
+    height: 500,
+  },
+  burst: {
+    src: "/media/products/5-removebg-preview.png",
+    alt: "木夹悬挂的三张手绘旅行照片",
+    width: 500,
+    height: 500,
   },
 };
 ---
@@ -119,7 +150,81 @@ const uploadedDecorations: Record<
         >
           <div class="mood-product-composite">
             <div class="mood-product-img">
-              {l.key === "bites" ? (
+              {replacementProductArt[l.key] ? (
+                l.key === "crackers" ? (
+                  <!-- 电脑屏幕保持为可替换图片层，透明屏幕边缘由原电脑外框自然遮住。 -->
+                  <div
+                    class="mood-laptop-composite"
+                    role="img"
+                    aria-label="电脑屏幕展示创意设计作品集封面"
+                  >
+                    <img
+                      class="mood-laptop-screen-art"
+                      src="/media/products/laptop-screen-portfolio.png"
+                      alt=""
+                      width="1400"
+                      height="784"
+                      aria-hidden="true"
+                    />
+                    <img
+                      class:list={[
+                        "mood-replacement-art",
+                        "mood-replacement-art--crackers",
+                        "mood-laptop-frame",
+                      ]}
+                      src={replacementProductArt[l.key].src}
+                      alt=""
+                      width={replacementProductArt[l.key].width}
+                      height={replacementProductArt[l.key].height}
+                      aria-hidden="true"
+                    />
+                  </div>
+                ) : l.key === "bars" ? (
+                  <!-- 水晶球保留透明手绘外框；球体内部是独立、可替换的圆形图片层。 -->
+                  <div
+                    class="mood-crystal-composite mood-replacement-art--bars"
+                    role="img"
+                    aria-label="水晶球中展示晾衣草地与小狗插画"
+                  >
+                    <img
+                      class="mood-crystal-frame"
+                      src={replacementProductArt[l.key].src}
+                      alt=""
+                      width={replacementProductArt[l.key].width}
+                      height={replacementProductArt[l.key].height}
+                      aria-hidden="true"
+                    />
+                    <img
+                      class="mood-crystal-scene"
+                      src="/media/products/crystal-ball-scene.png"
+                      alt=""
+                      width="1199"
+                      height="1721"
+                      aria-hidden="true"
+                    />
+                    <img
+                      class="mood-crystal-foreground"
+                      src={replacementProductArt[l.key].src}
+                      alt=""
+                      width={replacementProductArt[l.key].width}
+                      height={replacementProductArt[l.key].height}
+                      aria-hidden="true"
+                    />
+                  </div>
+                ) : (
+                  <!-- 其余主视觉直接显示用户上传的透明 PNG，不叠加旧占位符。 -->
+                  <img
+                    class:list={[
+                      "mood-replacement-art",
+                      `mood-replacement-art--${l.key}`,
+                    ]}
+                    src={replacementProductArt[l.key].src}
+                    alt={replacementProductArt[l.key].alt}
+                    width={replacementProductArt[l.key].width}
+                    height={replacementProductArt[l.key].height}
+                  />
+                )
+              ) : l.key === "__legacy-bites" ? (
                 <!-- 日常杂记：复刻 F.W.DeVoe 复古调色盘广告构图 ——
                      直立蛋形调色盘（右侧指孔）+ 一束笔尖朝上、穿过指孔的画笔
                      + 左下颜料瓶 + 右下平躺大颜料管/小管/洒出的颜料/瓶盖。
@@ -340,12 +445,6 @@ const uploadedDecorations: Record<
                     width="500"
                     height="450"
                   ></canvas>
-                  <span class="mood-camera-doodle mood-camera-doodle--petals">
-                    <i></i><i></i>
-                  </span>
-                  <span class="mood-camera-doodle mood-camera-doodle--fan">
-                    <i></i><i></i><i></i>
-                  </span>
                 </div>
               ) : l.key === "burst" ? (
                 <!-- 环游记：三张拍立得夹在晾绳上的手绘构图。
@@ -395,23 +494,33 @@ const uploadedDecorations: Record<
                   }
                 </div>
               ) : l.key === "bars" ? (
-                <!-- 梦到什么发什么系列：使用用户选定的紫色星云手绘水晶球。 -->
-                <div class="mood-dream-scene" aria-hidden="true">
+                <!-- 梦到什么发什么系列：原水晶球插画作为外框，
+                     用户图片裁成圆形并填满球体内部。 -->
+                <div
+                  class="mood-dream-scene"
+                  role="img"
+                  aria-label="水晶球中展示晾衣草地与小狗插画"
+                >
                   <img
                     class="mood-crystal-reference"
-                    src="/media/products/crystal-ball-reference.png"
+                    src={replacementProductArt[l.key].src}
                     alt=""
-                    width="500"
-                    height="500"
+                    width={replacementProductArt[l.key].width}
+                    height={replacementProductArt[l.key].height}
                     loading="lazy"
                     decoding="async"
+                    aria-hidden="true"
                   />
-                  <span class="mood-crystal-photo-slot" data-crystal-photo>
-                    <span class="mood-crystal-photo-icon">
-                      <i></i><b></b>
-                    </span>
-                    <span class="mood-crystal-photo-label">图片占位</span>
-                  </span>
+                  <img
+                    class="mood-crystal-scene"
+                    src="/media/products/crystal-ball-scene.png"
+                    alt=""
+                    width="1199"
+                    height="1721"
+                    loading="lazy"
+                    decoding="async"
+                    aria-hidden="true"
+                  />
                 </div>
               ) : uploadedDecorations[l.key] ? (
                 <div
@@ -433,39 +542,39 @@ const uploadedDecorations: Record<
               ) : (
                 <div class:list={["mood-shape", l.shape]} />
               )}
+              {l.label && l.labelArrow && (
+                <figcaption
+                  class:list={[
+                    "mood-product-callout",
+                    l.labelLayout === "arrow-over-text" && "mood-product-callout--column",
+                  ]}
+                >
+                  {l.labelLayout !== "text-arrow" && (
+                    <svg
+                      class="mood-product-arrow"
+                      viewBox={arrows[l.labelArrow].vb}
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path d={arrows[l.labelArrow].line} />
+                      <path d={arrows[l.labelArrow].head} />
+                    </svg>
+                  )}
+                  <span class="mood-product-label">{l.label}</span>
+                  {l.labelLayout === "text-arrow" && (
+                    <svg
+                      class="mood-product-arrow"
+                      viewBox={arrows[l.labelArrow].vb}
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path d={arrows[l.labelArrow].line} />
+                      <path d={arrows[l.labelArrow].head} />
+                    </svg>
+                  )}
+                </figcaption>
+              )}
             </div>
-            {l.label && l.labelArrow && (
-              <figcaption
-                class:list={[
-                  "mood-product-callout",
-                  l.labelLayout === "arrow-over-text" && "mood-product-callout--column",
-                ]}
-              >
-                {l.labelLayout !== "text-arrow" && (
-                  <svg
-                    class="mood-product-arrow"
-                    viewBox={arrows[l.labelArrow].vb}
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path d={arrows[l.labelArrow].line} />
-                    <path d={arrows[l.labelArrow].head} />
-                  </svg>
-                )}
-                <span class="mood-product-label">{l.label}</span>
-                {l.labelLayout === "text-arrow" && (
-                  <svg
-                    class="mood-product-arrow"
-                    viewBox={arrows[l.labelArrow].vb}
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path d={arrows[l.labelArrow].line} />
-                    <path d={arrows[l.labelArrow].head} />
-                  </svg>
-                )}
-              </figcaption>
-            )}
           </div>
         </figure>
       ))
@@ -498,13 +607,28 @@ const uploadedDecorations: Record<
     min-height: calc(100svh + var(--mood-exit-buffer) + var(--mood-burst-drop));
     background: var(--color-bg);
     /* 只裁横向（收住 left-bar / right-cracker 的两侧溢出），
-     * 纵向放开：避免顶部装饰（top-blur / energy-ball）在 canvas 上边缘
-     * 被 overflow:hidden 削出一条突兀的硬直线 */
+     * 纵向放开：避免顶部装饰在 canvas 上边缘被削出硬直线。 */
     overflow-x: clip;
     overflow-y: visible;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+  }
+
+  /* 绝对定位的插画本身不会撑开父元素。脚本完成内容边界测量后，
+   * 用实际的最下边缘接管画布高度，让整个区块随内部内容自适应。 */
+  .mood-products-section.mood-height-ready {
+    min-height: 0;
+  }
+
+  .mood-products-canvas.mood-height-ready {
+    min-height: 0;
+    height: var(--mood-content-height);
+  }
+
+  .mood-height-measuring .mood-product {
+    transition: none !important;
+    transform: rotate(var(--rot, 0deg)) !important;
   }
 
   /* ===== 中间标题：居中在首屏 100svh 内 ===== */
@@ -605,51 +729,58 @@ const uploadedDecorations: Record<
   /* ===== 各组位置与尺寸 =====
    * 顶部 / 两侧：围绕标题的椭圆环
    * 底部三组：用 --mood-bottom-safe 抬离 section 底边，完整露出 */
-  .mood-product--bites        { left: 8.5%; top: -2%;  width: 248px; }
-  .mood-product--top-blur     { left: 27.5%; top: -1%;  width: 60px; }
-  .mood-product--energy-ball  { right: -2.5%; top: 36%;  width: 150px; }
-  .mood-product--crackers     { right: 5%;  top: 3.5%; width: 300px; }
-  .mood-product--left-bar     { left: -4%;  top: 38%;  width: 170px; }
-  .mood-product--right-cracker{ left: 46%;  top: 2.5%; width: 110px; }
+  .mood-product--bites        { left: 8.5%; top: -2%;  width: 325.5px; }
+  .mood-product--top-blur     { left: 42.1%; top: 3.25%; width: 60px; }
+  .mood-product--crackers     { right: 5%;  top: 3.5%; width: 370px; }
+  .mood-product--left-bar     { left: -4%;  top: 34%;  width: 170px; }
+  .mood-product--right-cracker{ left: 51.6%; top: 15%;  width: 110px; }
   .mood-product--cookies      {
-    left: 10%;
-    bottom: calc(var(--mood-bottom-safe) - clamp(20px, 2vw, 30px));
-    width: clamp(260px, 21.5vw, 340px);
+    left: 5.7%;
+    bottom: calc(
+      var(--mood-bottom-safe) - clamp(48px, 4vw, 62px) -
+      clamp(88px, 12.3vw, 207px) + 25px
+    );
+    width: clamp(320px, 27vw, 415px);
   }
   /* 环游记（burst）：独占更低的一行，避免与两侧内容发生视觉冲突。 */
-  .mood-product--burst        { left: 35.5%; bottom: clamp(38px, 5svh, 82px); width: clamp(310px, 29vw, 420px); }
+  .mood-product--burst        { left: 37%; bottom: calc(clamp(38px, 5svh, 82px) - 32px); width: clamp(365px, 33vw, 490px); }
   .mood-product--bars         {
-    right: 4%;
-    bottom: calc(var(--mood-bottom-safe) - clamp(32px, 3vw, 46px));
-    width: clamp(320px, 30vw, 430px);
+    --bars-art-shift: clamp(48px, 4vw, 62px);
+    --bars-callout-lift: 78px;
+    right: calc(4% - 16px);
+    bottom: calc(var(--mood-bottom-safe) - clamp(32px, 3vw, 46px) - 48px);
+    width: clamp(322px, 29.44vw, 428px);
   }
 
   @media (max-width: 1023px) {
-    .mood-product--bites        { width: 150px; }
+    .mood-product--bites        { width: 204.75px; }
     .mood-product--top-blur     { width: 46px; }
-    .mood-product--energy-ball  { width: 104px; }
-    .mood-product--crackers     { width: 150px; }
+    .mood-product--crackers     { width: 195px; }
     .mood-product--left-bar     { width: 120px; }
     .mood-product--right-cracker{ width: 82px; }
-    .mood-product--cookies      { width: clamp(190px, 22vw, 300px); }
-    .mood-product--burst        { left: 34%; width: clamp(250px, 31vw, 330px); }
-    .mood-product--bars         { right: 4%; width: clamp(210px, 27vw, 300px); }
+    .mood-product--cookies      { width: clamp(240px, 28vw, 370px); }
+    .mood-product--burst        { left: 33%; width: clamp(300px, 36vw, 390px); }
+    .mood-product--bars         { right: calc(2.5% - 16px); width: clamp(221px, 28.52vw, 313px); }
   }
 
   @media (max-width: 639px) {
     .mood-products-section     { --mood-burst-drop: clamp(70px, 10svh, 100px); }
-    .mood-product--bites        { width: 104px; left: 2%; }
+    .mood-product--bites        { width: 130.2px; left: 2%; }
     .mood-product--top-blur     { width: 36px; }
     .mood-product--right-cracker{ width: 60px; }
-    .mood-product--crackers     { width: 104px; right: 2%; }
-    .mood-product--left-bar,
-    .mood-product--energy-ball { display: none; }
-    .mood-product--cookies      { width: 150px; left: 4%; }
-    .mood-product--burst        { width: 150px; left: 22%; bottom: 55px; }
+    .mood-product--crackers     { width: 124px; right: 2%; }
+    .mood-product--left-bar     { display: none; }
+    .mood-product--cookies      {
+      bottom: calc(var(--mood-bottom-safe) - 4px);
+      left: 6%;
+      width: 180px;
+    }
+    .mood-product--burst        { width: 180px; left: 19%; bottom: 55px; }
     .mood-product--bars         {
-      right: 5%;
-      bottom: calc(var(--mood-bottom-safe) - 14px);
-      width: 126px;
+      --bars-callout-lift: 34px;
+      right: calc(5% - 16px);
+      bottom: calc(var(--mood-bottom-safe) - 62px);
+      width: 127px;
     }
 
     .mood-product--burst .mood-product-composite {
@@ -660,6 +791,11 @@ const uploadedDecorations: Record<
   /* ===== 产品图层与形状占位符 ===== */
   .mood-product-img {
     width: 100%;
+  }
+
+  /* 环游记标签和照片以同一图片盒为定位基准，缩放与移动始终同步。 */
+  .mood-product--burst .mood-product-img {
+    position: relative;
   }
 
   .mood-shape {
@@ -682,7 +818,6 @@ const uploadedDecorations: Record<
 
   /* 产品组本身会因进场动画形成独立合成层，因此在组层级完成白底融合。 */
   .mood-product--top-blur,
-  .mood-product--energy-ball,
   .mood-product--left-bar,
   .mood-product--right-cracker {
     mix-blend-mode: multiply;
@@ -725,15 +860,6 @@ const uploadedDecorations: Record<
     );
   }
 
-  /* 2：透明底鱼缸清晰呈现，保留完整瓶口、鱼尾与手绘轮廓。 */
-  .mood-uploaded-decor--energy-ball {
-    --decor-scale: 1.25;
-  }
-
-  .mood-uploaded-decor--energy-ball img {
-    filter: brightness(1.02) contrast(1.04) saturate(1.03);
-  }
-
   /* 3：蛋糕从右侧探入，替换原来的小圆角块。 */
   .mood-uploaded-decor--right-cracker {
     --decor-scale: 3.2;
@@ -756,7 +882,114 @@ const uploadedDecorations: Record<
     mask-image: radial-gradient(ellipse 38% 34% at 51% 48%, #000 58%, transparent 100%);
   }
 
-  /* 日常杂记：调色盘 / 职业ootd：笔记本 SVG（宽度随组，高度按 viewBox 等比） */
+  /* 五个主视觉：透明底原图完整展示，与页面米白背景自然融合。 */
+  .mood-replacement-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* 电脑屏幕是独立图片占位层：原 PNG 的屏幕区域本身透明，
+   * 作品图片铺在背后，外框、便签与键盘继续由原插画完整覆盖。 */
+  .mood-laptop-composite {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .mood-laptop-screen-art {
+    position: absolute;
+    z-index: 1;
+    left: 15.6%;
+    top: 15%;
+    width: 67.8%;
+    height: 49%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .mood-laptop-frame {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 水晶球球体是独立图片占位层：用户图片裁成圆形后覆盖原球体，
+   * 外圈、底座以及周围的月亮和星星仍由透明 PNG 保留。 */
+  .mood-crystal-composite {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .mood-crystal-frame {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .mood-crystal-composite .mood-crystal-scene {
+    position: absolute;
+    z-index: 2;
+    top: 20.4%;
+    left: 28.3%;
+    display: block;
+    width: 43.8%;
+    height: 44.2%;
+    box-sizing: border-box;
+    border: clamp(1px, 0.14vw, 2px) solid rgba(39, 36, 31, 0.88);
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 58%;
+    filter:
+      saturate(0.94)
+      contrast(0.98);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* 同一张透明水晶球插画再作为前景叠一层，仅露出底部区域。
+   * 这样金色底座会自然遮住球体下缘，而不会被圆形图片覆盖。 */
+  .mood-crystal-foreground {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    clip-path: inset(62.8% 0 0 0);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* 沿用旧构图的视觉基线，避免替换图片后整体上下跳动。 */
+  .mood-replacement-art--cookies {
+    transform: translateY(clamp(16px, 1.6vw, 24px));
+  }
+
+  .mood-replacement-art--bars {
+    transform: translateY(var(--bars-art-shift));
+  }
+
+  /* 第 5 张原图是正方形透明画布，实际照片串集中在中下部；
+   * 用负外边距压缩透明留白，使它保持原来横向照片串的占位高度。 */
+  .mood-replacement-art--burst {
+    margin-top: -26%;
+    margin-bottom: -20%;
+  }
+
+  /* 旧调色盘 SVG / 职业ootd 笔记本 SVG（宽度随组，高度按 viewBox 等比） */
   .mood-palette,
   .mood-laptop {
     display: block;
@@ -1102,7 +1335,8 @@ const uploadedDecorations: Record<
     transform: rotate(8deg);
   }
 
-  /* 梦到什么发什么系列：完整展示用户选定的紫色星云手绘水晶球。 */
+  /* 梦到什么发什么系列：外框与圆形图片层组成一个完整水晶球。
+   * 圆形层略微内缩，完整保留手绘黑色轮廓、金色底座与外围装饰。 */
   .mood-dream-scene {
     position: relative;
     width: 100%;
@@ -1118,6 +1352,7 @@ const uploadedDecorations: Record<
 
   .mood-crystal-reference {
     position: absolute;
+    z-index: 1;
     top: 50%;
     left: 50%;
     display: block;
@@ -1136,90 +1371,22 @@ const uploadedDecorations: Record<
     user-select: none;
   }
 
-  /* 球体内部：固定图片槽。上传 crystal-ball-photo.jpg 后自动替换占位图。 */
-  .mood-crystal-photo-slot {
+  .mood-crystal-scene {
     position: absolute;
     z-index: 2;
-    top: 47%;
-    left: 50%;
-    display: flex;
-    /* 贴合新素材的玻璃内圈；预留描边厚度，避免照片越过球体边缘或压到底座。 */
-    width: 42%;
-    aspect-ratio: 1;
-    overflow: hidden;
-    align-items: center;
-    justify-content: center;
-    border: 1.5px dashed rgba(94, 74, 133, 0.68);
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 73% 25%, rgba(255, 246, 213, 0.82) 0 5%, transparent 5.8%),
-      linear-gradient(145deg, rgba(238, 231, 244, 0.94), rgba(189, 179, 206, 0.92));
-    background-position: center;
-    background-size: cover;
-    box-shadow:
-      inset 0 0 0 4px rgba(255, 250, 234, 0.2),
-      0 0 16px rgba(81, 62, 115, 0.12);
-    transform: translate(-50%, -50%);
-  }
-
-  .mood-crystal-photo-slot.has-photo {
-    background-image: var(--crystal-photo-url);
-  }
-
-  .mood-crystal-photo-slot.has-photo > * {
-    display: none;
-  }
-
-  .mood-crystal-photo-icon {
-    position: absolute;
-    inset: 0;
-    opacity: 0.45;
-  }
-
-  .mood-crystal-photo-icon::before {
-    content: "";
-    position: absolute;
-    top: 18%;
-    right: 20%;
-    width: 12%;
-    aspect-ratio: 1;
-    border: 1.5px solid #65577c;
-    border-radius: 50%;
-  }
-
-  .mood-crystal-photo-icon i,
-  .mood-crystal-photo-icon b {
-    position: absolute;
-    bottom: -2%;
+    top: 21.8%;
+    left: 29.8%;
     display: block;
-    width: 74%;
-    height: 58%;
-    background: #8e8798;
-    clip-path: polygon(0 100%, 39% 23%, 58% 49%, 76% 15%, 100% 100%);
-  }
-
-  .mood-crystal-photo-icon i {
-    left: -4%;
-  }
-
-  .mood-crystal-photo-icon b {
-    right: -18%;
-    opacity: 0.72;
-    transform: scale(0.76);
-  }
-
-  .mood-crystal-photo-label {
-    position: relative;
-    z-index: 2;
-    padding: 3px 8px;
-    border: 1px solid rgba(85, 67, 117, 0.34);
-    border-radius: 999px;
-    background: rgba(246, 240, 246, 0.78);
-    color: rgba(68, 54, 93, 0.78);
-    font-family: var(--font-art);
-    font-size: clamp(8px, 0.72vw, 11px);
-    letter-spacing: 0.08em;
-    white-space: nowrap;
+    width: 40.8%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 58%;
+    filter:
+      saturate(0.94)
+      contrast(0.98);
+    pointer-events: none;
+    user-select: none;
   }
 
   .mood-crystal-ball {
@@ -1461,85 +1628,6 @@ const uploadedDecorations: Record<
 
   /* 参考海报里围绕相机的手绘小符号：旋涡、叶片、扇形笔触与果实。
    * 用页面的浅暖金色呈现，避免在米白背景上消失。 */
-  .mood-camera-doodle {
-    position: absolute;
-    z-index: 3;
-    display: block;
-    color: #d9a66f;
-    opacity: 0.72;
-    pointer-events: none;
-    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.65));
-  }
-
-  .mood-camera-doodle i,
-  .mood-camera-doodle b {
-    position: absolute;
-    display: block;
-    font-style: normal;
-    font-weight: 500;
-  }
-
-  .mood-camera-doodle--petals {
-    top: -8%;
-    right: 17%;
-    width: 34px;
-    height: 30px;
-  }
-
-  .mood-camera-doodle--petals i {
-    top: 3px;
-    width: 10px;
-    height: 22px;
-    border-radius: 75% 25% 70% 30%;
-    background: currentColor;
-  }
-
-  .mood-camera-doodle--petals i:first-child {
-    left: 7px;
-    transform: rotate(-24deg);
-  }
-
-  .mood-camera-doodle--petals i:last-child {
-    right: 5px;
-    transform: rotate(31deg) scale(0.82);
-  }
-
-  .mood-camera-doodle--fan {
-    left: -9%;
-    bottom: 14%;
-    width: 40px;
-    height: 34px;
-  }
-
-  .mood-camera-doodle--fan i {
-    bottom: 2px;
-    left: 15px;
-    width: 9px;
-    height: 27px;
-    border-radius: 90% 18% 88% 22%;
-    background: currentColor;
-    transform-origin: 50% 100%;
-  }
-
-  .mood-camera-doodle--fan i:nth-child(1) {
-    transform: rotate(-47deg) scaleY(0.82);
-  }
-
-  .mood-camera-doodle--fan i:nth-child(2) {
-    transform: rotate(-14deg);
-  }
-
-  .mood-camera-doodle--fan i:nth-child(3) {
-    transform: rotate(22deg) scaleY(0.86);
-  }
-
-  @media (max-width: 639px) {
-    .mood-camera-doodle {
-      opacity: 0.62;
-      scale: 0.72;
-    }
-  }
-
   /* 包装袋：圆角矩形 + 顶部封口 */
   .mood-shape-bag {
     aspect-ratio: 4 / 5;
@@ -1688,17 +1776,65 @@ const uploadedDecorations: Record<
 
   /* 各组 callout 位置：贴近产品图但不接触；
    * 底部三组的 callout 落在 composite 的 padding-bottom 区内，不会被裁切 */
-  .is--bites .mood-product-callout    { right: -42%; top: 62%; }
+  .is--bites .mood-product-callout    { left: calc(100% + 9px); right: auto; top: 62%; }
   .is--crackers .mood-product-callout { left: 44%; bottom: -42px; }
-  .is--cookies .mood-product-callout  { left: -12%; bottom: 2px; }
-  .is--burst .mood-product-callout    { left: 37%; top: -42px; }
-  .is--bars .mood-product-callout     { right: 10%; bottom: 14px; }
+  /* 相机原图左侧带有透明留白：标签收进画布并上移到相纸左侧。 */
+  .is--cookies .mood-product-callout  {
+    left: auto;
+    right: calc(63% + 8px);
+    bottom: 80px;
+    transform: translateX(-4px);
+  }
+  /* 原图可见内容从画布高度的 27.6% 开始：标签贴着这条视觉边缘，
+   * 留出 8px 呼吸距离，并略向右靠近照片主体。 */
+  .is--burst .mood-product-callout    {
+    left: 50%;
+    top: 27.6%;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 3px;
+    transform: translateY(calc(-100% - 8px));
+  }
+  .is--bars .mood-product-callout {
+    left: 50%;
+    right: auto;
+    top: calc(
+      100% - 64px + var(--bars-art-shift) + 6px -
+      var(--bars-callout-lift)
+    );
+    bottom: auto;
+    align-items: center;
+    gap: 3px;
+    transform: translateX(-50%);
+  }
+  .is--bars .mood-product-label {
+    display: block;
+    transform: none;
+  }
+  .is--bars .mood-product-arrow {
+    width: clamp(28px, 2.4vw, 36px);
+    transform: none;
+  }
+  .is--bars .mood-product-arrow path {
+    stroke-width: 2.5;
+  }
 
   @media (max-width: 639px) {
     .is--crackers .mood-product-callout { left: 0; bottom: -36px; }
-    .is--cookies .mood-product-callout  { left: -14%; bottom: 0; }
-    .is--burst .mood-product-callout    { left: -28%; top: -36px; }
-    .is--bars .mood-product-callout     { right: 10%; bottom: 8px; }
+    .is--cookies .mood-product-callout  {
+      left: auto;
+      right: calc(63% + 8px);
+      bottom: 34px;
+      transform: translateX(-2px);
+    }
+    .is--burst .mood-product-callout    {
+      left: 50%;
+      top: 27.6%;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 3px;
+      transform: translateY(calc(-100% - 8px));
+    }
   }
 
   /* ===== 关闭动效：全部直接显示、无位移 ===== */
@@ -1719,6 +1855,20 @@ const uploadedDecorations: Record<
   }
 </style>
 
+<style is:global>
+  /*
+   * Keep the travel-note label and its hanging photos together while
+   * lowering the complete artwork by the requested 20px.
+   */
+  :where(div, figure, a):has(
+    > img[src*="5-removebg"],
+    > img[alt*="环游"],
+    > img[alt*="一串相片"]
+  ) {
+    translate: 0 20px;
+  }
+</style>
+
 <script>
   const section = document.querySelector<HTMLElement>("[data-mood-section]");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1729,16 +1879,6 @@ const uploadedDecorations: Record<
     const probe = new Image();
     probe.onerror = () => img.remove();
     probe.src = img.href.baseVal;
-  });
-
-  // 水晶球内部图片槽：上传固定文件名后自动覆盖占位符。
-  document.querySelectorAll<HTMLElement>("[data-crystal-photo]").forEach((slot) => {
-    const probe = new Image();
-    probe.onload = () => {
-      slot.style.setProperty("--crystal-photo-url", `url("${probe.src}")`);
-      slot.classList.add("has-photo");
-    };
-    probe.src = "/media/products/crystal-ball-photo.jpg";
   });
 
   type PhotoPoint = { x: number; y: number };
@@ -1912,6 +2052,78 @@ const uploadedDecorations: Record<
     };
     probe.src = src;
   });
+
+  const canvas = section?.querySelector<HTMLElement>(".mood-products-canvas");
+  const bottomAnchoredProducts = canvas
+    ? [
+        ...canvas.querySelectorAll<HTMLElement>(
+          ".mood-product--cookies, .mood-product--burst, .mood-product--bars",
+        ),
+      ]
+    : [];
+  let heightFrame = 0;
+
+  const syncCanvasHeight = () => {
+    if (!section || !canvas) return;
+
+    section.classList.remove("mood-height-ready");
+    canvas.classList.remove("mood-height-ready");
+    canvas.style.removeProperty("--mood-content-height");
+
+    // 先恢复 CSS 中的响应式定位，用原始画布计算三组底部插画的 top；
+    // 随后把 top 固定下来，避免容器高度变化时 bottom 定位形成循环依赖。
+    for (const product of bottomAnchoredProducts) {
+      product.style.removeProperty("top");
+      product.style.removeProperty("bottom");
+    }
+
+    section.classList.add("mood-height-measuring");
+    const anchoredTops = bottomAnchoredProducts.map(
+      (product) => product.offsetTop,
+    );
+
+    bottomAnchoredProducts.forEach((product, index) => {
+      product.style.top = `${anchoredTops[index]}px`;
+      product.style.bottom = "auto";
+    });
+
+    const canvasTop = canvas.getBoundingClientRect().top;
+    let contentBottom = canvasTop + window.innerHeight;
+    const measuredElements = canvas.querySelectorAll<HTMLElement>(
+      ".mood-center, .mood-product, .mood-product-callout",
+    );
+
+    for (const element of measuredElements) {
+      contentBottom = Math.max(
+        contentBottom,
+        element.getBoundingClientRect().bottom,
+      );
+    }
+
+    canvas.style.setProperty(
+      "--mood-content-height",
+      `${Math.ceil(contentBottom - canvasTop + 24)}px`,
+    );
+    canvas.classList.add("mood-height-ready");
+    section.classList.add("mood-height-ready");
+    section.classList.remove("mood-height-measuring");
+  };
+
+  const queueCanvasHeightSync = () => {
+    cancelAnimationFrame(heightFrame);
+    heightFrame = requestAnimationFrame(() => {
+      heightFrame = requestAnimationFrame(syncCanvasHeight);
+    });
+  };
+
+  if (canvas) {
+    queueCanvasHeightSync();
+    addEventListener("resize", queueCanvasHeightSync, { passive: true });
+    document.fonts?.ready.then(queueCanvasHeightSync);
+    canvas.querySelectorAll("img").forEach((image) => {
+      if (!image.complete) image.addEventListener("load", queueCanvasHeightSync, { once: true });
+    });
+  }
 
   if (section) {
     if (reduce) {
